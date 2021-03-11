@@ -1,0 +1,32 @@
+package slice
+
+// XxxIn : if arr has element e, return true. otherwise false
+func XxxIn(e xxx, arr ...xxx) bool {
+	return XxxIdxOf(e, arr...) != -1
+}
+
+// XxxNotIn : if arr does NOT have element e, return true. otherwise false
+func XxxNotIn(e xxx, arr ...xxx) bool {
+	return !XxxIn(e, arr...)
+}
+
+// XxxIdxOf : returns the index of the first instance of e in set, or -1 if e is not present in set
+func XxxIdxOf(e xxx, arr ...xxx) int {
+	for i, ele := range arr {
+		if ele == e {
+			return i
+		}
+	}
+	return -1
+}
+
+// XxxLastIdxOf : returns the index of the last instance of e in set, or -1 if e is not present in set
+func XxxLastIdxOf(e xxx, arr ...xxx) int {
+	n := len(arr)
+	for i := n - 1; i >= 0; i-- {
+		if arr[i] == e {
+			return i
+		}
+	}
+	return -1
+}
