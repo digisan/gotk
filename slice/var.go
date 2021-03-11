@@ -10,6 +10,10 @@ var (
 	sJoin       = strings.Join
 	sSplit      = strings.Split
 	sHasPrefix  = strings.HasPrefix
+	sHasSuffix  = strings.HasSuffix
 	sTrim       = strings.Trim
+	sTrimLeft   = strings.TrimLeft
+	sTrimRight  = strings.TrimRight
 	sReplaceAll = strings.ReplaceAll
+	sContains   = strings.Contains
 )

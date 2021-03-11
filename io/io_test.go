@@ -20,11 +20,11 @@ func TestFileLineScan(t *testing.T) {
 		{
 			name: "OK",
 			args: args{
-				filepath: "../slice/xxx.txt",
+				filepath: "../slice/T1.template",
 				f: func(line string) (bool, string) {
 					return true, sReplaceAll(sReplaceAll(line, "Xxx", "Int"), "xxx", "int")
 				},
-				outfile: "../slice/int.go",
+				outfile: "./out.txt",
 			},
 			want:    "",
 			wantErr: false,
@@ -107,6 +107,61 @@ func TestDirExists(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := DirExists(tt.args.dirname); got != tt.want {
 				t.Errorf("DirExists() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestFileIsEmpty(t *testing.T) {
+	type args struct {
+		filename string
+	}
+	tests := []struct {
+		name string
+		args args
+		want bool
+	}{
+		// TODO: Add test cases.
+		{
+			name: "FileIsEmpty",
+			args: args{filename: "./io.go"},
+			want: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := FileIsEmpty(tt.args.filename); got != tt.want {
+				t.Errorf("FileIsEmpty() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestDirIsEmpty(t *testing.T) {
+	type args struct {
+		dirname string
+	}
+	tests := []struct {
+		name string
+		args args
+		want bool
+	}{
+		// TODO: Add test cases.
+		{
+			name: "FileIsEmpty",
+			args: args{dirname: "./"},
+			want: false,
+		},
+		{
+			name: "FileIsEmpty",
+			args: args{dirname: "../net"},
+			want: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := DirIsEmpty(tt.args.dirname); got != tt.want {
+				t.Errorf("DirIsEmpty() = %v, want %v", got, tt.want)
 			}
 		})
 	}

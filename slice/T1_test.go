@@ -4,7 +4,8 @@ import "testing"
 
 func TestXxxGen(t *testing.T) {
 	type args struct {
-		T         string
+		Tx        string
+		pkgname   string
 		outgofile string
 	}
 	tests := []struct {
@@ -15,28 +16,31 @@ func TestXxxGen(t *testing.T) {
 		{
 			name: "OK",
 			args: args{
-				T:         "string",
-				outgofile: "./string.go",
+				Tx:        "string",
+				pkgname:   "slice",
+				outgofile: "./auto.go",
 			},
 		},
 		{
 			name: "OK",
 			args: args{
-				T:         "int",
-				outgofile: "./int.go",
+				Tx:        "int",
+				pkgname:   "slice",
+				outgofile: "./auto.go",
 			},
 		},
 		{
 			name: "OK",
 			args: args{
-				T:         "interface{}",
-				outgofile: "./object.go",
+				Tx:        "interface{}",
+				pkgname:   "slice",
+				outgofile: "./auto.go",
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			XxxGen(tt.args.T, tt.args.outgofile)
+			T1FuncGen(tt.args.Tx, tt.args.pkgname, tt.args.outgofile)
 		})
 	}
 }

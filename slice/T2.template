@@ -1,0 +1,45 @@
+// XxxsFMYyys : Filter & Modify []xxx slice, return []yyy slice
+func XxxsFMYyys(arr []xxx, filter func(i int) bool, modifier func(i int) yyy) (r []yyy) {
+	// [S@x==y]
+	switch {
+	case filter != nil && modifier != nil:
+		for i := range arr {
+			if filter(i) {
+				r = append(r, modifier(i))
+			}
+		}
+	case filter != nil && modifier == nil: 
+		for i, e := range arr {
+			if filter(i) {
+				r = append(r, e)
+			}
+		}
+	case filter == nil && modifier != nil:
+		for i := range arr {
+			r = append(r, modifier(i))
+		}
+	default:
+		return arr
+	}
+	return
+	// [E@x==y]
+
+	// [S@x!=y]
+	if modifier == nil {
+		panic("modifier cannot be nil")
+	}
+	switch {
+	case filter != nil:
+		for i := range arr {
+			if filter(i) {
+				r = append(r, modifier(i))
+			}
+		}
+	default:
+		for i := range arr {
+			r = append(r, modifier(i))
+		}
+	}
+	return
+	// [E@x!=y]
+}

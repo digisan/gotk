@@ -17,6 +17,24 @@ var (
 	MustAppendFile = base.MustAppendFile
 )
 
+// FileIsEmpty :
+func FileIsEmpty(filename string) bool {
+	info, err := os.Stat(filename)
+	if err != nil {
+		panic(err)
+	}
+	return info.Size() == 0
+}
+
+// DirIsEmpty :
+func DirIsEmpty(dirname string) bool {
+	fs, err := os.ReadDir(dirname)
+	if err != nil {
+		panic(err)
+	}
+	return len(fs) == 0
+}
+
 // FileExists :
 func FileExists(filename string) bool {
 	info, err := os.Stat(filename)
