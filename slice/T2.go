@@ -1,31 +1,44 @@
 package slice
 
-import "github.com/digisan/gotk/io"
+import (
+	"os"
+
+	"github.com/digisan/gotk/io"
+)
 
 // T2FuncGen :
-func T2FuncGen(Tx, Ty, pkgname, outgofile string) {
+func T2FuncGen(Tx, Ty, pkgdir string) {
+
+	pkgname1, ok := mTypPkg[Tx]
+	if !ok {
+		panic(Tx + " is not supported for T<xxx>")
+	}
+	pkgname2, ok := mTypPkg[Ty]
+	if !ok {
+		panic(Ty + " is not supported for T<yyy>")
+	}
+	if Tx == Ty {
+		pkgname2 = ""
+	}
+
+	pkgdir = sTrimSuffix(pkgdir, "/") + "/"
+	if !io.DirExists(pkgdir) {
+		if err := os.MkdirAll(pkgdir, os.ModePerm); err != nil {
+			panic(err.Error())
+		}
+	}
+
+	pkgname := pkgname1 + pkgname2
+	outgofile := pkgdir + pkgname + "/auto.go"
 
 	if !io.FileExists(outgofile) || io.FileIsEmpty(outgofile) {
-		io.MustWriteFile(outgofile, []byte("package "+pkgname+"\n"))
+		io.MustWriteFile(outgofile, []byte("package "+pkgname))
 	}
 
 	flagXeqY, flagXneY := true, true
 
 	src, err := io.FileLineScan("./T2.template", func(line string) (bool, string) {
 		line = sTrimRight(line, " \t")
-
-		fpx, ok := mTypFP[Tx]
-		if !ok {
-			panic(Tx + " is incorrect type")
-		}
-
-		fsy, ok := mTypFP[Ty]
-		if !ok {
-			panic(Ty + " is incorrect type")
-		}
-		if Tx == Ty {
-			fsy = ""
-		}
 
 		switch {
 		case sHasSuffix(line, `[S@x==y]`):
@@ -42,8 +55,8 @@ func T2FuncGen(Tx, Ty, pkgname, outgofile string) {
 			return false, ""
 		}
 
-		line = sReplaceAll(sReplaceAll(line, "Yyys", fsy), "yyy", Ty)
-		line = sReplaceAll(sReplaceAll(line, "Xxx", fpx), "xxx", Tx)
+		line = sReplaceAll(line, "yyy", Ty)
+		line = sReplaceAll(line, "xxx", Tx)
 
 		if (Tx == Ty && flagXeqY) || (Tx != Ty && flagXneY) {
 			return true, line
@@ -51,11 +64,11 @@ func T2FuncGen(Tx, Ty, pkgname, outgofile string) {
 		return false, ""
 
 	}, "")
+
 	if err != nil {
 		panic(err.Error())
 	}
-	io.MustAppendFile(outgofile, []byte(src), true)
-	io.MustAppendFile(outgofile, []byte{}, true)
 
-	return
+	io.MustAppendFile(outgofile, []byte(""), true)
+	io.MustAppendFile(outgofile, []byte(src), true)
 }

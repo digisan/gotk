@@ -2,12 +2,11 @@ package slice
 
 import "testing"
 
-func TestT2Gen(t *testing.T) {
+func TestT2FuncGen(t *testing.T) {
 	type args struct {
-		Tx        string
-		Ty        string
-		pkgname   string
-		outgofile string
+		Tx     string
+		Ty     string
+		pkgdir string
 	}
 	tests := []struct {
 		name string
@@ -17,34 +16,39 @@ func TestT2Gen(t *testing.T) {
 		{
 			name: "OK",
 			args: args{
-				Tx:        "int",
-				Ty:        "string",
-				pkgname:   "slice",
-				outgofile: "auto.go",
+				Tx:     "int",
+				Ty:     "string",
+				pkgdir: "./",
 			},
 		},
 		{
 			name: "OK",
 			args: args{
-				Tx:        "string",
-				Ty:        "string",
-				pkgname:   "slice",
-				outgofile: "auto.go",
+				Tx:     "int",
+				Ty:     "int",
+				pkgdir: "./",
 			},
 		},
 		{
 			name: "OK",
 			args: args{
-				Tx:        "string",
-				Ty:        "int",
-				pkgname:   "slice",
-				outgofile: "auto.go",
+				Tx:     "string",
+				Ty:     "string",
+				pkgdir: "./",
+			},
+		},
+		{
+			name: "OK",
+			args: args{
+				Tx:     "string",
+				Ty:     "int",
+				pkgdir: "./",
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			T2FuncGen(tt.args.Tx, tt.args.Ty, tt.args.pkgname, tt.args.outgofile)
+			T2FuncGen(tt.args.Tx, tt.args.Ty, tt.args.pkgdir)
 		})
 	}
 }

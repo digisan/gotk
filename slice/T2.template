@@ -1,45 +1,49 @@
-// XxxsFMYyys : Filter & Modify []xxx slice, return []yyy slice
-func XxxsFMYyys(arr []xxx, filter func(i int) bool, modifier func(i int) yyy) (r []yyy) {
+// FilterModify : Filter & Modify []xxx slice, return []yyy slice
+func FilterModify(arr []xxx, filter func(i int, e xxx) bool, modifier func(i int, e xxx) yyy) (r []yyy) {
 	// [S@x==y]
 	switch {
 	case filter != nil && modifier != nil:
-		for i := range arr {
-			if filter(i) {
-				r = append(r, modifier(i))
+		for i, e := range arr {
+			if filter(i, e) {
+				r = append(r, modifier(i, e))
 			}
 		}
 	case filter != nil && modifier == nil: 
 		for i, e := range arr {
-			if filter(i) {
+			if filter(i, e) {
 				r = append(r, e)
 			}
 		}
 	case filter == nil && modifier != nil:
-		for i := range arr {
-			r = append(r, modifier(i))
+		for i, e := range arr {
+			r = append(r, modifier(i, e))
 		}
 	default:
 		return arr
 	}
 	return
 	// [E@x==y]
-
 	// [S@x!=y]
 	if modifier == nil {
 		panic("modifier cannot be nil")
 	}
+
 	switch {
 	case filter != nil:
-		for i := range arr {
-			if filter(i) {
-				r = append(r, modifier(i))
+		for i, e := range arr {
+			if filter(i, e) {
+				r = append(r, modifier(i, e))
 			}
 		}
 	default:
-		for i := range arr {
-			r = append(r, modifier(i))
+		for i, e := range arr {
+			r = append(r, modifier(i, e))
 		}
 	}
 	return
 	// [E@x!=y]
 }
+
+var (
+	FM = FilterModify
+)
