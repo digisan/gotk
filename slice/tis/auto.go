@@ -1,4 +1,4 @@
-package intstr
+package tis
 
 // FilterModify : Filter & Modify []int slice, return []string slice
 func FilterModify(arr []int, filter func(i int, e int) bool, modifier func(i int, e int) string) (r []string) {

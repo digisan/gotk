@@ -1,17 +1,17 @@
-package int
+package ti32
 
 // In : if arr has element e, return true. otherwise false
-func In(e int, arr ...int) bool {
+func In(e rune, arr ...rune) bool {
 	return IdxOf(e, arr...) != -1
 }
 
 // NotIn : if arr does NOT have element e, return true. otherwise false
-func NotIn(e int, arr ...int) bool {
+func NotIn(e rune, arr ...rune) bool {
 	return !In(e, arr...)
 }
 
 // IdxOf : returns the index of the first instance of e in slice, or -1 if e is not present in slice
-func IdxOf(e int, arr ...int) int {
+func IdxOf(e rune, arr ...rune) int {
 	for i, ele := range arr {
 		if ele == e {
 			return i
@@ -21,7 +21,7 @@ func IdxOf(e int, arr ...int) int {
 }
 
 // LastIdxOf : returns the index of the last instance of e in slice, or -1 if e is not present in slice
-func LastIdxOf(e int, arr ...int) int {
+func LastIdxOf(e rune, arr ...rune) int {
 	for i := len(arr) - 1; i >= 0; i-- {
 		if arr[i] == e {
 			return i
@@ -31,11 +31,11 @@ func LastIdxOf(e int, arr ...int) int {
 }
 
 // MkSet : remove repeated elements in arr
-func MkSet(arr ...int) (set []int) {
+func MkSet(arr ...rune) (set []rune) {
 	if arr == nil {
 		return nil
 	}
-	m := make(map[int]struct{})
+	m := make(map[rune]struct{})
 	for _, ele := range arr {
 		if _, ok := m[ele]; !ok {
 			set = append(set, ele)
@@ -43,13 +43,13 @@ func MkSet(arr ...int) (set []int) {
 		}
 	}
 	if len(set) == 0 {
-		return []int{}
+		return []rune{}
 	}
 	return
 }
 
 // Superset :
-func Superset(setA, setB []int) bool {
+func Superset(setA, setB []rune) bool {
 NEXT_B:
 	for _, b := range setB {
 		for _, a := range setA {
@@ -63,12 +63,12 @@ NEXT_B:
 }
 
 // Subset :
-func Subset(setA, setB []int) bool {
+func Subset(setA, setB []rune) bool {
 	return Superset(setB, setA)
 }
 
 // Equal :
-func Equal(setA, setB []int) bool {
+func Equal(setA, setB []rune) bool {
 	if (setA == nil && setB != nil) || (setA != nil && setB == nil) {
 		return false
 	}
@@ -76,7 +76,7 @@ func Equal(setA, setB []int) bool {
 }
 
 // union :
-func union(setA, setB []int) (set []int) {
+func union(setA, setB []rune) (set []rune) {
 	if setA == nil && setB == nil {
 		return nil
 	}
@@ -87,7 +87,7 @@ func union(setA, setB []int) (set []int) {
 		return setA
 	}
 
-	m := make(map[int]struct{})
+	m := make(map[rune]struct{})
 	for _, a := range setA {
 		if _, ok := m[a]; !ok {
 			set = append(set, a)
@@ -101,13 +101,13 @@ func union(setA, setB []int) (set []int) {
 		}
 	}
 	if set == nil {
-		return []int{}
+		return []rune{}
 	}
 	return
 }
 
 // Union :
-func Union(sets ...[]int) (set []int) {
+func Union(sets ...[]rune) (set []rune) {
 	if len(sets) == 0 {
 		return nil
 	}
@@ -119,7 +119,7 @@ func Union(sets ...[]int) (set []int) {
 }
 
 // intersect :
-func intersect(setA, setB []int) (set []int) {
+func intersect(setA, setB []rune) (set []rune) {
 	if setA == nil || setB == nil {
 		return nil
 	}
@@ -135,13 +135,13 @@ AGAIN:
 		}
 	}
 	if set == nil {
-		return []int{}
+		return []rune{}
 	}
 	return
 }
 
 // Intersect :
-func Intersect(sets ...[]int) (set []int) {
+func Intersect(sets ...[]rune) (set []rune) {
 	if len(sets) == 0 {
 		return nil
 	}
@@ -151,32 +151,3 @@ func Intersect(sets ...[]int) (set []int) {
 	}
 	return set
 }
-
-// FilterModify : Filter & Modify []int slice, return []int slice
-func FilterModify(arr []int, filter func(i int, e int) bool, modifier func(i int, e int) int) (r []int) {
-	switch {
-	case filter != nil && modifier != nil:
-		for i, e := range arr {
-			if filter(i, e) {
-				r = append(r, modifier(i, e))
-			}
-		}
-	case filter != nil && modifier == nil:
-		for i, e := range arr {
-			if filter(i, e) {
-				r = append(r, e)
-			}
-		}
-	case filter == nil && modifier != nil:
-		for i, e := range arr {
-			r = append(r, modifier(i, e))
-		}
-	default:
-		return arr
-	}
-	return
-}
-
-var (
-	FM = FilterModify
-)

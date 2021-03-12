@@ -29,6 +29,20 @@ func TestT1FuncGen(t *testing.T) {
 		{
 			name: "OK",
 			args: args{
+				Tx:     "byte",
+				pkgdir: "./",
+			},
+		},
+		{
+			name: "OK",
+			args: args{
+				Tx:     "rune",
+				pkgdir: "./",
+			},
+		},
+		{
+			name: "OK",
+			args: args{
 				Tx:     "interface{}",
 				pkgdir: "./",
 			},

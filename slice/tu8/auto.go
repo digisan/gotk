@@ -1,17 +1,17 @@
-package obj
+package tu8
 
 // In : if arr has element e, return true. otherwise false
-func In(e interface{}, arr ...interface{}) bool {
+func In(e byte, arr ...byte) bool {
 	return IdxOf(e, arr...) != -1
 }
 
 // NotIn : if arr does NOT have element e, return true. otherwise false
-func NotIn(e interface{}, arr ...interface{}) bool {
+func NotIn(e byte, arr ...byte) bool {
 	return !In(e, arr...)
 }
 
 // IdxOf : returns the index of the first instance of e in slice, or -1 if e is not present in slice
-func IdxOf(e interface{}, arr ...interface{}) int {
+func IdxOf(e byte, arr ...byte) int {
 	for i, ele := range arr {
 		if ele == e {
 			return i
@@ -21,7 +21,7 @@ func IdxOf(e interface{}, arr ...interface{}) int {
 }
 
 // LastIdxOf : returns the index of the last instance of e in slice, or -1 if e is not present in slice
-func LastIdxOf(e interface{}, arr ...interface{}) int {
+func LastIdxOf(e byte, arr ...byte) int {
 	for i := len(arr) - 1; i >= 0; i-- {
 		if arr[i] == e {
 			return i
@@ -31,11 +31,11 @@ func LastIdxOf(e interface{}, arr ...interface{}) int {
 }
 
 // MkSet : remove repeated elements in arr
-func MkSet(arr ...interface{}) (set []interface{}) {
+func MkSet(arr ...byte) (set []byte) {
 	if arr == nil {
 		return nil
 	}
-	m := make(map[interface{}]struct{})
+	m := make(map[byte]struct{})
 	for _, ele := range arr {
 		if _, ok := m[ele]; !ok {
 			set = append(set, ele)
@@ -43,13 +43,13 @@ func MkSet(arr ...interface{}) (set []interface{}) {
 		}
 	}
 	if len(set) == 0 {
-		return []interface{}{}
+		return []byte{}
 	}
 	return
 }
 
 // Superset :
-func Superset(setA, setB []interface{}) bool {
+func Superset(setA, setB []byte) bool {
 NEXT_B:
 	for _, b := range setB {
 		for _, a := range setA {
@@ -63,12 +63,12 @@ NEXT_B:
 }
 
 // Subset :
-func Subset(setA, setB []interface{}) bool {
+func Subset(setA, setB []byte) bool {
 	return Superset(setB, setA)
 }
 
 // Equal :
-func Equal(setA, setB []interface{}) bool {
+func Equal(setA, setB []byte) bool {
 	if (setA == nil && setB != nil) || (setA != nil && setB == nil) {
 		return false
 	}
@@ -76,7 +76,7 @@ func Equal(setA, setB []interface{}) bool {
 }
 
 // union :
-func union(setA, setB []interface{}) (set []interface{}) {
+func union(setA, setB []byte) (set []byte) {
 	if setA == nil && setB == nil {
 		return nil
 	}
@@ -87,7 +87,7 @@ func union(setA, setB []interface{}) (set []interface{}) {
 		return setA
 	}
 
-	m := make(map[interface{}]struct{})
+	m := make(map[byte]struct{})
 	for _, a := range setA {
 		if _, ok := m[a]; !ok {
 			set = append(set, a)
@@ -101,13 +101,13 @@ func union(setA, setB []interface{}) (set []interface{}) {
 		}
 	}
 	if set == nil {
-		return []interface{}{}
+		return []byte{}
 	}
 	return
 }
 
 // Union :
-func Union(sets ...[]interface{}) (set []interface{}) {
+func Union(sets ...[]byte) (set []byte) {
 	if len(sets) == 0 {
 		return nil
 	}
@@ -119,7 +119,7 @@ func Union(sets ...[]interface{}) (set []interface{}) {
 }
 
 // intersect :
-func intersect(setA, setB []interface{}) (set []interface{}) {
+func intersect(setA, setB []byte) (set []byte) {
 	if setA == nil || setB == nil {
 		return nil
 	}
@@ -135,13 +135,13 @@ AGAIN:
 		}
 	}
 	if set == nil {
-		return []interface{}{}
+		return []byte{}
 	}
 	return
 }
 
 // Intersect :
-func Intersect(sets ...[]interface{}) (set []interface{}) {
+func Intersect(sets ...[]byte) (set []byte) {
 	if len(sets) == 0 {
 		return nil
 	}

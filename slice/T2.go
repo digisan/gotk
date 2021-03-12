@@ -19,6 +19,8 @@ func T2FuncGen(Tx, Ty, pkgdir string) {
 	}
 	if Tx == Ty {
 		pkgname2 = ""
+	} else {
+		pkgname2 = sTrimPrefix(pkgname2, "t")
 	}
 
 	pkgdir = sTrimSuffix(pkgdir, "/") + "/"

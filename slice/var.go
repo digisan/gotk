@@ -14,6 +14,7 @@ var (
 	sTrim       = strings.Trim
 	sTrimLeft   = strings.TrimLeft
 	sTrimRight  = strings.TrimRight
+	sTrimPrefix = strings.TrimPrefix
 	sTrimSuffix = strings.TrimSuffix
 	sReplaceAll = strings.ReplaceAll
 	sContains   = strings.Contains

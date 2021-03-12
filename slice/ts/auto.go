@@ -1,4 +1,4 @@
-package str
+package ts
 
 // In : if arr has element e, return true. otherwise false
 func In(e string, arr ...string) bool {

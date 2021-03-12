@@ -1,4 +1,4 @@
-package int
+package ti
 
 import (
 	"reflect"

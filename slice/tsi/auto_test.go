@@ -1,4 +1,4 @@
-package strint
+package tsi
 
 import (
 	"reflect"

@@ -1,4 +1,4 @@
-package strint
+package tsi
 
 // FilterModify : Filter & Modify []string slice, return []int slice
 func FilterModify(arr []string, filter func(i int, e string) bool, modifier func(i int, e string) int) (r []int) {
