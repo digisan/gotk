@@ -426,6 +426,14 @@ func TestEqual(t *testing.T) {
 		{
 			name: "OK",
 			args: args{
+				setA: []int{1, 3},
+				setB: []int{2, 4},
+			},
+			want: false,
+		},
+		{
+			name: "OK",
+			args: args{
 				setA: []int{1, 2, 3, 4},
 				setB: []int{2, 4},
 			},
@@ -436,6 +444,14 @@ func TestEqual(t *testing.T) {
 			args: args{
 				setA: []int{1, 2, 3, 4},
 				setB: []int{2, 4, 1, 3},
+			},
+			want: true,
+		},
+		{
+			name: "OK",
+			args: args{
+				setA: []int{1, 2, 3, 4},
+				setB: []int{4, 3, 2, 1},
 			},
 			want: true,
 		},
@@ -689,6 +705,128 @@ func TestFilterModify(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if gotR := FM(tt.args.arr, tt.args.filter, tt.args.modifier); !reflect.DeepEqual(gotR, tt.wantR) {
 				t.Errorf("FM() = %v, want %v", gotR, tt.wantR)
+			}
+		})
+	}
+}
+
+func TestSuperEq(t *testing.T) {
+	type args struct {
+		setA []int
+		setB []int
+	}
+	tests := []struct {
+		name string
+		args args
+		want bool
+	}{
+		// TODO: Add test cases.
+		{
+			name: "OK",
+			args: args{
+				setA: []int{1, 3},
+				setB: []int{2, 4},
+			},
+			want: false,
+		},
+		{
+			name: "OK",
+			args: args{
+				setA: []int{1, 3},
+				setB: []int{3, 1},
+			},
+			want: true,
+		},
+		{
+			name: "OK",
+			args: args{
+				setA: []int{0, 1, 3},
+				setB: []int{3, 1},
+			},
+			want: true,
+		},
+		{
+			name: "OK",
+			args: args{
+				setA: []int{0, 1, 3},
+				setB: []int{},
+			},
+			want: true,
+		},
+		{
+			name: "OK",
+			args: args{
+				setA: []int{},
+				setB: nil,
+			},
+			want: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := SuperEq(tt.args.setA, tt.args.setB); got != tt.want {
+				t.Errorf("SuperEq() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestSubEq(t *testing.T) {
+	type args struct {
+		setA []int
+		setB []int
+	}
+	tests := []struct {
+		name string
+		args args
+		want bool
+	}{
+		// TODO: Add test cases.
+		{
+			name: "OK",
+			args: args{
+				setA: []int{1, 3},
+				setB: []int{2, 4},
+			},
+			want: false,
+		},
+		{
+			name: "OK",
+			args: args{
+				setA: []int{1, 3},
+				setB: []int{3, 1},
+			},
+			want: true,
+		},
+		{
+			name: "OK",
+			args: args{
+				setA: []int{1},
+				setB: []int{3, 1},
+			},
+			want: true,
+		},
+		{
+			name: "OK",
+			args: args{
+				setA: []int{},
+				setB: []int{1},
+			},
+			want: true,
+		},
+		{
+			name: "OK",
+			args: args{
+				setA: nil,
+				setB: []int{},
+			},
+			want: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := SubEq(tt.args.setA, tt.args.setB); got != tt.want {
+				t.Errorf("SubEq() = %v, want %v", got, tt.want)
 			}
 		})
 	}

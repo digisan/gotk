@@ -53,7 +53,7 @@ func Superset(setA, setB []byte) bool {
 NEXT_B:
 	for _, b := range setB {
 		for _, a := range setA {
-			if b == a {
+			if a == b {
 				continue NEXT_B
 			}
 		}
@@ -72,7 +72,31 @@ func Equal(setA, setB []byte) bool {
 	if (setA == nil && setB != nil) || (setA != nil && setB == nil) {
 		return false
 	}
-	return !Superset(setA, setB) && !Subset(setA, setB)
+	if len(setA) != len(setB) {
+		return false
+	}
+
+AGAIN:
+	for i, a := range setA {
+		for j, b := range setB {
+			if a == b {
+				setA = append(setA[:i], setA[i+1:]...)
+				setB = append(setB[:j], setB[j+1:]...)
+				goto AGAIN
+			}
+		}
+	}
+	return len(setA) == 0 && len(setB) == 0
+}
+
+// SuperEq :
+func SuperEq(setA, setB []byte) bool {
+	return Superset(setA, setB) || Equal(setA, setB)
+}
+
+// SubEq :
+func SubEq(setA, setB []byte) bool {
+	return Subset(setA, setB) || Equal(setA, setB)
 }
 
 // union :
