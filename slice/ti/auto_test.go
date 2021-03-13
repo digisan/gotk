@@ -831,3 +831,32 @@ func TestSubEq(t *testing.T) {
 		})
 	}
 }
+
+func TestReorder(t *testing.T) {
+	type args struct {
+		arr     []int
+		indices []int
+	}
+	tests := []struct {
+		name       string
+		args       args
+		wantOrders []int
+	}{
+		// TODO: Add test cases.
+		{
+			name: "OK",
+			args: args{
+				arr:     []int{1, 2, 3, 4, 5},
+				indices: []int{4, 3, 2},
+			},
+			wantOrders: []int{5, 4, 3},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if gotOrders := Reorder(tt.args.arr, tt.args.indices); !reflect.DeepEqual(gotOrders, tt.wantOrders) {
+				t.Errorf("Reorder() = %v, want %v", gotOrders, tt.wantOrders)
+			}
+		})
+	}
+}

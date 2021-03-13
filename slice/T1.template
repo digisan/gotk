@@ -173,3 +173,17 @@ func Intersect(sets ...[]xxx) (set []xxx) {
 	}
 	return set
 }
+
+// Reorder : any index must less than len(arr) 
+func Reorder(arr []xxx, indices []int) (orders []xxx) {
+	if arr == nil || indices == nil {
+		return nil
+	}
+	if len(arr) == 0 || len(indices) == 0 {
+		return []xxx{}
+	}
+	for _, idx := range indices {
+		orders = append(orders, arr[idx])
+	}
+	return orders
+}

@@ -175,3 +175,17 @@ func Intersect(sets ...[]byte) (set []byte) {
 	}
 	return set
 }
+
+// Reorder : any index must less than len(arr)
+func Reorder(arr []byte, indices []int) (orders []byte) {
+	if arr == nil || indices == nil {
+		return nil
+	}
+	if len(arr) == 0 || len(indices) == 0 {
+		return []byte{}
+	}
+	for _, idx := range indices {
+		orders = append(orders, arr[idx])
+	}
+	return orders
+}

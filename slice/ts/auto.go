@@ -176,6 +176,20 @@ func Intersect(sets ...[]string) (set []string) {
 	return set
 }
 
+// Reorder : any index must less than len(arr)
+func Reorder(arr []string, indices []int) (orders []string) {
+	if arr == nil || indices == nil {
+		return nil
+	}
+	if len(arr) == 0 || len(indices) == 0 {
+		return []string{}
+	}
+	for _, idx := range indices {
+		orders = append(orders, arr[idx])
+	}
+	return orders
+}
+
 // FilterModify : Filter & Modify []string slice, return []string slice
 func FilterModify(arr []string, filter func(i int, e string) bool, modifier func(i int, e string) string) (r []string) {
 	switch {
