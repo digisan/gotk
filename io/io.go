@@ -3,19 +3,63 @@ package io
 import (
 	"bufio"
 	"io"
+	"log"
 	"os"
+	"path/filepath"
 	"strings"
-
-	"github.com/cdutwhu/debog/base"
 )
 
-var (
-	// MustWriteFile : from debog/base
-	MustWriteFile = base.MustWriteFile
-
-	// MustAppendFile : from debog/base
-	MustAppendFile = base.MustAppendFile
+const (
+	// FilePerm :
+	FilePerm = 0666
+	// DirPerm :
+	DirPerm = 0777
 )
+
+// MustWriteFile :
+func MustWriteFile(filename string, data []byte) {
+	dir := filepath.Dir(filename)
+	_, err := os.Stat(dir)
+	if err != nil && os.IsNotExist(err) {
+		if err := os.MkdirAll(dir, DirPerm); err != nil { // dir must be 0777 to put writes in
+			log.Fatalf("Could NOT Create File to Write: %v", err)
+		}
+		goto WRITE
+	}
+	if err != nil {
+		log.Fatalf("Could NOT Get file Status: %v", err)
+	}
+
+WRITE:
+	if err := os.WriteFile(filename, data, FilePerm); err != nil {
+		log.Fatalf("Could NOT Write File: %v", err)
+	}
+}
+
+// MustAppendFile :
+func MustAppendFile(filename string, data []byte, newline bool) {
+	_, err := os.Stat(filename)
+	if err != nil && os.IsNotExist(err) {
+		MustWriteFile(filename, data)
+		return
+	}
+	if err != nil {
+		log.Fatalf("Could NOT Get file Status: %v", err)
+	}
+
+	file, err := os.OpenFile(filename, os.O_APPEND|os.O_WRONLY, FilePerm)
+	if err != nil {
+		log.Fatalf("Could NOT Open File to Append: %v", err)
+	}
+	defer file.Close()
+
+	if newline {
+		data = append([]byte{'\n'}, data...)
+	}
+	if _, err = file.Write(data); err != nil {
+		log.Fatalf("Could NOT Append File: %v", err)
+	}
+}
 
 // FileIsEmpty :
 func FileIsEmpty(filename string) bool {
