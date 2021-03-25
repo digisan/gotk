@@ -14,18 +14,18 @@ func TrackTime(start time.Time) {
 	fmt.Printf("Took %s\n", elapsed)
 }
 
-// IsXML :
+// IsXML : Check str is valid XML
 func IsXML(str string) bool {
 	return xml.Unmarshal([]byte(str), new(interface{})) == nil
 }
 
-// IsJSON :
+// IsJSON : Check str is valid JSON
 func IsJSON(str string) bool {
 	return json.Unmarshal([]byte(str), new(interface{})) == nil
 }
 
-// IsNumeric :
-func IsNumeric(s string) bool {
-	_, err := strconv.ParseFloat(s, 64)
+// IsNumeric : Check str is valid numeric style
+func IsNumeric(str string) bool {
+	_, err := strconv.ParseFloat(str, 64)
 	return err == nil
 }
