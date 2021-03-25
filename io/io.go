@@ -130,3 +130,53 @@ func FileLineScan(filepath string, f func(line string) (bool, string), outfile s
 func StrLineScan(str string, f func(line string) (bool, string), outfile string) (string, error) {
 	return readByLine(strings.NewReader(str), f, outfile)
 }
+
+// FileDirCount : ignore hidden file or directory
+func FileDirCount(dirname string, recursive bool) (fileCount, dirCount int, err error) {
+
+	dirname = sTrimSuffix(dirname, "/") + "/"
+
+	if !recursive {
+
+		files, err := os.ReadDir(dirname)
+		if err != nil {
+			return -1, -1, err
+		}
+		for _, file := range files {
+			// ignore hidden file or directory
+			if sHasPrefix(file.Name(), ".") {
+				continue
+			}
+			path := dirname + file.Name()
+			if FileExists(path) {
+				fileCount++
+			} else {
+				dirCount++
+			}
+		}
+
+	} else {
+
+		if err = filepath.Walk(dirname,
+			func(path string, info os.FileInfo, err error) error {
+				if err != nil {
+					return err
+				}
+				// ignore hidden file or directory
+				if sHasPrefix(info.Name(), ".") {
+					return nil
+				}
+				if FileExists(path) {
+					fileCount++
+				} else {
+					dirCount++
+				}
+				return nil
+			}); err != nil {
+			return -1, -1, err
+		}
+
+	}
+
+	return
+}
