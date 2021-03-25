@@ -231,6 +231,7 @@ func TestFileDirCount(t *testing.T) {
 	type args struct {
 		dirname   string
 		recursive bool
+		exctypes  []string
 	}
 	tests := []struct {
 		name          string
@@ -245,15 +246,16 @@ func TestFileDirCount(t *testing.T) {
 			args: args{
 				dirname:   "../",
 				recursive: false,
+				exctypes:  []string{"go"},
 			},
-			wantFileCount: 5,
+			wantFileCount: 4,
 			wantDirCount:  5,
 			wantErr:       false,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotFileCount, gotDirCount, err := FileDirCount(tt.args.dirname, tt.args.recursive)
+			gotFileCount, gotDirCount, err := FileDirCount(tt.args.dirname, tt.args.recursive, tt.args.exctypes...)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("FileDirCount() error = %v, wantErr %v", err, tt.wantErr)
 				return

@@ -132,7 +132,7 @@ func StrLineScan(str string, f func(line string) (bool, string), outfile string)
 }
 
 // FileDirCount : ignore hidden file or directory
-func FileDirCount(dirname string, recursive bool) (fileCount, dirCount int, err error) {
+func FileDirCount(dirname string, recursive bool, exctypes ...string) (fileCount, dirCount int, err error) {
 
 	dirname = sTrimSuffix(dirname, "/") + "/"
 
@@ -142,12 +142,20 @@ func FileDirCount(dirname string, recursive bool) (fileCount, dirCount int, err 
 		if err != nil {
 			return -1, -1, err
 		}
+	NEXT_FILE:
 		for _, file := range files {
+			filename := file.Name()
 			// ignore hidden file or directory
-			if sHasPrefix(file.Name(), ".") {
+			if sHasPrefix(filename, ".") {
 				continue
 			}
-			path := dirname + file.Name()
+			// ignore excluded files
+			for _, exc := range exctypes {
+				if sHasSuffix(filename, "."+exc) {
+					continue NEXT_FILE
+				}
+			}
+			path := dirname + filename
 			if FileExists(path) {
 				fileCount++
 			} else {
@@ -162,9 +170,16 @@ func FileDirCount(dirname string, recursive bool) (fileCount, dirCount int, err 
 				if err != nil {
 					return err
 				}
+				filename := info.Name()
 				// ignore hidden file or directory
-				if sHasPrefix(info.Name(), ".") {
+				if sHasPrefix(filename, ".") {
 					return nil
+				}
+				// ignore excluded files
+				for _, exc := range exctypes {
+					if sHasSuffix(filename, "."+exc) {
+						return nil
+					}
 				}
 				if FileExists(path) {
 					fileCount++
