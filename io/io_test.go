@@ -226,3 +226,44 @@ func TestMustAppendFile(t *testing.T) {
 		})
 	}
 }
+
+func TestFileDirCount(t *testing.T) {
+	type args struct {
+		dirname   string
+		recursive bool
+	}
+	tests := []struct {
+		name          string
+		args          args
+		wantFileCount int
+		wantDirCount  int
+		wantErr       bool
+	}{
+		// TODO: Add test cases.
+		{
+			name: "OK",
+			args: args{
+				dirname:   "./",
+				recursive: false,
+			},
+			wantFileCount: 5,
+			wantDirCount:  5,
+			wantErr:       false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			gotFileCount, gotDirCount, err := FileDirCount(tt.args.dirname, tt.args.recursive)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("FileDirCount() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if gotFileCount != tt.wantFileCount {
+				t.Errorf("FileDirCount() gotFileCount = %v, want %v", gotFileCount, tt.wantFileCount)
+			}
+			if gotDirCount != tt.wantDirCount {
+				t.Errorf("FileDirCount() gotDirCount = %v, want %v", gotDirCount, tt.wantDirCount)
+			}
+		})
+	}
+}
