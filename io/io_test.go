@@ -243,7 +243,7 @@ func TestFileDirCount(t *testing.T) {
 		{
 			name: "OK",
 			args: args{
-				dirname:   "./",
+				dirname:   "../",
 				recursive: false,
 			},
 			wantFileCount: 5,
