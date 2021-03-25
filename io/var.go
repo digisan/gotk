@@ -11,5 +11,6 @@ var (
 	sSplit      = strings.Split
 	sHasPrefix  = strings.HasPrefix
 	sTrim       = strings.Trim
+	sTrimSuffix = strings.TrimSuffix
 	sReplaceAll = strings.ReplaceAll
 )
