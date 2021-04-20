@@ -2,9 +2,11 @@ package io
 
 import (
 	"bufio"
+	"fmt"
 	"io"
 	"log"
 	"os"
+	"os/user"
 	"path/filepath"
 	"strings"
 )
@@ -15,6 +17,39 @@ const (
 	// DirPerm :
 	DirPerm = 0777
 )
+
+// AbsPath :
+func AbsPath(path string, check bool) (string, error) {
+	if sHasPrefix(path, "~/") {
+		user, err := user.Current()
+		if err != nil {
+			log.Fatalf("%v", err)
+		}
+		path = user.HomeDir + path[1:]
+	}
+	abspath, err := filepath.Abs(path)
+	if err != nil {
+		log.Fatalf("%v", err)
+	}
+
+	if check && (!DirExists(abspath) && !FileExists(abspath)) {
+		return abspath, fmt.Errorf("%s doesn't exist", abspath)
+	}
+	return abspath, nil
+}
+
+// MustCreateDir :
+func MustCreateDir(dir string) {
+	dir, err := AbsPath(dir, false)
+	if err != nil {
+		log.Fatalf("%v", err)
+	}
+	filename := dir + "/MustCreateDir.temp"
+	MustWriteFile(filename, []byte{})
+	if err := os.Remove(filename); err != nil {
+		log.Fatalf("%v", err)
+	}
+}
 
 // MustWriteFile :
 func MustWriteFile(filename string, data []byte) {
