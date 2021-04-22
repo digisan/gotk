@@ -6,11 +6,12 @@ import (
 	"path/filepath"
 
 	"github.com/digisan/gotk/io"
+	"github.com/digisan/gotk/slice/ts"
 )
 
 // GetRunningPID:
 func GetRunningPID(pathOfExe string) (pidGrp []string) {
-	abspath, err := filepath.Abs(pathOfExe)
+	abspath, err := io.AbsPath(pathOfExe, true)
 	if err != nil {
 		log.Fatalf("%v", err)
 	}
@@ -26,7 +27,7 @@ func GetRunningPID(pathOfExe string) (pidGrp []string) {
 		log.Fatalf("%v", err)
 	}
 
-	pidGrpTemp := []string{}
+	pidGrpGrep := []string{}
 	io.StrLineScan(string(out), func(ln string) (bool, string) {
 		I := 0
 		for _, seg := range sSplit(ln, " ") {
@@ -34,15 +35,29 @@ func GetRunningPID(pathOfExe string) (pidGrp []string) {
 				I++
 			}
 			if I == 2 {
-				pidGrpTemp = append(pidGrpTemp, seg)
+				pidGrpGrep = append(pidGrpGrep, seg)
 				break
 			}
 		}
 		return true, ""
 	}, "")
 
-	for _, pid := range pidGrpTemp {
-		out, err := exec.Command("/bin/sh", "-c", "pwdx "+pid).CombinedOutput()
+	// pgrep ***
+	if len(exe) > 15 {
+		exe = exe[:15]
+	}
+	out, err = exec.Command("/bin/sh", "-c", "pgrep "+exe).CombinedOutput()
+	if fSf("%v", err) == "exit status 1" {
+		return
+	}
+	if err != nil {
+		log.Fatalf("%v", err)
+	}
+	pidGrpPGrep := sSplit(sTrim(string(out), " \t\r\n"), "\n")
+
+	// check... dirOfExe & in pgrep
+	for _, pid := range pidGrpGrep {
+		out, err = exec.Command("/bin/sh", "-c", "pwdx "+pid).CombinedOutput()
 		if fSf("%v", err) == "exit status 1" {
 			return
 		}
@@ -51,40 +66,13 @@ func GetRunningPID(pathOfExe string) (pidGrp []string) {
 		}
 
 		procpath := sSplit(sTrim(string(out), " \t\r\n"), ": ")[1]
-		if dir == procpath {
+		if dir == procpath && ts.In(pid, pidGrpPGrep...) {
 			pidGrp = append(pidGrp, pid)
 		}
 	}
 
-	//
-
-	// dir, exe := filepath.Dir(abspath), filepath.Base(abspath)
-	// out, err := exec.Command("/bin/sh", "-c", "pgrep "+exe).CombinedOutput()
-	// if fSf("%v", err) == "exit status 1" {
-	// 	return
-	// }
-	// if err != nil {
-	// 	log.Fatalf("%v", err)
-	// }
-
-	// outstr := sTrim(string(out), " \t\r\n")
-	// for _, pid := range sSplit(outstr, "\n") {
-	// 	out, err := exec.Command("/bin/sh", "-c", "pwdx "+pid).CombinedOutput()
-	// 	if fSf("%v", err) == "exit status 1" {
-	// 		return
-	// 	}
-	// 	if err != nil {
-	// 		log.Fatalf("%v", err)
-	// 	}
-
-	// 	outstr := sTrim(string(out), " \t\r\n")
-	// 	procpath := sSplit(outstr, ": ")[1]
-	// 	if dir == procpath {
-	// 		pidGrp = append(pidGrp, pid)
-	// 	}
-	// }
-
 	return
+
 }
 
 // ExistRunningPS:

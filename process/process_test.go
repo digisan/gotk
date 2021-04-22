@@ -7,6 +7,6 @@ import (
 )
 
 func TestGetRunningPID(t *testing.T) {
-	fmt.Println(GetRunningPID("/home/qmiao/Desktop/n3/nats-streaming-server-v0.21.2-linux-amd64/nats-streaming-server"))
+	fmt.Println(GetRunningPID("~/Desktop/OTF/otf-reader/cmd/otf-reader/otf-reader"))
 	fmt.Println(time.Now())
 }
