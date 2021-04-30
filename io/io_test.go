@@ -64,6 +64,13 @@ func TestFileExists(t *testing.T) {
 		{
 			name: "OK",
 			args: args{
+				filename: "~/Desktop/gotk/io/io.go",
+			},
+			want: true,
+		},
+		{
+			name: "OK",
+			args: args{
 				filename: "./io.txt",
 			},
 			want: false,
@@ -98,6 +105,13 @@ func TestDirExists(t *testing.T) {
 		{
 			name: "OK",
 			args: args{
+				dirname: "~/Desktop/gotk/io",
+			},
+			want: true,
+		},
+		{
+			name: "OK",
+			args: args{
 				dirname: "../io",
 			},
 			want: true,
@@ -107,61 +121,6 @@ func TestDirExists(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := DirExists(tt.args.dirname); got != tt.want {
 				t.Errorf("DirExists() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func TestFileIsEmpty(t *testing.T) {
-	type args struct {
-		filename string
-	}
-	tests := []struct {
-		name string
-		args args
-		want bool
-	}{
-		// TODO: Add test cases.
-		{
-			name: "FileIsEmpty",
-			args: args{filename: "./io.go"},
-			want: false,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := FileIsEmpty(tt.args.filename); got != tt.want {
-				t.Errorf("FileIsEmpty() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func TestDirIsEmpty(t *testing.T) {
-	type args struct {
-		dirname string
-	}
-	tests := []struct {
-		name string
-		args args
-		want bool
-	}{
-		// TODO: Add test cases.
-		{
-			name: "FileIsEmpty",
-			args: args{dirname: "./"},
-			want: false,
-		},
-		{
-			name: "FileIsEmpty",
-			args: args{dirname: "../net"},
-			want: true,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := DirIsEmpty(tt.args.dirname); got != tt.want {
-				t.Errorf("DirIsEmpty() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -343,6 +302,143 @@ func TestMustCreateDir(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			MustCreateDir(tt.args.dir)
+		})
+	}
+}
+
+func TestFilesAllExist(t *testing.T) {
+	type args struct {
+		filenames []string
+	}
+	tests := []struct {
+		name string
+		args args
+		want bool
+	}{
+		// TODO: Add test cases.
+		{
+			name: "OK",
+			args: args{
+				filenames: []string{
+					"/home/qmiao/Desktop/nats-stream.service",
+					"~/Desktop/nats-stream.service",
+					"../../nats-stream.service",
+				},
+			},
+			want: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := FilesAllExist(tt.args.filenames); got != tt.want {
+				t.Errorf("FilesExist() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestDirsAllExist(t *testing.T) {
+	type args struct {
+		dirnames []string
+	}
+	tests := []struct {
+		name string
+		args args
+		want bool
+	}{
+		// TODO: Add test cases.
+		{
+			name: "OK",
+			args: args{
+				dirnames: []string{
+					"~/Desktop/",
+					"~/Desktop/gotk",
+				},
+			},
+			want: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := DirsAllExist(tt.args.dirnames); got != tt.want {
+				t.Errorf("DirsExist() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestFileIsEmpty(t *testing.T) {
+	type args struct {
+		filename string
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    bool
+		wantErr bool
+	}{
+		// TODO: Add test cases.
+		{
+			name:    "OK",
+			args:    args{filename: "./io.go"},
+			want:    false,
+			wantErr: false,
+		},
+		{
+			name:    "OK",
+			args:    args{filename: "./io.txt"},
+			want:    true,
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := FileIsEmpty(tt.args.filename)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("FileIsEmpty() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if got != tt.want {
+				t.Errorf("FileIsEmpty() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestDirIsEmpty(t *testing.T) {
+	type args struct {
+		dirname string
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    bool
+		wantErr bool
+	}{
+		// TODO: Add test cases.
+		{
+			name:    "OK",
+			args:    args{dirname: "./"},
+			want:    false,
+			wantErr: false,
+		},
+		{
+			name:    "OK",
+			args:    args{dirname: "../ioio"},
+			want:    true,
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := DirIsEmpty(tt.args.dirname)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("DirIsEmpty() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if got != tt.want {
+				t.Errorf("DirIsEmpty() = %v, want %v", got, tt.want)
+			}
 		})
 	}
 }

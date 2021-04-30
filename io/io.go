@@ -18,7 +18,51 @@ const (
 	DirPerm = 0777
 )
 
-// AbsPath :
+func init() {
+	log.SetFlags(log.LstdFlags | log.Lshortfile)
+}
+
+// DirExists :
+func DirExists(dirname string) bool {
+	dirname, _ = AbsPath(dirname, false)
+	info, err := os.Stat(dirname)
+	if os.IsNotExist(err) {
+		return false
+	}
+	return info.IsDir()
+}
+
+// FileExists :
+func FileExists(filename string) bool {
+	filename, _ = AbsPath(filename, false)
+	info, err := os.Stat(filename)
+	if os.IsNotExist(err) {
+		return false
+	}
+	return !info.IsDir()
+}
+
+// FilesAllExist :
+func FilesAllExist(filenames []string) bool {
+	for _, filename := range filenames {
+		if !FileExists(filename) {
+			return false
+		}
+	}
+	return len(filenames) > 0
+}
+
+// DirsAllExist :
+func DirsAllExist(dirnames []string) bool {
+	for _, dirname := range dirnames {
+		if !DirExists(dirname) {
+			return false
+		}
+	}
+	return len(dirnames) > 0
+}
+
+// AbsPath : if check(false), error always nil
 func AbsPath(path string, check bool) (string, error) {
 	if sHasPrefix(path, "~/") {
 		user, err := user.Current()
@@ -40,10 +84,7 @@ func AbsPath(path string, check bool) (string, error) {
 
 // MustCreateDir :
 func MustCreateDir(dir string) {
-	dir, err := AbsPath(dir, false)
-	if err != nil {
-		log.Fatalf("%v", err)
-	}
+	dir, _ = AbsPath(dir, false)
 	filename := dir + "/MustCreateDir.temp"
 	MustWriteFile(filename, []byte{})
 	if err := os.Remove(filename); err != nil {
@@ -53,7 +94,8 @@ func MustCreateDir(dir string) {
 
 // MustWriteFile :
 func MustWriteFile(filename string, data []byte) {
-	dir := filepath.Dir(filename)
+
+	dir, _ := AbsPath(filepath.Dir(filename), false)
 	_, err := os.Stat(dir)
 	if err != nil && os.IsNotExist(err) {
 		if err := os.MkdirAll(dir, DirPerm); err != nil { // dir must be 0777 to put writes in
@@ -73,6 +115,8 @@ WRITE:
 
 // MustAppendFile :
 func MustAppendFile(filename string, data []byte, newline bool) {
+
+	filename, _ = AbsPath(filename, false)
 	_, err := os.Stat(filename)
 	if err != nil && os.IsNotExist(err) {
 		MustWriteFile(filename, data)
@@ -97,39 +141,31 @@ func MustAppendFile(filename string, data []byte, newline bool) {
 }
 
 // FileIsEmpty :
-func FileIsEmpty(filename string) bool {
+func FileIsEmpty(filename string) (bool, error) {
+	filename, err := AbsPath(filename, true)
+	if err != nil {
+		return true, err
+	}
+
 	info, err := os.Stat(filename)
 	if err != nil {
-		panic(err)
+		log.Fatalf("Could NOT Get file Status: %v", err)
 	}
-	return info.Size() == 0
+	return info.Size() == 0, nil
 }
 
 // DirIsEmpty :
-func DirIsEmpty(dirname string) bool {
+func DirIsEmpty(dirname string) (bool, error) {
+	dirname, err := AbsPath(dirname, true)
+	if err != nil {
+		return true, err
+	}
+
 	fs, err := os.ReadDir(dirname)
 	if err != nil {
-		panic(err)
+		log.Fatalf("Could NOT ReadDir: %v", err)
 	}
-	return len(fs) == 0
-}
-
-// FileExists :
-func FileExists(filename string) bool {
-	info, err := os.Stat(filename)
-	if os.IsNotExist(err) {
-		return false
-	}
-	return !info.IsDir()
-}
-
-// DirExists :
-func DirExists(dirname string) bool {
-	info, err := os.Stat(dirname)
-	if os.IsNotExist(err) {
-		return false
-	}
-	return info.IsDir()
+	return len(fs) == 0, nil
 }
 
 // readByLine :
@@ -153,11 +189,19 @@ func readByLine(r io.Reader, f func(line string) (bool, string), outfile string)
 
 // FileLineScan :
 func FileLineScan(filepath string, f func(line string) (bool, string), outfile string) (string, error) {
+	filepath, err := AbsPath(filepath, true)
+	if err != nil {
+		return "", err
+	}
 	file, err := os.Open(filepath)
 	if err != nil {
 		return "", err
 	}
-	defer file.Close()
+	defer func() {
+		if file != nil {
+			file.Close()
+		}
+	}()
 	return readByLine(file, f, outfile)
 }
 
@@ -169,7 +213,10 @@ func StrLineScan(str string, f func(line string) (bool, string), outfile string)
 // FileDirCount : ignore hidden file or directory
 func FileDirCount(dirname string, recursive bool, exctypes ...string) (fileCount, dirCount int, err error) {
 
-	dirname = sTrimSuffix(dirname, "/") + "/"
+	dirname, err = AbsPath(dirname, true)
+	if err != nil {
+		return -1, -1, err
+	}
 
 	if !recursive {
 
