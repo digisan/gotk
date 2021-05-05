@@ -76,17 +76,22 @@ func Equal(setA, setB []byte) bool {
 		return false
 	}
 
+	tmpA := make([]byte, len(setA))
+	tmpB := make([]byte, len(setB))
+	copy(tmpA, setA)
+	copy(tmpB, setB)
+
 AGAIN:
-	for i, a := range setA {
-		for j, b := range setB {
+	for i, a := range tmpA {
+		for j, b := range tmpB {
 			if a == b {
-				setA = append(setA[:i], setA[i+1:]...)
-				setB = append(setB[:j], setB[j+1:]...)
+				tmpA = append(tmpA[:i], tmpA[i+1:]...)
+				tmpB = append(tmpB[:j], tmpB[j+1:]...)
 				goto AGAIN
 			}
 		}
 	}
-	return len(setA) == 0 && len(setB) == 0
+	return len(tmpA) == 0 && len(tmpB) == 0
 }
 
 // SuperEq :

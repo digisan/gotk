@@ -1,6 +1,7 @@
 package ts
 
 import (
+	"fmt"
 	"reflect"
 	"testing"
 )
@@ -48,4 +49,35 @@ func TestReorder(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestEqual(t *testing.T) {
+	type args struct {
+		setA []string
+		setB []string
+	}
+	tests := []struct {
+		name string
+		args args
+		want bool
+	}{
+		// TODO: Add test cases.
+		{
+			name: "OK",
+			args: args{
+				setA: []string{"a", "b"},
+				setB: []string{"b", "a"},
+			},
+			want: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := Equal(tt.args.setA, tt.args.setB); got != tt.want {
+				t.Errorf("Equal() = %v, want %v", got, tt.want)
+			}
+			fmt.Println(tt.args.setA, tt.args.setB)
+		})
+	}
+
 }
