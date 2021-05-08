@@ -84,6 +84,10 @@ func AbsPath(path string, check bool) (string, error) {
 
 // MustCreateDir :
 func MustCreateDir(dir string) {
+
+	mtx4crtdir.Lock()
+	defer mtx4crtdir.Unlock()
+
 	dir, _ = AbsPath(dir, false)
 	filename := dir + "/MustCreateDir.temp"
 	MustWriteFile(filename, []byte{})

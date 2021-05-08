@@ -96,3 +96,60 @@ func TestIsNumeric(t *testing.T) {
 		})
 	}
 }
+
+func TestIsContInts(t *testing.T) {
+	type args struct {
+		ints []int
+	}
+	tests := []struct {
+		name    string
+		args    args
+		wantOk  bool
+		wantMin int
+		wantMax int
+	}{
+		// TODO: Add test cases.
+		{
+			name:    "OK",
+			args:    args{[]int{1, 2, 3, 4, 5}},
+			wantOk:  true,
+			wantMin: 1,
+			wantMax: 5,
+		},
+		{
+			name:    "OK",
+			args:    args{[]int{1, 2, 3, 4, 6}},
+			wantOk:  false,
+			wantMin: 1,
+			wantMax: 6,
+		},
+		{
+			name:    "OK",
+			args:    args{[]int{5, 4, 3, 2, 1}},
+			wantOk:  true,
+			wantMin: 1,
+			wantMax: 5,
+		},
+		{
+			name:    "OK",
+			args:    args{[]int{6, 4, 3, 2, 1}},
+			wantOk:  false,
+			wantMin: 1,
+			wantMax: 6,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			gotOk, gotMin, gotMax := IsContInts(tt.args.ints)
+			if gotOk != tt.wantOk {
+				t.Errorf("IsContInts() gotOk = %v, want %v", gotOk, tt.wantOk)
+			}
+			if gotMin != tt.wantMin {
+				t.Errorf("IsContInts() gotMin = %v, want %v", gotMin, tt.wantMin)
+			}
+			if gotMax != tt.wantMax {
+				t.Errorf("IsContInts() gotMax = %v, want %v", gotMax, tt.wantMax)
+			}
+		})
+	}
+}

@@ -2,6 +2,7 @@ package io
 
 import (
 	"strings"
+	"sync"
 )
 
 var (
@@ -9,4 +10,5 @@ var (
 	sHasPrefix  = strings.HasPrefix
 	sHasSuffix  = strings.HasSuffix
 	sReplaceAll = strings.ReplaceAll
+	mtx4crtdir  = &sync.Mutex{}	
 )
