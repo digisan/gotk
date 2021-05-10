@@ -82,6 +82,21 @@ func AbsPath(path string, check bool) (string, error) {
 	return abspath, nil
 }
 
+// RelPath : if check(false), error always nil
+func RelPath(path string, check bool) (string, error) {
+	basepath, err := AbsPath(filepath.Dir(os.Args[0]), check)
+	if err != nil {
+		return "", err
+	}
+	targpath, err := AbsPath(path, check)
+	if err != nil {
+		return "", err
+	}
+	// fmt.Println("basepath: ", basepath)
+	// fmt.Println("target:   ", targpath)
+	return filepath.Rel(basepath, targpath)
+}
+
 // MustCreateDir :
 func MustCreateDir(dir string) {
 

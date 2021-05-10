@@ -1,6 +1,7 @@
 package io
 
 import (
+	"fmt"
 	"testing"
 )
 
@@ -441,4 +442,60 @@ func TestDirIsEmpty(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestRelPath(t *testing.T) {
+	type args struct {
+		path  string
+		check bool
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    string
+		wantErr bool
+	}{
+		// TODO: Add test cases.
+		{
+			name: "OK",
+			args: args{
+				path:  "~/Desktop/gotk/task/task.go",
+				check: false,
+			},
+			want:    "",
+			wantErr: false,
+		},
+		{
+			name: "OK",
+			args: args{
+				path:  "~/Desktop/gotk/README1.md",
+				check: true,
+			},
+			want:    "",
+			wantErr: false,
+		},
+		{
+			name: "OK",
+			args: args{
+				path:  "./var.go",
+				check: false,
+			},
+			want:    "",
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := RelPath(tt.args.path, tt.args.check)
+			fmt.Println(got, err)
+			// if (err != nil) != tt.wantErr {
+			// 	t.Errorf("RelPath() error = %v, wantErr %v", err, tt.wantErr)
+			// 	return
+			// }
+			// if got != tt.want {
+			// 	t.Errorf("RelPath() = %v, want %v", got, tt.want)
+			// }
+		})
+	}
+	fmt.Println("finish")
 }
