@@ -2,7 +2,7 @@ package mapslice
 
 import "sort"
 
-// KsVs2Slc : orderType [K-DESC / K-ASC / V-DESC / V-ASC] by string length
+// KsVs2Slc : orderType [KL-DESC / KL-ASC / VL-DESC / VL-ASC] by string length
 // map[string]string => key []string & value []string
 func KsVs2Slc(m map[string]string, orderType string) (keys []string, values []string) {
 
@@ -24,13 +24,13 @@ func KsVs2Slc(m map[string]string, orderType string) (keys []string, values []st
 	}
 
 	switch orderType {
-	case "K-DESC":
+	case "KL-DESC":
 		sort.SliceStable(kvSlc, func(i, j int) bool { return len(kvSlc[i].key) > len(kvSlc[j].key) })
-	case "K-ASC":
+	case "KL-ASC":
 		sort.SliceStable(kvSlc, func(i, j int) bool { return len(kvSlc[i].key) < len(kvSlc[j].key) })
-	case "V-DESC":
+	case "VL-DESC":
 		sort.SliceStable(kvSlc, func(i, j int) bool { return len(kvSlc[i].value) > len(kvSlc[j].value) })
-	case "V-ASC":
+	case "VL-ASC":
 		sort.SliceStable(kvSlc, func(i, j int) bool { return len(kvSlc[i].value) < len(kvSlc[j].value) })
 	}
 

@@ -22,25 +22,25 @@ func TestMap2Slices(t *testing.T) {
 		// TODO: Add test cases.
 		{
 			name:       "OK",
-			args:       args{m: M, orderType: "K-DESC"},
+			args:       args{m: M, orderType: "KL-DESC"},
 			wantKeys:   []string{"abc", "ab", "a"},
 			wantValues: []string{"1", "12", "123"},
 		},
 		{
 			name:       "OK",
-			args:       args{m: M, orderType: "K-ASC"},
+			args:       args{m: M, orderType: "KL-ASC"},
 			wantKeys:   []string{"a", "ab", "abc"},
 			wantValues: []string{"123", "12", "1"},
 		},
 		{
 			name:       "OK",
-			args:       args{m: M, orderType: "V-ASC"},
+			args:       args{m: M, orderType: "VL-ASC"},
 			wantKeys:   []string{"abc", "ab", "a"},
 			wantValues: []string{"1", "12", "123"},
 		},
 		{
 			name:       "OK",
-			args:       args{m: M, orderType: "V-DESC"},
+			args:       args{m: M, orderType: "VL-DESC"},
 			wantKeys:   []string{"a", "ab", "abc"},
 			wantValues: []string{"123", "12", "1"},
 		},
