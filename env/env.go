@@ -1,6 +1,7 @@
 package env
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"strings"
@@ -36,6 +37,7 @@ func Chunk2Map(filepath, markstart, markend, sep string, env bool) map[string]st
 
 	keyvars, _ := mapslice.KsVs2Slc(m, "KL-DESC")
 
+	// replace '$XYZ $XY $X' to its value
 AGAIN1:
 	for key, value := range m {
 		for _, variable := range keyvars {
@@ -46,12 +48,27 @@ AGAIN1:
 		}
 	}
 
+	// remove map each key's prefix '$'
 AGAIN2:
 	for key, value := range m {
 		if strings.HasPrefix(key, "$") {
 			m[key[1:]] = value
 			delete(m, key)
 			goto AGAIN2
+		}
+	}
+
+	keyvars, _ = mapslice.KsVs2Slc(m, "KL-DESC")
+
+	// replace '${XYZ} ${XY} ${X}' to its value
+AGAIN3:
+	for key, value := range m {
+		for _, variable := range keyvars {
+			valued := fmt.Sprintf("${%s}", variable)
+			if strings.Contains(value, valued) {
+				m[key] = strings.ReplaceAll(value, valued, m[variable])
+				goto AGAIN3
+			}
 		}
 	}
 
