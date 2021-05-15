@@ -80,3 +80,31 @@ AGAIN3:
 
 	return m
 }
+
+// EnvValued : if m is empty, environment variables as m apply to s
+func EnvValued(str string, m map[string]string) (valstr string) {
+
+	if len(m) == 0 {
+		for _, e := range os.Environ() {
+			pair := strings.SplitN(e, "=", 2)
+			m[pair[0]] = pair[1]
+		}
+	}
+
+	keyvars, _ := mapslice.KsVs2Slc(m, "KL-DESC")
+	valstr = str
+
+	// replace '$XYZ $XY $X' to its value
+	for _, variable := range keyvars {
+		valued := fmt.Sprintf("$%s", variable)
+		valstr = strings.ReplaceAll(valstr, valued, m[variable])
+	}
+
+	// replace '${XYZ} ${XY} ${X}' to its value
+	for _, variable := range keyvars {
+		valued := fmt.Sprintf("${%s}", variable)
+		valstr = strings.ReplaceAll(valstr, valued, m[variable])
+	}
+
+	return
+}
