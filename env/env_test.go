@@ -74,9 +74,23 @@ func TestEnvValued(t *testing.T) {
 			},
 			wantValstr: "root/path/a/b/c",
 		},
+		{
+			name: "OK",
+			args: args{
+				str: "$TEST_ROOT/$TEST_PATH/a/b/c",
+				m:   nil,
+			},
+			wantValstr: "root/path/a/b/c",
+		},
 	}
-	for _, tt := range tests {
+	for i, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+
+			if i == 2 {
+				os.Setenv("TEST_ROOT", "root")
+				os.Setenv("TEST_PATH", "path")
+			}
+
 			if gotValstr := EnvValued(tt.args.str, tt.args.m); gotValstr != tt.wantValstr {
 				t.Errorf("EnvValued() = %v, want %v", gotValstr, tt.wantValstr)
 			}

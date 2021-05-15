@@ -85,6 +85,7 @@ AGAIN3:
 func EnvValued(str string, m map[string]string) (valstr string) {
 
 	if len(m) == 0 {
+		m = make(map[string]string)
 		for _, e := range os.Environ() {
 			pair := strings.SplitN(e, "=", 2)
 			m[pair[0]] = pair[1]
