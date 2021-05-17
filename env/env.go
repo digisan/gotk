@@ -11,7 +11,7 @@ import (
 )
 
 // Chunk2Map :
-func Chunk2Map(filepath, markstart, markend, sep string, env bool) map[string]string {
+func Chunk2Map(filepath, markstart, markend, sep string, env, val4path2abs bool) map[string]string {
 
 	m := make(map[string]string)
 
@@ -73,6 +73,17 @@ AGAIN3:
 			if strings.Contains(value, valued) {
 				m[key] = strings.ReplaceAll(value, valued, m[variable])
 				goto AGAIN3
+			}
+		}
+	}
+
+	if val4path2abs {
+		for key, value := range m {
+			if strings.HasPrefix(value, "~/") ||
+				strings.HasPrefix(value, "./") ||
+				strings.HasPrefix(value, "../") {
+				abspath, _ := io.AbsPath(value, false)
+				m[key] = abspath
 			}
 		}
 	}

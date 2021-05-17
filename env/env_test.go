@@ -23,11 +23,12 @@ func TestSplitN(t *testing.T) {
 
 func TestChunk2Map(t *testing.T) {
 	type args struct {
-		filepath  string
-		markstart string
-		markend   string
-		sep       string
-		env       bool
+		filepath     string
+		markstart    string
+		markend      string
+		sep          string
+		env          bool
+		val4path2abs bool
 	}
 	tests := []struct {
 		name string
@@ -38,18 +39,19 @@ func TestChunk2Map(t *testing.T) {
 		{
 			name: "OK",
 			args: args{
-				filepath:  "./variables.md",
-				markstart: "```export",
-				markend:   "```",
-				sep:       "=",
-				env:       true,
+				filepath:     "./variables.md",
+				markstart:    "```export",
+				markend:      "```",
+				sep:          "=",
+				env:          true,
+				val4path2abs: true,
 			},
-			want: map[string]string{"$A": "abcghi", "$B": "defabcghighi", "$C": "ghi"},
+			want: map[string]string{"$A": "~/Desktop/", "$B": "defabcghighi", "$C": "ghi"},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			Chunk2Map(tt.args.filepath, tt.args.markstart, tt.args.markend, tt.args.sep, tt.args.env)
+			Chunk2Map(tt.args.filepath, tt.args.markstart, tt.args.markend, tt.args.sep, tt.args.env, tt.args.val4path2abs)
 		})
 	}
 
