@@ -7,6 +7,20 @@ import (
 	"testing"
 )
 
+func TestSplitN(t *testing.T) {
+	s := "abc"
+	ss := strings.SplitN(s, "#", 2)
+	fmt.Println(len(ss), len(ss[0]), ss)
+
+	s = "abc#"
+	ss = strings.SplitN(s, "#", 2)
+	fmt.Println(len(ss), len(ss[0]), len(ss[1]), ss)
+
+	s = "abc#1"
+	ss = strings.SplitN(s, "#", 2)
+	fmt.Println(len(ss), len(ss[0]), len(ss[1]), ss)
+}
+
 func TestChunk2Map(t *testing.T) {
 	type args struct {
 		filepath  string

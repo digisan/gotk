@@ -17,6 +17,9 @@ func Chunk2Map(filepath, markstart, markend, sep string, env bool) map[string]st
 
 	proc := false
 	_, err := io.FileLineScan(filepath, func(ln string) (bool, string) {
+
+		ln = strings.Trim(strings.SplitN(ln, "#", 2)[0], " \t") // support comment
+
 		if ln == markstart && !proc {
 			proc = true
 			return false, ""
@@ -27,6 +30,8 @@ func Chunk2Map(filepath, markstart, markend, sep string, env bool) map[string]st
 		}
 		if proc && strings.Contains(ln, sep) {
 			ss := strings.SplitN(ln, sep, 2)
+			ss[0] = strings.Trim(ss[0], " \t")
+			ss[1] = strings.Trim(ss[1], " \t")
 			m["$"+ss[0]] = ss[1]
 		}
 		return false, ""
