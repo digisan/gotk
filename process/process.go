@@ -1,16 +1,18 @@
 package process
 
 import (
+	"fmt"
 	"log"
 	"os/exec"
 	"path/filepath"
+	"strconv"
 
 	"github.com/digisan/gotk/io"
 	"github.com/digisan/gotk/slice/ts"
 )
 
 // GetRunningPID:
-func GetRunningPID(pathOfExe string) (pidGrp []string) {
+func GetRunningPID(pathOfExe string) (pidGrp []int) {
 	abspath, err := io.AbsPath(pathOfExe, true)
 	if err != nil {
 		log.Fatalf("%v", err)
@@ -27,7 +29,7 @@ func GetRunningPID(pathOfExe string) (pidGrp []string) {
 		log.Fatalf("%v", err)
 	}
 
-	pidGrpGrep := []string{}
+	pidGrpGrep := []int{}
 	io.StrLineScan(string(out), func(ln string) (bool, string) {
 		I := 0
 		for _, seg := range sSplit(ln, " ") {
@@ -35,7 +37,12 @@ func GetRunningPID(pathOfExe string) (pidGrp []string) {
 				I++
 			}
 			if I == 2 {
-				pidGrpGrep = append(pidGrpGrep, seg)
+				pid, err := strconv.Atoi(seg)
+				if err != nil {
+					log.SetFlags(log.Lshortfile | log.LstdFlags)
+					log.Fatalln(err)
+				}
+				pidGrpGrep = append(pidGrpGrep, pid)
 				break
 			}
 		}
@@ -57,7 +64,7 @@ func GetRunningPID(pathOfExe string) (pidGrp []string) {
 
 	// check... dirOfExe & in pgrep
 	for _, pid := range pidGrpGrep {
-		out, err = exec.Command("/bin/sh", "-c", "pwdx "+pid).CombinedOutput()
+		out, err = exec.Command("/bin/sh", "-c", "pwdx "+fmt.Sprint(pid)).CombinedOutput()
 		if fSf("%v", err) == "exit status 1" {
 			return
 		}
@@ -66,13 +73,12 @@ func GetRunningPID(pathOfExe string) (pidGrp []string) {
 		}
 
 		procpath := sSplit(sTrim(string(out), " \t\r\n"), ": ")[1]
-		if dir == procpath && ts.In(pid, pidGrpPGrep...) {
+		if dir == procpath && ts.In(fmt.Sprint(pid), pidGrpPGrep...) {
 			pidGrp = append(pidGrp, pid)
 		}
 	}
 
 	return
-
 }
 
 // ExistRunningPS:
