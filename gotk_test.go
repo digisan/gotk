@@ -153,3 +153,44 @@ func TestIsContInts(t *testing.T) {
 		})
 	}
 }
+
+func TestIsCSV(t *testing.T) {
+	type args struct {
+		str string
+	}
+	tests := []struct {
+		name string
+		args args
+		want bool
+	}{
+		// TODO: Add test cases.
+		{
+			name: "OK",
+			args: args{
+				str: "a,b,c,d\n1,2,3,4",
+			},
+			want: true,
+		},
+		{
+			name: "OK1",
+			args: args{
+				str: "a,b,c,d,e\n1,2,3,4",
+			},
+			want: false,
+		},
+		{
+			name: "OK1",
+			args: args{
+				str: "a,b,c\n1,2,3,4",
+			},
+			want: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := IsCSV(tt.args.str); got != tt.want {
+				t.Errorf("IsCSV() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

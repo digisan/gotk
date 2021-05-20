@@ -1,12 +1,14 @@
 package gotk
 
 import (
+	"encoding/csv"
 	"encoding/json"
 	"encoding/xml"
 	"fmt"
 	"math"
 	"reflect"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/digisan/gotk/iter"
@@ -26,6 +28,12 @@ func IsXML(str string) bool {
 // IsJSON : Check str is valid JSON
 func IsJSON(str string) bool {
 	return json.Unmarshal([]byte(str), new(interface{})) == nil
+}
+
+// IsCSV : Check str is valid CSV
+func IsCSV(str string) bool {
+	_, err := csv.NewReader(strings.NewReader(str)).ReadAll()
+	return err == nil
 }
 
 // IsNumeric : Check str is valid numeric style
