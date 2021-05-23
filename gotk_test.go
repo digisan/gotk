@@ -167,6 +167,13 @@ func TestIsCSV(t *testing.T) {
 		{
 			name: "OK",
 			args: args{
+				str: "",
+			},
+			want: false,
+		},
+		{
+			name: "OK",
+			args: args{
 				str: "a,b,c,d\n1,2,3,4",
 			},
 			want: true,

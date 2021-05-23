@@ -32,8 +32,8 @@ func IsJSON(str string) bool {
 
 // IsCSV : Check str is valid CSV
 func IsCSV(str string) bool {
-	_, err := csv.NewReader(strings.NewReader(str)).ReadAll()
-	return err == nil
+	records, err := csv.NewReader(strings.NewReader(str)).ReadAll()
+	return err == nil && len(records) > 0
 }
 
 // IsNumeric : Check str is valid numeric style
