@@ -1,11 +1,11 @@
 # test
 
-```export
+###export
 A=1$AA # this is a test comment
-AA =    abc$C
+AA =    abc$CC
 B=def${A}A$C
-C=ghi
-D= ~/Desktop/gotk
+C=ghiv
+D= ~/Desktop/gotk # second test
 E=../
 F=./temp
-```
+###

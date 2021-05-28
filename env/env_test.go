@@ -39,9 +39,9 @@ func TestChunk2Map(t *testing.T) {
 		{
 			name: "OK",
 			args: args{
-				filepath:     "./variables.md",
-				markstart:    "```export",
-				markend:      "```",
+				filepath:     "./variables.sh",
+				markstart:    "###export",
+				markend:      "###",
 				sep:          "=",
 				env:          true,
 				val4path2abs: true,
@@ -51,11 +51,12 @@ func TestChunk2Map(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			Chunk2Map(tt.args.filepath, tt.args.markstart, tt.args.markend, tt.args.sep, tt.args.env, tt.args.val4path2abs)
+			m := Chunk2Map(tt.args.filepath, tt.args.markstart, tt.args.markend, tt.args.sep, tt.args.env, tt.args.val4path2abs)
+			fmt.Println(m)
 		})
 	}
 
-	fmt.Println()
+	fmt.Println(`----------------------------------`)
 	for _, e := range os.Environ() {
 		pair := strings.SplitN(e, "=", 2)
 		fmt.Println(pair[0], pair[1])
