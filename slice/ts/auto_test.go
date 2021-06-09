@@ -81,3 +81,29 @@ func TestEqual(t *testing.T) {
 	}
 
 }
+
+func TestReverse(t *testing.T) {
+	type args struct {
+		arr []string
+	}
+	tests := []struct {
+		name string
+		args args
+		want []string
+	}{
+		{
+			name: "OK",
+			args: args{
+				arr: []string{"a", "b", "c"},
+			},
+			want: []string{"c", "b", "a"},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := Reverse(tt.args.arr); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Reverse() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

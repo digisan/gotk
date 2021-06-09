@@ -194,3 +194,12 @@ func Reorder(arr []rune, indices []int) (orders []rune) {
 	}
 	return orders
 }
+
+// Reverse : [1,2,3] => [3,2,1]
+func Reverse(arr []rune) []rune {
+	indices := make([]int, len(arr))
+	for i:=0; i<len(arr); i++ {
+		indices[i] = len(arr)-1-i
+	}
+	return Reorder(arr, indices)
+}

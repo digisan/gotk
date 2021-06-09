@@ -4,11 +4,14 @@ import (
 	"bufio"
 	"fmt"
 	"io"
+	"io/fs"
 	"log"
 	"os"
 	"os/user"
 	"path/filepath"
 	"strings"
+
+	"github.com/digisan/gotk/slice/ts"
 )
 
 const (
@@ -229,70 +232,131 @@ func StrLineScan(str string, f func(line string) (bool, string), outfile string)
 	return readByLine(strings.NewReader(str), f, outfile)
 }
 
-// FileDirCount : ignore hidden file or directory
-func FileDirCount(dirname string, recursive bool, exctypes ...string) (fileCount, dirCount int, err error) {
+// WalkFileDir : ignore hidden file or directory
+func WalkFileDir(dirname string, recursive bool, exctypes ...string) (filepaths, directories []string, err error) {
 
 	dirname, err = AbsPath(dirname, true)
 	if err != nil {
-		return -1, -1, err
+		return nil, nil, err
 	}
 
 	if !recursive {
 
 		files, err := os.ReadDir(dirname)
 		if err != nil {
-			return -1, -1, err
+			return nil, nil, err
 		}
+
 	NEXT_FILE:
 		for _, file := range files {
+
 			filename := file.Name()
+
 			// ignore hidden file or directory
 			if sHasPrefix(filename, ".") {
 				continue
 			}
+
 			// ignore excluded files
 			for _, exc := range exctypes {
 				if sHasSuffix(filename, "."+exc) {
 					continue NEXT_FILE
 				}
 			}
-			path := dirname + filename
-			if FileExists(path) {
-				fileCount++
+
+			if path := filepath.Join(dirname, filename); FileExists(path) {
+				filepaths = append(filepaths, path)
 			} else {
-				dirCount++
+				directories = append(directories, path)
 			}
 		}
 
 	} else {
 
-		if err = filepath.Walk(dirname,
-			func(path string, info os.FileInfo, err error) error {
+		skipself := true
+		if err = filepath.WalkDir(dirname,
+			func(path string, d fs.DirEntry, err error) error {
 				if err != nil {
 					return err
 				}
-				filename := info.Name()
+
+				filename := d.Name()
+
+				// ignore self folder
+				if skipself {
+					skipself = false
+					return nil
+				}
+
 				// ignore hidden file or directory
 				if sHasPrefix(filename, ".") {
 					return nil
 				}
+
+				// ignore any files under hidden directory
+				for _, pathSeg := range AncestorList(path) {
+					if sHasPrefix(pathSeg, ".") {
+						return nil
+					}
+				}
+
 				// ignore excluded files
 				for _, exc := range exctypes {
 					if sHasSuffix(filename, "."+exc) {
 						return nil
 					}
 				}
+
 				if FileExists(path) {
-					fileCount++
+					filepaths = append(filepaths, path)
 				} else {
-					dirCount++
+					directories = append(directories, path)
 				}
 				return nil
-			}); err != nil {
-			return -1, -1, err
-		}
 
+			}); err != nil {
+
+			return nil, nil, err
+		}
 	}
 
 	return
+}
+
+func AncestorList(path string) (ancestors []string) {
+	abspath, _ := AbsPath(path, false)
+	for {
+		// fmt.Println(abspath)
+		abspath = filepath.Dir(abspath)
+		if abspath == "/" {
+			break
+		}
+		ancestors = append(ancestors, abspath)
+	}
+	ancestors = ts.Reverse(ancestors)
+	// fmt.Println(ancestors)
+
+	for i := len(ancestors) - 1; i >= 1; i-- {
+		ancestors[i] = strings.TrimPrefix(ancestors[i], ancestors[i-1])
+		ancestors[i] = strings.TrimLeft(ancestors[i], "/\\")
+	}
+	ancestors[0] = strings.TrimLeft(ancestors[0], "/\\")
+	// fmt.Println(ancestors)
+	return
+}
+
+func Parent(path string) string {
+	ancestors := AncestorList(path)
+	if len(ancestors) > 0 {
+		return ancestors[len(ancestors)-1]
+	}
+	return ""
+}
+
+func GrandParent(path string) string {
+	ancestors := AncestorList(path)
+	if len(ancestors) > 1 {
+		return ancestors[len(ancestors)-2]
+	}
+	return ""
 }

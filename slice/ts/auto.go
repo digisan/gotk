@@ -195,6 +195,15 @@ func Reorder(arr []string, indices []int) (orders []string) {
 	return orders
 }
 
+// Reverse : [1,2,3] => [3,2,1]
+func Reverse(arr []string) []string {
+	indices := make([]int, len(arr))
+	for i:=0; i<len(arr); i++ {
+		indices[i] = len(arr)-1-i
+	}
+	return Reorder(arr, indices)
+}
+
 // FilterModify : Filter & Modify []string slice, return []string slice
 func FilterModify(arr []string, filter func(i int, e string) bool, modifier func(i int, e string) string) (r []string) {
 	switch {

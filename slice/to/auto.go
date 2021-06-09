@@ -194,3 +194,12 @@ func Reorder(arr []interface{}, indices []int) (orders []interface{}) {
 	}
 	return orders
 }
+
+// Reverse : [1,2,3] => [3,2,1]
+func Reverse(arr []interface{}) []interface{} {
+	indices := make([]int, len(arr))
+	for i:=0; i<len(arr); i++ {
+		indices[i] = len(arr)-1-i
+	}
+	return Reorder(arr, indices)
+}

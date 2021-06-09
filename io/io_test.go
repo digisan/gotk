@@ -2,6 +2,7 @@ package io
 
 import (
 	"fmt"
+	"reflect"
 	"testing"
 )
 
@@ -187,45 +188,40 @@ func TestMustAppendFile(t *testing.T) {
 	}
 }
 
-func TestFileDirCount(t *testing.T) {
+func TestFileDir(t *testing.T) {
 	type args struct {
 		dirname   string
 		recursive bool
 		exctypes  []string
 	}
 	tests := []struct {
-		name          string
-		args          args
-		wantFileCount int
-		wantDirCount  int
-		wantErr       bool
+		name      string
+		args      args
+		wantFiles []string
+		wantDirs  []string
+		wantErr   bool
 	}{
 		// TODO: Add test cases.
 		{
 			name: "OK",
 			args: args{
 				dirname:   "../",
-				recursive: false,
-				exctypes:  []string{"go"},
+				recursive: true,
+				exctypes:  []string{"test"},
 			},
-			wantFileCount: 4,
-			wantDirCount:  5,
-			wantErr:       false,
+			wantFiles: []string{}, // 3,
+			wantDirs:  []string{}, // 9,
+			wantErr:   false,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotFileCount, gotDirCount, err := FileDirCount(tt.args.dirname, tt.args.recursive, tt.args.exctypes...)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("FileDirCount() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if gotFileCount != tt.wantFileCount {
-				t.Errorf("FileDirCount() gotFileCount = %v, want %v", gotFileCount, tt.wantFileCount)
-			}
-			if gotDirCount != tt.wantDirCount {
-				t.Errorf("FileDirCount() gotDirCount = %v, want %v", gotDirCount, tt.wantDirCount)
-			}
+			gotFiles, gotDirs, err := WalkFileDir(tt.args.dirname, tt.args.recursive, tt.args.exctypes...)
+			fmt.Println(err)
+			fmt.Println("----------")
+			fmt.Println(gotFiles)
+			fmt.Println("----------")
+			fmt.Println(gotDirs)
 		})
 	}
 }
@@ -498,4 +494,83 @@ func TestRelPath(t *testing.T) {
 		})
 	}
 	fmt.Println("finish")
+}
+
+func TestAncestorList(t *testing.T) {
+	type args struct {
+		path string
+	}
+	tests := []struct {
+		name string
+		args args
+		want []string
+	}{
+		// TODO: Add test cases.
+		{
+			name: "OK",
+			args: args{path: "./io.go"},
+			want: []string{},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := AncestorList(tt.args.path); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("AncestorList() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestParent(t *testing.T) {
+	type args struct {
+		path string
+	}
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		// TODO: Add test cases.
+		{
+			name: "OK",
+			args: args{
+				path: "./io.go",
+			},
+			want: "io",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := Parent(tt.args.path); got != tt.want {
+				t.Errorf("Parent() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestGrandParent(t *testing.T) {
+	type args struct {
+		path string
+	}
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		// TODO: Add test cases.
+		{
+			name: "OK",
+			args: args{
+				path: "./io.go",
+			},
+			want: "gotk",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := GrandParent(tt.args.path); got != tt.want {
+				t.Errorf("GrandParent() = %v, want %v", got, tt.want)
+			}
+		})
+	}
 }
