@@ -3,6 +3,7 @@ package slice
 import (
 	"os"
 
+	fd "github.com/digisan/gotk/filedir"
 	"github.com/digisan/gotk/io"
 )
 
@@ -39,7 +40,7 @@ func T1FuncGen(Tx, pkgdir string) {
 	}
 
 	pkgdir = sTrimSuffix(pkgdir, "/") + "/"
-	if !io.DirExists(pkgdir) {
+	if !fd.DirExists(pkgdir) {
 		if err := os.MkdirAll(pkgdir, os.ModePerm); err != nil {
 			panic(err.Error())
 		}
@@ -47,10 +48,10 @@ func T1FuncGen(Tx, pkgdir string) {
 
 	outgofile := pkgdir + pkgname + "/auto.go"
 
-	// if !io.FileExists(outgofile) || io.FileIsEmpty(outgofile) {
+	// if !fd.FileExists(outgofile) || fd.FileIsEmpty(outgofile) {
 	// 	io.MustWriteFile(outgofile, []byte("package "+pkgname))
 	// }
-	if empty, err := io.FileIsEmpty(outgofile); err != nil || empty {
+	if empty, err := fd.FileIsEmpty(outgofile); err != nil || empty {
 		io.MustWriteFile(outgofile, []byte("package "+pkgname))
 	}
 

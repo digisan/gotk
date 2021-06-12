@@ -1,4 +1,4 @@
-package io
+package filedir
 
 import (
 	"strings"
@@ -7,6 +7,8 @@ import (
 
 var (
 	sJoin       = strings.Join
+	sHasPrefix  = strings.HasPrefix
+	sHasSuffix  = strings.HasSuffix
 	sReplaceAll = strings.ReplaceAll
 	mtx4crtdir  = &sync.Mutex{}
 )

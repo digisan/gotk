@@ -7,13 +7,14 @@ import (
 	"path/filepath"
 	"strconv"
 
+	fd "github.com/digisan/gotk/filedir"
 	"github.com/digisan/gotk/io"
 	"github.com/digisan/gotk/slice/ts"
 )
 
 // GetRunningPID:
 func GetRunningPID(pathOfExe string) (pidGrp []int) {
-	abspath, err := io.AbsPath(pathOfExe, true)
+	abspath, err := fd.AbsPath(pathOfExe, true)
 	if err != nil {
 		log.Fatalf("%v", err)
 	}

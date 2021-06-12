@@ -6,6 +6,7 @@ import (
 	"os"
 	"strings"
 
+	fd "github.com/digisan/gotk/filedir"
 	"github.com/digisan/gotk/io"
 	"github.com/digisan/gotk/mapslice"
 )
@@ -85,7 +86,7 @@ AGAIN3:
 			if strings.HasPrefix(value, "~/") ||
 				strings.HasPrefix(value, "./") ||
 				strings.HasPrefix(value, "../") {
-				abspath, _ := io.AbsPath(value, false)
+				abspath, _ := fd.AbsPath(value, false)
 				m[key] = abspath
 			}
 		}
