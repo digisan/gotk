@@ -8,7 +8,7 @@ import (
 
 	fd "github.com/digisan/gotk/filedir"
 	"github.com/digisan/gotk/io"
-	"github.com/digisan/gotk/mapslice"
+	"github.com/digisan/gotk/slice/ts"
 )
 
 // Chunk2Map :
@@ -44,7 +44,8 @@ func Chunk2Map(filepath, markstart, markend, sep string, env, val4path2abs bool)
 		log.Fatalf("%v", err)
 	}
 
-	keyvars, _ := mapslice.KsVs2Slc(m, "KL-DESC")
+	// keyvars, _ := mapslice.KsVs2Slc(m, "KL-DESC")
+	keyvars, _ := ts.Map2KVs(m, func(i string, j string) bool { return len(i) > len(j) }, nil)
 
 	// replace '$XYZ $XY $X' to its value
 AGAIN1:
@@ -67,7 +68,8 @@ AGAIN2:
 		}
 	}
 
-	keyvars, _ = mapslice.KsVs2Slc(m, "KL-DESC")
+	// keyvars, _ = mapslice.KsVs2Slc(m, "KL-DESC")
+	keyvars, _ = ts.Map2KVs(m, func(i string, j string) bool { return len(i) > len(j) }, nil)
 
 	// replace '${XYZ} ${XY} ${X}' to its value
 AGAIN3:
@@ -112,7 +114,8 @@ func EnvValued(str string, m map[string]string) (valstr string) {
 		}
 	}
 
-	keyvars, _ := mapslice.KsVs2Slc(m, "KL-DESC")
+	// keyvars, _ := mapslice.KsVs2Slc(m, "KL-DESC")
+	keyvars, _ := ts.Map2KVs(m, func(i string, j string) bool { return len(i) > len(j) }, nil)
 	valstr = str
 
 	// replace '$XYZ $XY $X' to its value

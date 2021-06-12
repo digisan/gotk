@@ -1,5 +1,7 @@
 package tis
 
+import "sort"
+
 // FilterModify : Filter & Modify []int slice, return []string slice
 func FilterModify(arr []int, filter func(i int, e int) bool, modifier func(i int, e int) string) (r []string) {
 	if modifier == nil {
@@ -24,3 +26,49 @@ func FilterModify(arr []int, filter func(i int, e int) bool, modifier func(i int
 var (
 	FM = FilterModify
 )
+
+// Map2KVs : map to key slice & value slice
+func Map2KVs(m map[int]string, less4key func(i int, j int) bool, less4value func(i string, j string) bool) (keys []int, values []string) {
+
+	if m == nil {
+		return nil, nil
+	}
+	if len(m) == 0 {
+		return []int{}, []string{}
+	}
+
+	type kv struct {
+		key   int
+		value string
+	}
+
+	kvSlc := []kv{}
+	for k, v := range m {
+		kvSlc = append(kvSlc, kv{key: k, value: v})
+	}
+
+	switch {
+	case less4key != nil && less4value == nil:
+		sort.SliceStable(kvSlc, func(i, j int) bool { return less4key(kvSlc[i].key, kvSlc[j].key) })
+
+	case less4key == nil && less4value != nil:
+		sort.SliceStable(kvSlc, func(i, j int) bool { return less4value(kvSlc[i].value, kvSlc[j].value) })
+
+	case less4key != nil && less4value != nil:
+		sort.SliceStable(kvSlc, func(i, j int) bool {
+			if kvSlc[i].value == kvSlc[j].value {
+				return less4key(kvSlc[i].key, kvSlc[j].key)
+			}
+			return less4value(kvSlc[i].value, kvSlc[j].value)
+		})
+
+	default:
+		// do not sort
+	}
+
+	for _, kvEle := range kvSlc {
+		keys = append(keys, kvEle.key)
+		values = append(values, kvEle.value)
+	}
+	return
+}

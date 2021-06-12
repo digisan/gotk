@@ -860,3 +860,58 @@ func TestReorder(t *testing.T) {
 		})
 	}
 }
+
+func TestMap2KVs(t *testing.T) {
+	type args struct {
+		m          map[int]int
+		less4key   func(i int, j int) bool
+		less4value func(i int, j int) bool
+	}
+	tests := []struct {
+		name       string
+		args       args
+		wantKeys   []int
+		wantValues []int
+	}{
+		// TODO: Add test cases.
+		{
+			name: "OK",
+			args: args{
+				m:          map[int]int{1: 100, 2: 99, 3: 98, 4: 100},
+				less4key:   func(i, j int) bool { return i > j },
+				less4value: func(i, j int) bool { return i < j },
+			},
+			wantKeys:   []int{3, 2, 4, 1},
+			wantValues: []int{98, 99, 100, 100},
+		},
+		{
+			name: "OK",
+			args: args{
+				m:        map[int]int{1: 100, 2: 99, 3: 98, 4: 100},
+				less4key: func(i, j int) bool { return i > j },
+			},
+			wantKeys:   []int{4, 3, 2, 1},
+			wantValues: []int{100, 98, 99, 100},
+		},
+		{
+			name: "OK",
+			args: args{
+				m:          map[int]int{1: 100, 2: 99, 3: 98, 4: 100},
+				less4value: func(i, j int) bool { return i < j },
+			},
+			wantKeys:   []int{3, 2, 1, 4},
+			wantValues: []int{98, 99, 100, 100},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			gotKeys, gotValues := Map2KVs(tt.args.m, tt.args.less4key, tt.args.less4value)
+			if !reflect.DeepEqual(gotKeys, tt.wantKeys) {
+				t.Errorf("Map2KVs() gotKeys = %v, want %v", gotKeys, tt.wantKeys)
+			}
+			if !reflect.DeepEqual(gotValues, tt.wantValues) {
+				t.Errorf("Map2KVs() gotValues = %v, want %v", gotValues, tt.wantValues)
+			}
+		})
+	}
+}

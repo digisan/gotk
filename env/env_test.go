@@ -61,7 +61,6 @@ func TestChunk2Map(t *testing.T) {
 		pair := strings.SplitN(e, "=", 2)
 		fmt.Println(pair[0], pair[1])
 	}
-
 }
 
 func TestEnvValued(t *testing.T) {
