@@ -1,5 +1,7 @@
 package to
 
+import "sort"
+
 // In : if arr has element e, return true. otherwise false
 func In(e interface{}, arr ...interface{}) bool {
 	return IdxOf(e, arr...) != -1
@@ -198,8 +200,83 @@ func Reorder(arr []interface{}, indices []int) (orders []interface{}) {
 // Reverse : [1,2,3] => [3,2,1]
 func Reverse(arr []interface{}) []interface{} {
 	indices := make([]int, len(arr))
-	for i:=0; i<len(arr); i++ {
-		indices[i] = len(arr)-1-i
+	for i := 0; i < len(arr); i++ {
+		indices[i] = len(arr) - 1 - i
 	}
 	return Reorder(arr, indices)
+}
+
+// FilterModify : Filter & Modify []interface{} slice, return []interface{} slice
+func FilterModify(arr []interface{}, filter func(i int, e interface{}) bool, modifier func(i int, e interface{}) interface{}) (r []interface{}) {
+	switch {
+	case filter != nil && modifier != nil:
+		for i, e := range arr {
+			if filter(i, e) {
+				r = append(r, modifier(i, e))
+			}
+		}
+	case filter != nil && modifier == nil:
+		for i, e := range arr {
+			if filter(i, e) {
+				r = append(r, e)
+			}
+		}
+	case filter == nil && modifier != nil:
+		for i, e := range arr {
+			r = append(r, modifier(i, e))
+		}
+	default:
+		return arr
+	}
+	return
+}
+
+var (
+	FM = FilterModify
+)
+
+// Map2KVs : map to key slice & value slice
+func Map2KVs(m map[interface{}]interface{}, less4key func(i interface{}, j interface{}) bool, less4value func(i interface{}, j interface{}) bool) (keys []interface{}, values []interface{}) {
+
+	if m == nil {
+		return nil, nil
+	}
+	if len(m) == 0 {
+		return []interface{}{}, []interface{}{}
+	}
+
+	type kv struct {
+		key   interface{}
+		value interface{}
+	}
+
+	kvSlc := []kv{}
+	for k, v := range m {
+		kvSlc = append(kvSlc, kv{key: k, value: v})
+	}
+
+	switch {
+	case less4key != nil && less4value == nil:
+		sort.SliceStable(kvSlc, func(i, j int) bool { return less4key(kvSlc[i].key, kvSlc[j].key) })
+
+	case less4key == nil && less4value != nil:
+		sort.SliceStable(kvSlc, func(i, j int) bool { return less4value(kvSlc[i].value, kvSlc[j].value) })
+
+	case less4key != nil && less4value != nil:
+		sort.SliceStable(kvSlc, func(i, j int) bool {
+			if kvSlc[i].value == kvSlc[j].value {
+				return less4key(kvSlc[i].key, kvSlc[j].key)
+			}
+			return less4value(kvSlc[i].value, kvSlc[j].value)
+		})
+
+	default:
+		// do not sort
+	}
+
+	for _, kvEle := range kvSlc {
+		keys = append(keys, kvEle.key)
+		values = append(values, kvEle.value)
+	}
+	return
 }

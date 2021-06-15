@@ -7,6 +7,11 @@ import (
 	"github.com/digisan/gotk/io"
 )
 
+var mAliasTyp = map[string]string{
+	"object": "interface{}",
+	"double": "float64",
+}
+
 // type -> package name
 var mTypPkg = map[string]string{
 	"int":         "ti",
@@ -17,7 +22,6 @@ var mTypPkg = map[string]string{
 	"int64":       "ti64",
 	"float32":     "tf32",
 	"float64":     "tf64",
-	"double":      "tf64",
 	"bool":        "tb",
 	"uint":        "tu",
 	"uint8":       "tu8",

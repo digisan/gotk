@@ -12,34 +12,34 @@ func TestT1FuncGen(t *testing.T) {
 		args args
 	}{
 		// TODO: Add test cases.
-		{
-			name: "OK",
-			args: args{
-				Tx:     "string",
-				pkgdir: "./",
-			},
-		},
-		{
-			name: "OK",
-			args: args{
-				Tx:     "int",
-				pkgdir: "./",
-			},
-		},
-		{
-			name: "OK",
-			args: args{
-				Tx:     "byte",
-				pkgdir: "./",
-			},
-		},
-		{
-			name: "OK",
-			args: args{
-				Tx:     "rune",
-				pkgdir: "./",
-			},
-		},
+		// {
+		// 	name: "OK",
+		// 	args: args{
+		// 		Tx:     "string",
+		// 		pkgdir: "./",
+		// 	},
+		// },
+		// {
+		// 	name: "OK",
+		// 	args: args{
+		// 		Tx:     "int",
+		// 		pkgdir: "./",
+		// 	},
+		// },
+		// {
+		// 	name: "OK",
+		// 	args: args{
+		// 		Tx:     "byte",
+		// 		pkgdir: "./",
+		// 	},
+		// },
+		// {
+		// 	name: "OK",
+		// 	args: args{
+		// 		Tx:     "rune",
+		// 		pkgdir: "./",
+		// 	},
+		// },
 		{
 			name: "OK",
 			args: args{
