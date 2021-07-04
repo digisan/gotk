@@ -250,27 +250,26 @@ func WalkFileDir(dirname string, recursive bool, exctypes ...string) (filepaths,
 	return
 }
 
-func MergeDir(destdir string, srcdirs ...string) error {
+// MergeDir: if onConflict == nil, later overwrites previous when conflict
+func MergeDir(destdir string, onConflict func(existing, incoming []byte) (overwrite bool, overwriteData []byte), srcdirs ...string) error {
+
+	destdir, _ = AbsPath(destdir, false)
+
 	for _, srcdir := range srcdirs {
 		srcdir, err := AbsPath(srcdir, true)
 		if err != nil {
 			return err
 		}
-		fmt.Println("---", srcdir)
 
 		files, dirs, err := WalkFileDir(srcdir, true)
 		if err != nil {
 			return err
 		}
 
-		aimdirs := []string{}
-
 		// create each folder
 		for _, dir := range dirs {
 			aimdir := filepath.Clean(destdir) + dir[len(srcdir):]
-			aimdir, _ = AbsPath(aimdir, false)
 			os.MkdirAll(aimdir, 0700)
-			aimdirs = append(aimdirs, aimdir)
 		}
 
 		// create non-empty folders, including self folder
@@ -280,40 +279,39 @@ func MergeDir(destdir string, srcdirs ...string) error {
 		}
 		for _, dir := range ts.MkSet(dirs...) {
 			aimdir := filepath.Clean(destdir) + dir[len(srcdir):]
-			aimdir, _ = AbsPath(aimdir, false)
 			os.Mkdir(aimdir, 0700)
-			aimdirs = append(aimdirs, aimdir)
 		}
 
-		aimdirs = ts.MkSet(aimdirs...)
+		// fmt.Println("src-dir:", srcdir)
+		// fmt.Println("dest-dir:", destdir)
 
-		mAimSegs := make(map[string][]string)
-		for _, aimdir := range aimdirs {
-			switch {
-			case aimdir[0] == '/':
-				mAimSegs[aimdir] = strings.Split(aimdir[1:], "/")
-			case aimdir[1:3] == ":\\":
-				mAimSegs[aimdir] = strings.Split(aimdir[3:], "\\")
-			}
-		}
-
-		fmt.Println("aim-dirs:", aimdirs)
-		fmt.Println("aim-dirs:", mAimSegs)
-
-		// move files
+		// copy files
+	NEXT_FILE:
 		for _, file := range files {
-			// fmt.Println(file)
-			// os.Rename(file, )
-
-			segs := AncestorList(file)
-
-			for k, v := range mAimSegs {
-				fmt.Println(k)
-				fmt.Println(ts.Intersect(segs, v))
+			destdata, err := os.ReadFile(file)
+			if err != nil {
+				return err
 			}
 
-		}
+			destfile := strings.Replace(file, srcdir, destdir, 1)
 
+			if FileExists(destfile) && onConflict != nil {
+				// fmt.Printf("conflict at: %s\n", destfile)
+				existing, err := os.ReadFile(destfile)
+				if err != nil {
+					return err
+				}
+				overwrite, data := onConflict(existing, destdata)
+				if !overwrite {
+					continue NEXT_FILE
+				}
+				destdata = data
+			}
+
+			if err := os.WriteFile(destfile, destdata, os.ModePerm); err != nil {
+				return err
+			}
+		}
 	}
 	return nil
 }

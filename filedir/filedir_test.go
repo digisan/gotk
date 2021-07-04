@@ -466,14 +466,19 @@ func TestMergeDir(t *testing.T) {
 		{
 			name: "OK",
 			args: args{
-				destdir: "../mergetest0",
-				srcdirs: []string{"./"},
+				destdir: "~/Desktop/mergetest0",
+				srcdirs: []string{"./", "../io"},
 			},
 		},
 	}
+
+	oc := func(existing, incoming []byte) (bool, []byte) {
+		return true, append(existing, incoming...)
+	}
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := MergeDir(tt.args.destdir, tt.args.srcdirs...); (err != nil) != tt.wantErr {
+			if err := MergeDir(tt.args.destdir, oc, tt.args.srcdirs...); (err != nil) != tt.wantErr {
 				t.Errorf("MergeDir() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
