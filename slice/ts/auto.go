@@ -154,13 +154,18 @@ func intersect(setA, setB []string) (set []string) {
 	if setA == nil || setB == nil {
 		return nil
 	}
+
+	copyA, copyB := make([]string, len(setA)), make([]string, len(setB))
+	copy(copyA, setA)
+	copy(copyB, setB)
+
 AGAIN:
-	for i, a := range setA {
-		for j, b := range setB {
+	for i, a := range copyA {
+		for j, b := range copyB {
 			if a == b {
 				set = append(set, a)
-				setA = append(setA[:i], setA[i+1:]...)
-				setB = append(setB[:j], setB[i+j:]...)
+				copyA = append(copyA[:i], copyA[i+1:]...)
+				copyB = append(copyB[:j], copyB[i+j:]...)
 				goto AGAIN
 			}
 		}

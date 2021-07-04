@@ -152,13 +152,18 @@ func intersect(setA, setB []rune) (set []rune) {
 	if setA == nil || setB == nil {
 		return nil
 	}
+
+	copyA, copyB := make([]rune, len(setA)), make([]rune, len(setB))
+	copy(copyA, setA)
+	copy(copyB, setB)
+
 AGAIN:
-	for i, a := range setA {
-		for j, b := range setB {
+	for i, a := range copyA {
+		for j, b := range copyB {
 			if a == b {
 				set = append(set, a)
-				setA = append(setA[:i], setA[i+1:]...)
-				setB = append(setB[:j], setB[i+j:]...)
+				copyA = append(copyA[:i], copyA[i+1:]...)
+				copyB = append(copyB[:j], copyB[i+j:]...)
 				goto AGAIN
 			}
 		}
@@ -198,8 +203,8 @@ func Reorder(arr []rune, indices []int) (orders []rune) {
 // Reverse : [1,2,3] => [3,2,1]
 func Reverse(arr []rune) []rune {
 	indices := make([]int, len(arr))
-	for i:=0; i<len(arr); i++ {
-		indices[i] = len(arr)-1-i
+	for i := 0; i < len(arr); i++ {
+		indices[i] = len(arr) - 1 - i
 	}
 	return Reorder(arr, indices)
 }

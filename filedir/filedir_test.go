@@ -451,3 +451,31 @@ func TestDirExists(t *testing.T) {
 		})
 	}
 }
+
+func TestMergeDir(t *testing.T) {
+	type args struct {
+		destdir string
+		srcdirs []string
+	}
+	tests := []struct {
+		name    string
+		args    args
+		wantErr bool
+	}{
+		// TODO: Add test cases.
+		{
+			name: "OK",
+			args: args{
+				destdir: "../mergetest0",
+				srcdirs: []string{"./"},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if err := MergeDir(tt.args.destdir, tt.args.srcdirs...); (err != nil) != tt.wantErr {
+				t.Errorf("MergeDir() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}

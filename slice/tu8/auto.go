@@ -152,13 +152,18 @@ func intersect(setA, setB []byte) (set []byte) {
 	if setA == nil || setB == nil {
 		return nil
 	}
+
+	copyA, copyB := make([]byte, len(setA)), make([]byte, len(setB))
+	copy(copyA, setA)
+	copy(copyB, setB)
+
 AGAIN:
-	for i, a := range setA {
-		for j, b := range setB {
+	for i, a := range copyA {
+		for j, b := range copyB {
 			if a == b {
 				set = append(set, a)
-				setA = append(setA[:i], setA[i+1:]...)
-				setB = append(setB[:j], setB[i+j:]...)
+				copyA = append(copyA[:i], copyA[i+1:]...)
+				copyB = append(copyB[:j], copyB[i+j:]...)
 				goto AGAIN
 			}
 		}
@@ -198,8 +203,8 @@ func Reorder(arr []byte, indices []int) (orders []byte) {
 // Reverse : [1,2,3] => [3,2,1]
 func Reverse(arr []byte) []byte {
 	indices := make([]int, len(arr))
-	for i:=0; i<len(arr); i++ {
-		indices[i] = len(arr)-1-i
+	for i := 0; i < len(arr); i++ {
+		indices[i] = len(arr) - 1 - i
 	}
 	return Reorder(arr, indices)
 }

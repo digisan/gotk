@@ -120,7 +120,7 @@ func AncestorList(path string) (ancestors []string) {
 	for {
 		// fmt.Println(abspath)
 		abspath = filepath.Dir(abspath)
-		if abspath == "/" {
+		if abspath == "/" || abspath[1:] == ":\\" {
 			break
 		}
 		ancestors = append(ancestors, abspath)
@@ -132,7 +132,13 @@ func AncestorList(path string) (ancestors []string) {
 		ancestors[i] = strings.TrimPrefix(ancestors[i], ancestors[i-1])
 		ancestors[i] = strings.TrimLeft(ancestors[i], "/\\")
 	}
-	ancestors[0] = strings.TrimLeft(ancestors[0], "/\\")
+
+	if ancestors[0][1:3] == ":\\" {
+		ancestors[0] = ancestors[0][3:]
+	} else {
+		ancestors[0] = strings.TrimLeft(ancestors[0], "/")
+	}
+
 	// fmt.Println(ancestors)
 	return
 }
@@ -242,4 +248,72 @@ func WalkFileDir(dirname string, recursive bool, exctypes ...string) (filepaths,
 	}
 
 	return
+}
+
+func MergeDir(destdir string, srcdirs ...string) error {
+	for _, srcdir := range srcdirs {
+		srcdir, err := AbsPath(srcdir, true)
+		if err != nil {
+			return err
+		}
+		fmt.Println("---", srcdir)
+
+		files, dirs, err := WalkFileDir(srcdir, true)
+		if err != nil {
+			return err
+		}
+
+		aimdirs := []string{}
+
+		// create each folder
+		for _, dir := range dirs {
+			aimdir := filepath.Clean(destdir) + dir[len(srcdir):]
+			aimdir, _ = AbsPath(aimdir, false)
+			os.MkdirAll(aimdir, 0700)
+			aimdirs = append(aimdirs, aimdir)
+		}
+
+		// create non-empty folders, including self folder
+		dirs = []string{}
+		for _, file := range files {
+			dirs = append(dirs, filepath.Dir(file))
+		}
+		for _, dir := range ts.MkSet(dirs...) {
+			aimdir := filepath.Clean(destdir) + dir[len(srcdir):]
+			aimdir, _ = AbsPath(aimdir, false)
+			os.Mkdir(aimdir, 0700)
+			aimdirs = append(aimdirs, aimdir)
+		}
+
+		aimdirs = ts.MkSet(aimdirs...)
+
+		mAimSegs := make(map[string][]string)
+		for _, aimdir := range aimdirs {
+			switch {
+			case aimdir[0] == '/':
+				mAimSegs[aimdir] = strings.Split(aimdir[1:], "/")
+			case aimdir[1:3] == ":\\":
+				mAimSegs[aimdir] = strings.Split(aimdir[3:], "\\")
+			}
+		}
+
+		fmt.Println("aim-dirs:", aimdirs)
+		fmt.Println("aim-dirs:", mAimSegs)
+
+		// move files
+		for _, file := range files {
+			// fmt.Println(file)
+			// os.Rename(file, )
+
+			segs := AncestorList(file)
+
+			for k, v := range mAimSegs {
+				fmt.Println(k)
+				fmt.Println(ts.Intersect(segs, v))
+			}
+
+		}
+
+	}
+	return nil
 }

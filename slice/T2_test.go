@@ -13,46 +13,46 @@ func TestT2FuncGen(t *testing.T) {
 		args args
 	}{
 		// TODO: Add test cases.
-		// {
-		// 	name: "OK",
-		// 	args: args{
-		// 		Tx:     "int",
-		// 		Ty:     "string",
-		// 		pkgdir: "./",
-		// 	},
-		// },
-		// {
-		// 	name: "OK",
-		// 	args: args{
-		// 		Tx:     "int",
-		// 		Ty:     "int",
-		// 		pkgdir: "./",
-		// 	},
-		// },
-		// {
-		// 	name: "OK",
-		// 	args: args{
-		// 		Tx:     "string",
-		// 		Ty:     "string",
-		// 		pkgdir: "./",
-		// 	},
-		// },
-		// {
-		// 	name: "OK",
-		// 	args: args{
-		// 		Tx:     "string",
-		// 		Ty:     "int",
-		// 		pkgdir: "./",
-		// 	},
-		// },
-		// {
-		// 	name: "OK",
-		// 	args: args{
-		// 		Tx:     "string",
-		// 		Ty:     "bool",
-		// 		pkgdir: "./",
-		// 	},
-		// },
+		{
+			name: "OK",
+			args: args{
+				Tx:     "int",
+				Ty:     "string",
+				pkgdir: "./",
+			},
+		},
+		{
+			name: "OK",
+			args: args{
+				Tx:     "int",
+				Ty:     "int",
+				pkgdir: "./",
+			},
+		},
+		{
+			name: "OK",
+			args: args{
+				Tx:     "string",
+				Ty:     "string",
+				pkgdir: "./",
+			},
+		},
+		{
+			name: "OK",
+			args: args{
+				Tx:     "string",
+				Ty:     "int",
+				pkgdir: "./",
+			},
+		},
+		{
+			name: "OK",
+			args: args{
+				Tx:     "string",
+				Ty:     "bool",
+				pkgdir: "./",
+			},
+		},
 		{
 			name: "OK",
 			args: args{
