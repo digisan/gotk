@@ -107,3 +107,69 @@ func TestReverse(t *testing.T) {
 		})
 	}
 }
+
+func Test_minus(t *testing.T) {
+	type args struct {
+		setA []string
+		setB []string
+	}
+	tests := []struct {
+		name    string
+		args    args
+		wantSet []string
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if gotSet := minus(tt.args.setA, tt.args.setB); !reflect.DeepEqual(gotSet, tt.wantSet) {
+				t.Errorf("minus() = %v, want %v", gotSet, tt.wantSet)
+			}
+		})
+	}
+}
+
+func TestMinus(t *testing.T) {
+	type args struct {
+		setA      []string
+		setOthers [][]string
+	}
+	tests := []struct {
+		name    string
+		args    args
+		wantSet []string
+	}{
+		// TODO: Add test cases.
+		{
+			name: "OK",
+			args: args{
+				setA:      []string{"a", "b", "c"},
+				setOthers: [][]string{{"b", "B"}, {"c", "C"}},
+			},
+			wantSet: []string{"a"},
+		},
+		{
+			name: "OK",
+			args: args{
+				setA:      []string{"a", "b", "c"},
+				setOthers: [][]string{{"B"}, {"c", "C"}, {"a"}},
+			},
+			wantSet: []string{"b"},
+		},
+		{
+			name: "OK",
+			args: args{
+				setA:      []string{"a", "b", "c"},
+				setOthers: [][]string{{"B", "b"}, {"c", "C"}, {"a"}},
+			},
+			wantSet: []string{},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if gotSet := Minus(tt.args.setA, tt.args.setOthers...); !reflect.DeepEqual(gotSet, tt.wantSet) {
+				t.Errorf("Minus() = %v, want %v", gotSet, tt.wantSet)
+			}
+		})
+	}
+}

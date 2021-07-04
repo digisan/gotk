@@ -188,6 +188,28 @@ func Intersect(sets ...[]interface{}) (set []interface{}) {
 	return set
 }
 
+func minus(setA, setB []interface{}) (set []interface{}) {
+	if setA == nil {
+		return nil
+	}
+	set = make([]interface{}, 0)
+
+NEXT_A:
+	for _, a := range setA {
+		for _, b := range setB {
+			if a == b {
+				continue NEXT_A
+			}
+		}
+		set = append(set, a)
+	}
+	return
+}
+
+func Minus(setA []interface{}, setOthers ...[]interface{}) (set []interface{}) {
+	return minus(setA, Union(setOthers...))
+}
+
 // Reorder : any index must less than len(arr)
 func Reorder(arr []interface{}, indices []int) (orders []interface{}) {
 	if arr == nil || indices == nil {

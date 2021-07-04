@@ -186,6 +186,28 @@ func Intersect(sets ...[]byte) (set []byte) {
 	return set
 }
 
+func minus(setA, setB []byte) (set []byte) {
+	if setA == nil {
+		return nil
+	}
+	set = make([]byte, 0)
+
+NEXT_A:
+	for _, a := range setA {
+		for _, b := range setB {
+			if a == b {
+				continue NEXT_A
+			}
+		}
+		set = append(set, a)
+	}
+	return
+}
+
+func Minus(setA []byte, setOthers ...[]byte) (set []byte) {
+	return minus(setA, Union(setOthers...))
+}
+
 // Reorder : any index must less than len(arr)
 func Reorder(arr []byte, indices []int) (orders []byte) {
 	if arr == nil || indices == nil {

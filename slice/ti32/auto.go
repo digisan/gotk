@@ -186,6 +186,28 @@ func Intersect(sets ...[]rune) (set []rune) {
 	return set
 }
 
+func minus(setA, setB []rune) (set []rune) {
+	if setA == nil {
+		return nil
+	}
+	set = make([]rune, 0)
+
+NEXT_A:
+	for _, a := range setA {
+		for _, b := range setB {
+			if a == b {
+				continue NEXT_A
+			}
+		}
+		set = append(set, a)
+	}
+	return
+}
+
+func Minus(setA []rune, setOthers ...[]rune) (set []rune) {
+	return minus(setA, Union(setOthers...))
+}
+
 // Reorder : any index must less than len(arr)
 func Reorder(arr []rune, indices []int) (orders []rune) {
 	if arr == nil || indices == nil {
