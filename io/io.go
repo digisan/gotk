@@ -51,6 +51,7 @@ func MustWriteFile(filename string, data []byte) {
 		log.Fatalf("Could NOT Get file Status: %v", err)
 	}
 
+	filename = filepath.Join(dir, filepath.Base(filename))
 WRITE:
 	if err := os.WriteFile(filename, data, FilePerm); err != nil {
 		log.Fatalf("Could NOT Write File: %v", err)

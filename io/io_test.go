@@ -57,8 +57,8 @@ func TestMustWriteFile(t *testing.T) {
 		{
 			name: "OK",
 			args: args{
-				filename: "./testout.txt",
-				data:     []byte("TestMustWriteFile"),
+				filename: "~/Desktop/testout.txt",
+				data:     []byte("TestMustWriteFile111"),
 			},
 		},
 	}
@@ -83,7 +83,7 @@ func TestMustAppendFile(t *testing.T) {
 		{
 			name: "OK",
 			args: args{
-				filename: "./testout1.txt",
+				filename: "~/Desktop/testout.txt",
 				data:     []byte("TestMustAppendFile"),
 				newline:  true,
 			},
