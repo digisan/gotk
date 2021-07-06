@@ -455,6 +455,7 @@ func TestDirExists(t *testing.T) {
 func TestMergeDir(t *testing.T) {
 	type args struct {
 		destdir string
+		move    bool
 		srcdirs []string
 	}
 	tests := []struct {
@@ -467,7 +468,16 @@ func TestMergeDir(t *testing.T) {
 			name: "OK",
 			args: args{
 				destdir: "~/Desktop/mergetest0",
+				move:    false,
 				srcdirs: []string{"./", "../io"},
+			},
+		},
+		{
+			name: "OK",
+			args: args{
+				destdir: "./merge4",
+				move:    true,
+				srcdirs: []string{"./merge1", "./merge3"},
 			},
 		},
 	}
@@ -478,7 +488,7 @@ func TestMergeDir(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := MergeDir(tt.args.destdir, oc, tt.args.srcdirs...); (err != nil) != tt.wantErr {
+			if err := MergeDir(tt.args.destdir, tt.args.move, oc, tt.args.srcdirs...); (err != nil) != tt.wantErr {
 				t.Errorf("MergeDir() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})

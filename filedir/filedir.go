@@ -250,8 +250,8 @@ func WalkFileDir(dirname string, recursive bool, exctypes ...string) (filepaths,
 	return
 }
 
-// MergeDir: if onConflict == nil, later overwrites previous when conflict
-func MergeDir(destdir string, onConflict func(existing, incoming []byte) (overwrite bool, overwriteData []byte), srcdirs ...string) error {
+// MergeDir: if onConflict == nil, overwrites previous when conflict
+func MergeDir(destdir string, move bool, onConflict func(existing, incoming []byte) (overwrite bool, overwriteData []byte), srcdirs ...string) error {
 
 	destdir, _ = AbsPath(destdir, false)
 
@@ -311,6 +311,10 @@ func MergeDir(destdir string, onConflict func(existing, incoming []byte) (overwr
 			if err := os.WriteFile(destfile, destdata, os.ModePerm); err != nil {
 				return err
 			}
+		}
+
+		if move {
+			os.RemoveAll(srcdir)
 		}
 	}
 	return nil
