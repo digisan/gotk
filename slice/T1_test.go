@@ -43,6 +43,13 @@ func TestT1FuncGen(t *testing.T) {
 		{
 			name: "OK",
 			args: args{
+				Tx:     "float64",
+				pkgdir: "./",
+			},
+		},
+		{
+			name: "OK",
+			args: args{
 				Tx:     "interface{}",
 				pkgdir: "./",
 			},

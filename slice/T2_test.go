@@ -40,6 +40,14 @@ func TestT2FuncGen(t *testing.T) {
 		{
 			name: "OK",
 			args: args{
+				Tx:     "float64",
+				Ty:     "float64",
+				pkgdir: "./",
+			},
+		},
+		{
+			name: "OK",
+			args: args{
 				Tx:     "string",
 				Ty:     "int",
 				pkgdir: "./",

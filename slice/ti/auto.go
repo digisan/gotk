@@ -2,6 +2,32 @@ package ti
 
 import "sort"
 
+func Max(arr ...int) int {
+	if len(arr) == 0 {
+		panic("Max args at least has one element")
+	}
+	m := arr[0]
+	for _, a := range arr[1:] {
+		if a > m {
+			m = a
+		}
+	}
+	return m
+}
+
+func Min(arr ...int) int {
+	if len(arr) == 0 {
+		panic("Min args at least has one element")
+	}
+	m := arr[0]
+	for _, a := range arr[1:] {
+		if a < m {
+			m = a
+		}
+	}
+	return m
+}
+
 // In : if arr has element e, return true. otherwise false
 func In(e int, arr ...int) bool {
 	return IdxOf(e, arr...) != -1

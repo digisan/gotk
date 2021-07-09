@@ -915,3 +915,33 @@ func TestMap2KVs(t *testing.T) {
 		})
 	}
 }
+
+func TestMax(t *testing.T) {
+	type args struct {
+		arr []int
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		// TODO: Add test cases.
+		{
+			name: "OK",
+			args: args{[]int{4, 3, 5, 2}},
+			want: 5,
+		},
+		{
+			name: "OK",
+			args: args{[]int{2}},
+			want: 2,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := Max(tt.args.arr...); got != tt.want {
+				t.Errorf("Max() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
