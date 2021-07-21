@@ -12,6 +12,19 @@ import (
 	"github.com/digisan/gotk/slice/ts"
 )
 
+// ".txt" => ".txt", "txt" => ".txt", " " => "", "" => ""
+func DotExt(ext string) string {
+	s0 := strings.Trim(ext, " \t")
+	// fmt.Println(s0)
+	s1 := strings.TrimLeft(s0, ".")
+	// fmt.Println(s1)
+	s2 := strings.TrimRight("."+s1, ".")
+	// fmt.Println(s2)
+	s3 := strings.Trim(s2, " \t")
+	// fmt.Println(s3)
+	return s3
+}
+
 // DirExists :
 func DirExists(dirname string) bool {
 	dirname, _ = AbsPath(dirname, false)

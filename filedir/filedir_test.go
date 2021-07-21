@@ -494,3 +494,51 @@ func TestMergeDir(t *testing.T) {
 		})
 	}
 }
+
+func TestDotExt(t *testing.T) {
+	type args struct {
+		ext string
+	}
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		// TODO: Add test cases.
+		{
+			name: "OK",
+			args: args{
+				ext: ".txt",
+			},
+			want: ".txt",
+		},
+		{
+			name: "OK",
+			args: args{
+				ext: "txt",
+			},
+			want: ".txt",
+		},
+		{
+			name: "OK",
+			args: args{
+				ext: "  	",
+			},
+			want: "",
+		},
+		{
+			name: "OK",
+			args: args{
+				ext: "",
+			},
+			want: "",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := DotExt(tt.args.ext); got != tt.want {
+				t.Errorf("DotExt() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
