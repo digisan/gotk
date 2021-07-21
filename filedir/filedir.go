@@ -93,6 +93,14 @@ func DirIsEmpty(dirname string) (bool, error) {
 	return len(fs) == 0, nil
 }
 
+func Remove(path string) error {
+	abspath, err := AbsPath(path, true)
+	if err != nil {
+		return err
+	}
+	return os.RemoveAll(abspath)
+}
+
 // AbsPath : if check(false), error always nil
 func AbsPath(path string, check bool) (string, error) {
 	if sHasPrefix(path, "~/") {
