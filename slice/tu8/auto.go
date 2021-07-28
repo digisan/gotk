@@ -256,3 +256,22 @@ func Reverse(arr []byte) []byte {
 	}
 	return Reorder(arr, indices)
 }
+
+// Reduce :
+func Reduce(arr []byte, reduce func(e0, e1 byte) byte) byte {
+	switch len(arr) {
+	case 0, 1:
+		panic("Reduce at least receives 2 parameters")
+	default:
+		var r byte
+		for i := 0; i < len(arr)-1; i++ {
+			j := i + 1
+			e0, e1 := arr[i], arr[j]
+			if i > 0 {
+				e0 = r
+			}
+			r = reduce(e0, e1)
+		}
+		return r
+	}
+}

@@ -259,8 +259,27 @@ func Reverse(arr []float64) []float64 {
 	return Reorder(arr, indices)
 }
 
-// FilterModify : Filter & Modify []float64 slice, return []float64 slice
-func FilterModify(arr []float64, filter func(i int, e float64) bool, modifier func(i int, e float64) float64) (r []float64) {
+// Reduce :
+func Reduce(arr []float64, reduce func(e0, e1 float64) float64) float64 {
+	switch len(arr) {
+	case 0, 1:
+		panic("Reduce at least receives 2 parameters")
+	default:
+		var r float64
+		for i := 0; i < len(arr)-1; i++ {
+			j := i + 1
+			e0, e1 := arr[i], arr[j]
+			if i > 0 {
+				e0 = r
+			}
+			r = reduce(e0, e1)
+		}
+		return r
+	}
+}
+
+// FilterMap : Filter & Modify []float64 slice, return []float64 slice
+func FilterMap(arr []float64, filter func(i int, e float64) bool, modifier func(i int, e float64) float64) (r []float64) {
 	switch {
 	case filter != nil && modifier != nil:
 		for i, e := range arr {
@@ -285,7 +304,7 @@ func FilterModify(arr []float64, filter func(i int, e float64) bool, modifier fu
 }
 
 var (
-	FM = FilterModify
+	FM = FilterMap
 )
 
 // Map2KVs : map to key slice & value slice

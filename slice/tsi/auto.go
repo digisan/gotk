@@ -2,8 +2,8 @@ package tsi
 
 import "sort"
 
-// FilterModify : Filter & Modify []string slice, return []int slice
-func FilterModify(arr []string, filter func(i int, e string) bool, modifier func(i int, e string) int) (r []int) {
+// FilterMap : Filter & Modify []string slice, return []int slice
+func FilterMap(arr []string, filter func(i int, e string) bool, modifier func(i int, e string) int) (r []int) {
 	if modifier == nil {
 		panic("modifier cannot be nil")
 	}
@@ -24,7 +24,7 @@ func FilterModify(arr []string, filter func(i int, e string) bool, modifier func
 }
 
 var (
-	FM = FilterModify
+	FM = FilterMap
 )
 
 // Map2KVs : map to key slice & value slice

@@ -254,3 +254,22 @@ func Reverse(arr []xxx) []xxx {
 	}
 	return Reorder(arr, indices)
 }
+
+// Reduce :
+func Reduce(arr []xxx, reduce func(e0, e1 xxx) xxx) xxx {
+	switch len(arr) {
+	case 0, 1:
+		panic("Reduce at least receives 2 parameters")
+	default:
+		var r xxx
+		for i := 0; i < len(arr)-1; i++ {
+			j := i + 1
+			e0, e1 := arr[i], arr[j]
+			if i > 0 {
+				e0 = r
+			}
+			r = reduce(e0, e1)
+		}
+		return r
+	}
+}

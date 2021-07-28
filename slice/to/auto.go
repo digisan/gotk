@@ -233,8 +233,27 @@ func Reverse(arr []interface{}) []interface{} {
 	return Reorder(arr, indices)
 }
 
-// FilterModify : Filter & Modify []interface{} slice, return []interface{} slice
-func FilterModify(arr []interface{}, filter func(i int, e interface{}) bool, modifier func(i int, e interface{}) interface{}) (r []interface{}) {
+// Reduce :
+func Reduce(arr []interface{}, reduce func(e0, e1 interface{}) interface{}) interface{} {
+	switch len(arr) {
+	case 0, 1:
+		panic("Reduce at least receives 2 parameters")
+	default:
+		var r interface{}
+		for i := 0; i < len(arr)-1; i++ {
+			j := i + 1
+			e0, e1 := arr[i], arr[j]
+			if i > 0 {
+				e0 = r
+			}
+			r = reduce(e0, e1)
+		}
+		return r
+	}
+}
+
+// FilterMap : Filter & Modify []interface{} slice, return []interface{} slice
+func FilterMap(arr []interface{}, filter func(i int, e interface{}) bool, modifier func(i int, e interface{}) interface{}) (r []interface{}) {
 	switch {
 	case filter != nil && modifier != nil:
 		for i, e := range arr {
@@ -259,7 +278,7 @@ func FilterModify(arr []interface{}, filter func(i int, e interface{}) bool, mod
 }
 
 var (
-	FM = FilterModify
+	FM = FilterMap
 )
 
 // Map2KVs : map to key slice & value slice

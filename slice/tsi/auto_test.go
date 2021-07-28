@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestFilterModify(t *testing.T) {
+func TestFilterMap(t *testing.T) {
 	type args struct {
 		arr      []string
 		filter   func(i int, e string) bool
@@ -80,8 +80,8 @@ func TestMap2KVs(t *testing.T) {
 		{
 			name: "OK",
 			args: args{
-				m:          map[string]int{"1": 1, "12": 2, "123": 3, "234": 2},
-				less4key:   func(i string, j string) bool { return len(i) > len(j) },				
+				m:        map[string]int{"1": 1, "12": 2, "123": 3, "234": 2},
+				less4key: func(i string, j string) bool { return len(i) > len(j) },
 			},
 			wantKeys:   []string{"123", "234", "12", "1"},
 			wantValues: []int{3, 2, 2, 1},
@@ -89,7 +89,7 @@ func TestMap2KVs(t *testing.T) {
 		{
 			name: "OK",
 			args: args{
-				m:          map[string]int{"1": 1, "12": 2, "123": 3, "234": 2},				
+				m:          map[string]int{"1": 1, "12": 2, "123": 3, "234": 2},
 				less4value: func(i, j int) bool { return i < j },
 			},
 			wantKeys:   []string{"1", "12", "234", "123"},

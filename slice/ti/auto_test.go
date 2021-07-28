@@ -643,7 +643,7 @@ func TestIntersect(t *testing.T) {
 	}
 }
 
-func TestFilterModify(t *testing.T) {
+func TestFilterMap(t *testing.T) {
 	type args struct {
 		arr      []int
 		filter   func(i int, e int) bool
@@ -941,6 +941,35 @@ func TestMax(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := Max(tt.args.arr...); got != tt.want {
 				t.Errorf("Max() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestReduce(t *testing.T) {
+	type args struct {
+		arr    []int
+		reduce func(e0, e1 int) int
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		// TODO: Add test cases.
+		{
+			name: "OK",
+			args: args{
+				arr:    []int{1, 2, 3, 4, 5, 6, 7},
+				reduce: func(e0, e1 int) int { return e0 + e1 },
+			},
+			want: 28,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := Reduce(tt.args.arr, tt.args.reduce); got != tt.want {
+				t.Errorf("Reduce() = %v, want %v", got, tt.want)
 			}
 		})
 	}

@@ -1,5 +1,5 @@
-// FilterModify : Filter & Modify []xxx slice, return []yyy slice
-func FilterModify(arr []xxx, filter func(i int, e xxx) bool, modifier func(i int, e xxx) yyy) (r []yyy) {
+// FilterMap : Filter & Modify []xxx slice, return []yyy slice
+func FilterMap(arr []xxx, filter func(i int, e xxx) bool, modifier func(i int, e xxx) yyy) (r []yyy) {
 	// [S@x==y]
 	switch {
 	case filter != nil && modifier != nil:
@@ -45,7 +45,7 @@ func FilterModify(arr []xxx, filter func(i int, e xxx) bool, modifier func(i int
 }
 
 var (
-	FM = FilterModify
+	FM = FilterMap
 )
 
 // Map2KVs : map to key slice & value slice

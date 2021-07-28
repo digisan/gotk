@@ -259,8 +259,27 @@ func Reverse(arr []string) []string {
 	return Reorder(arr, indices)
 }
 
-// FilterModify : Filter & Modify []string slice, return []string slice
-func FilterModify(arr []string, filter func(i int, e string) bool, modifier func(i int, e string) string) (r []string) {
+// Reduce :
+func Reduce(arr []string, reduce func(e0, e1 string) string) string {
+	switch len(arr) {
+	case 0, 1:
+		panic("Reduce at least receives 2 parameters")
+	default:
+		var r string
+		for i := 0; i < len(arr)-1; i++ {
+			j := i + 1
+			e0, e1 := arr[i], arr[j]
+			if i > 0 {
+				e0 = r
+			}
+			r = reduce(e0, e1)
+		}
+		return r
+	}
+}
+
+// FilterMap : Filter & Modify []string slice, return []string slice
+func FilterMap(arr []string, filter func(i int, e string) bool, modifier func(i int, e string) string) (r []string) {
 	switch {
 	case filter != nil && modifier != nil:
 		for i, e := range arr {
@@ -285,7 +304,7 @@ func FilterModify(arr []string, filter func(i int, e string) bool, modifier func
 }
 
 var (
-	FM = FilterModify
+	FM = FilterMap
 )
 
 // Map2KVs : map to key slice & value slice
