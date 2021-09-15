@@ -55,6 +55,7 @@ func TestEqual(t *testing.T) {
 	type args struct {
 		setA []string
 		setB []string
+		setC []string
 	}
 	tests := []struct {
 		name string
@@ -65,18 +66,28 @@ func TestEqual(t *testing.T) {
 		{
 			name: "OK",
 			args: args{
-				setA: []string{"a", "b"},
-				setB: []string{"b", "a"},
+				setA: []string{"a", "b", "c"},
+				setB: []string{"b", "a", "c"},
+				setC: []string{"c", "b", "a"},
 			},
 			want: true,
+		},
+		{
+			name: "OK",
+			args: args{
+				setA: []string{"a", "b", "c"},
+				setB: []string{"b", "a", "c"},
+				setC: []string{"c", "b", "d"},
+			},
+			want: false,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := Equal(tt.args.setA, tt.args.setB); got != tt.want {
+			if got := Equal(tt.args.setA, tt.args.setB, tt.args.setC); got != tt.want {
 				t.Errorf("Equal() = %v, want %v", got, tt.want)
 			}
-			fmt.Println(tt.args.setA, tt.args.setB)
+			fmt.Println(tt.args.setA, tt.args.setB, tt.args.setC)
 		})
 	}
 

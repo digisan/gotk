@@ -93,8 +93,8 @@ func Subset(setA, setB []rune) bool {
 	return Superset(setB, setA)
 }
 
-// Equal :
-func Equal(setA, setB []rune) bool {
+// equal :
+func equal(setA, setB []rune) bool {
 	if (setA == nil && setB != nil) || (setA != nil && setB == nil) {
 		return false
 	}
@@ -118,6 +118,18 @@ AGAIN:
 		}
 	}
 	return len(tmpA) == 0 && len(tmpB) == 0
+}
+
+// Equal
+func Equal(sets ...[]rune) bool {
+	for i := 0; i < len(sets)-1; i++ {
+		this := sets[i]
+		next := sets[i+1]
+		if !equal(this, next) {
+			return false
+		}
+	}
+	return true
 }
 
 // SuperEq :

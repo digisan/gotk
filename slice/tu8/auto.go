@@ -93,8 +93,8 @@ func Subset(setA, setB []byte) bool {
 	return Superset(setB, setA)
 }
 
-// Equal :
-func Equal(setA, setB []byte) bool {
+// equal :
+func equal(setA, setB []byte) bool {
 	if (setA == nil && setB != nil) || (setA != nil && setB == nil) {
 		return false
 	}
@@ -118,6 +118,18 @@ AGAIN:
 		}
 	}
 	return len(tmpA) == 0 && len(tmpB) == 0
+}
+
+// Equal
+func Equal(sets ...[]byte) bool {
+	for i := 0; i < len(sets)-1; i++ {
+		this := sets[i]
+		next := sets[i+1]
+		if !equal(this, next) {
+			return false
+		}
+	}
+	return true
 }
 
 // SuperEq :

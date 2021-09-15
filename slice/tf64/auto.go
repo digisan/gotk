@@ -95,8 +95,8 @@ func Subset(setA, setB []float64) bool {
 	return Superset(setB, setA)
 }
 
-// Equal :
-func Equal(setA, setB []float64) bool {
+// equal :
+func equal(setA, setB []float64) bool {
 	if (setA == nil && setB != nil) || (setA != nil && setB == nil) {
 		return false
 	}
@@ -120,6 +120,18 @@ AGAIN:
 		}
 	}
 	return len(tmpA) == 0 && len(tmpB) == 0
+}
+
+// Equal
+func Equal(sets ...[]float64) bool {
+	for i := 0; i < len(sets)-1; i++ {
+		this := sets[i]
+		next := sets[i+1]
+		if !equal(this, next) {
+			return false
+		}
+	}
+	return true
 }
 
 // SuperEq :
