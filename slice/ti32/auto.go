@@ -13,6 +13,21 @@ func Max(arr ...rune) rune {
 	return m
 }
 
+func MaxIdx(arr ...rune) (rune, int) {
+	if len(arr) == 0 {
+		panic("Max args at least has one element")
+	}
+	m := arr[0]
+	idx := 0
+	for i, a := range arr[1:] {
+		if a > m {
+			m = a
+			idx = i
+		}
+	}
+	return m, idx
+}
+
 func Min(arr ...rune) rune {
 	if len(arr) == 0 {
 		panic("Min args at least has one element")
@@ -24,6 +39,21 @@ func Min(arr ...rune) rune {
 		}
 	}
 	return m
+}
+
+func MinIdx(arr ...rune) (rune, int) {
+	if len(arr) == 0 {
+		panic("Min args at least has one element")
+	}
+	m := arr[0]
+	idx := 0
+	for i, a := range arr[1:] {
+		if a < m {
+			m = a
+			idx = i
+		}
+	}
+	return m, idx
 }
 
 // In : if arr has element e, return true. otherwise false

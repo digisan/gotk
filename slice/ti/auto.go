@@ -15,6 +15,21 @@ func Max(arr ...int) int {
 	return m
 }
 
+func MaxIdx(arr ...int) (int, int) {
+	if len(arr) == 0 {
+		panic("Max args at least has one element")
+	}
+	m := arr[0]
+	idx := 0
+	for i, a := range arr[1:] {
+		if a > m {
+			m = a
+			idx = i
+		}
+	}
+	return m, idx
+}
+
 func Min(arr ...int) int {
 	if len(arr) == 0 {
 		panic("Min args at least has one element")
@@ -26,6 +41,21 @@ func Min(arr ...int) int {
 		}
 	}
 	return m
+}
+
+func MinIdx(arr ...int) (int, int) {
+	if len(arr) == 0 {
+		panic("Min args at least has one element")
+	}
+	m := arr[0]
+	idx := 0
+	for i, a := range arr[1:] {
+		if a < m {
+			m = a
+			idx = i
+		}
+	}
+	return m, idx
 }
 
 // In : if arr has element e, return true. otherwise false
