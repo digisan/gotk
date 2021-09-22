@@ -261,3 +261,36 @@ func TestIntersect(t *testing.T) {
 		})
 	}
 }
+
+func TestMaxIdx(t *testing.T) {
+	type args struct {
+		arr []byte
+	}
+	tests := []struct {
+		name  string
+		args  args
+		want  byte
+		want1 int
+	}{
+		// TODO: Add test cases.
+		{
+			name: "",
+			args: args{
+				arr: []byte{4, 5, 1, 2, 5, 3, 2},
+			},
+			want: 5,
+			want1: 1,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, got1 := MaxIdx(tt.args.arr...)
+			if got != tt.want {
+				t.Errorf("MaxIdx() got = %v, want %v", got, tt.want)
+			}
+			if got1 != tt.want1 {
+				t.Errorf("MaxIdx() got1 = %v, want %v", got1, tt.want1)
+			}
+		})
+	}
+}

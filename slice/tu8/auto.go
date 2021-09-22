@@ -22,7 +22,7 @@ func MaxIdx(arr ...byte) (byte, int) {
 	for i, a := range arr[1:] {
 		if a > m {
 			m = a
-			idx = i
+			idx = i + 1
 		}
 	}
 	return m, idx
@@ -50,7 +50,7 @@ func MinIdx(arr ...byte) (byte, int) {
 	for i, a := range arr[1:] {
 		if a < m {
 			m = a
-			idx = i
+			idx = i + 1
 		}
 	}
 	return m, idx

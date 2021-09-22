@@ -24,7 +24,7 @@ func MaxIdx(arr ...float64) (float64, int) {
 	for i, a := range arr[1:] {
 		if a > m {
 			m = a
-			idx = i
+			idx = i + 1
 		}
 	}
 	return m, idx
@@ -52,7 +52,7 @@ func MinIdx(arr ...float64) (float64, int) {
 	for i, a := range arr[1:] {
 		if a < m {
 			m = a
-			idx = i
+			idx = i + 1
 		}
 	}
 	return m, idx
