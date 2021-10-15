@@ -1,5 +1,7 @@
 package tu8
 
+import "github.com/digisan/gotk/slice/ti"
+
 func Max(arr ...byte) byte {
 	if len(arr) == 0 {
 		panic("Max args at least has one element")
@@ -316,4 +318,21 @@ func Reduce(arr []byte, reduce func(e0, e1 byte) byte) byte {
 		}
 		return r
 	}
+}
+
+// ZipArray :
+func ZipArray(arrays ...[]byte) (zipped [][]byte) {
+	lens := []int{}
+	for _, arr := range arrays {
+		lens = append(lens, len(arr))
+	}
+	min := ti.Min(lens...)
+	for i := 0; i < min; i++ {
+		tuple := []byte{}
+		for _, arr := range arrays {
+			tuple = append(tuple, arr[i])
+		}
+		zipped = append(zipped, tuple)
+	}
+	return
 }

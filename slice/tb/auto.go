@@ -1,75 +1,19 @@
-package ti32
+package tb
 
 import "github.com/digisan/gotk/slice/ti"
 
-func Max(arr ...rune) rune {
-	if len(arr) == 0 {
-		panic("Max args at least has one element")
-	}
-	m := arr[0]
-	for _, a := range arr[1:] {
-		if a > m {
-			m = a
-		}
-	}
-	return m
-}
-
-func MaxIdx(arr ...rune) (rune, int) {
-	if len(arr) == 0 {
-		panic("Max args at least has one element")
-	}
-	m := arr[0]
-	idx := 0
-	for i, a := range arr[1:] {
-		if a > m {
-			m = a
-			idx = i + 1
-		}
-	}
-	return m, idx
-}
-
-func Min(arr ...rune) rune {
-	if len(arr) == 0 {
-		panic("Min args at least has one element")
-	}
-	m := arr[0]
-	for _, a := range arr[1:] {
-		if a < m {
-			m = a
-		}
-	}
-	return m
-}
-
-func MinIdx(arr ...rune) (rune, int) {
-	if len(arr) == 0 {
-		panic("Min args at least has one element")
-	}
-	m := arr[0]
-	idx := 0
-	for i, a := range arr[1:] {
-		if a < m {
-			m = a
-			idx = i + 1
-		}
-	}
-	return m, idx
-}
-
 // In : if arr has element e, return true. otherwise false
-func In(e rune, arr ...rune) bool {
+func In(e bool, arr ...bool) bool {
 	return IdxOf(e, arr...) != -1
 }
 
 // NotIn : if arr does NOT have element e, return true. otherwise false
-func NotIn(e rune, arr ...rune) bool {
+func NotIn(e bool, arr ...bool) bool {
 	return !In(e, arr...)
 }
 
 // IdxOf : returns the index of the first instance of e in slice, or -1 if e is not present in slice
-func IdxOf(e rune, arr ...rune) int {
+func IdxOf(e bool, arr ...bool) int {
 	for i, ele := range arr {
 		if ele == e {
 			return i
@@ -79,7 +23,7 @@ func IdxOf(e rune, arr ...rune) int {
 }
 
 // LastIdxOf : returns the index of the last instance of e in slice, or -1 if e is not present in slice
-func LastIdxOf(e rune, arr ...rune) int {
+func LastIdxOf(e bool, arr ...bool) int {
 	for i := len(arr) - 1; i >= 0; i-- {
 		if arr[i] == e {
 			return i
@@ -89,11 +33,11 @@ func LastIdxOf(e rune, arr ...rune) int {
 }
 
 // MkSet : remove repeated elements in arr
-func MkSet(arr ...rune) (set []rune) {
+func MkSet(arr ...bool) (set []bool) {
 	if arr == nil {
 		return nil
 	}
-	m := make(map[rune]struct{})
+	m := make(map[bool]struct{})
 	for _, ele := range arr {
 		if _, ok := m[ele]; !ok {
 			set = append(set, ele)
@@ -101,13 +45,13 @@ func MkSet(arr ...rune) (set []rune) {
 		}
 	}
 	if len(set) == 0 {
-		return []rune{}
+		return []bool{}
 	}
 	return
 }
 
 // Superset :
-func Superset(setA, setB []rune) bool {
+func Superset(setA, setB []bool) bool {
 NEXT_B:
 	for _, b := range setB {
 		for _, a := range setA {
@@ -121,12 +65,12 @@ NEXT_B:
 }
 
 // Subset :
-func Subset(setA, setB []rune) bool {
+func Subset(setA, setB []bool) bool {
 	return Superset(setB, setA)
 }
 
 // equal :
-func equal(setA, setB []rune) bool {
+func equal(setA, setB []bool) bool {
 	if (setA == nil && setB != nil) || (setA != nil && setB == nil) {
 		return false
 	}
@@ -134,8 +78,8 @@ func equal(setA, setB []rune) bool {
 		return false
 	}
 
-	tmpA := make([]rune, len(setA))
-	tmpB := make([]rune, len(setB))
+	tmpA := make([]bool, len(setA))
+	tmpB := make([]bool, len(setB))
 	copy(tmpA, setA)
 	copy(tmpB, setB)
 
@@ -153,7 +97,7 @@ AGAIN:
 }
 
 // Equal
-func Equal(sets ...[]rune) bool {
+func Equal(sets ...[]bool) bool {
 	for i := 0; i < len(sets)-1; i++ {
 		this := sets[i]
 		next := sets[i+1]
@@ -165,17 +109,17 @@ func Equal(sets ...[]rune) bool {
 }
 
 // SuperEq :
-func SuperEq(setA, setB []rune) bool {
+func SuperEq(setA, setB []bool) bool {
 	return Superset(setA, setB) || Equal(setA, setB)
 }
 
 // SubEq :
-func SubEq(setA, setB []rune) bool {
+func SubEq(setA, setB []bool) bool {
 	return Subset(setA, setB) || Equal(setA, setB)
 }
 
 // union :
-func union(setA, setB []rune) (set []rune) {
+func union(setA, setB []bool) (set []bool) {
 	if setA == nil && setB == nil {
 		return nil
 	}
@@ -186,7 +130,7 @@ func union(setA, setB []rune) (set []rune) {
 		return setA
 	}
 
-	m := make(map[rune]struct{})
+	m := make(map[bool]struct{})
 	for _, a := range setA {
 		if _, ok := m[a]; !ok {
 			set = append(set, a)
@@ -200,13 +144,13 @@ func union(setA, setB []rune) (set []rune) {
 		}
 	}
 	if set == nil {
-		return []rune{}
+		return []bool{}
 	}
 	return
 }
 
 // Union :
-func Union(sets ...[]rune) (set []rune) {
+func Union(sets ...[]bool) (set []bool) {
 	if len(sets) == 0 {
 		return nil
 	}
@@ -218,12 +162,12 @@ func Union(sets ...[]rune) (set []rune) {
 }
 
 // intersect :
-func intersect(setA, setB []rune) (set []rune) {
+func intersect(setA, setB []bool) (set []bool) {
 	if setA == nil || setB == nil {
 		return nil
 	}
 
-	copyA, copyB := make([]rune, len(setA)), make([]rune, len(setB))
+	copyA, copyB := make([]bool, len(setA)), make([]bool, len(setB))
 	copy(copyA, setA)
 	copy(copyB, setB)
 
@@ -239,13 +183,13 @@ AGAIN:
 		}
 	}
 	if set == nil {
-		return []rune{}
+		return []bool{}
 	}
 	return
 }
 
 // Intersect :
-func Intersect(sets ...[]rune) (set []rune) {
+func Intersect(sets ...[]bool) (set []bool) {
 	if len(sets) == 0 {
 		return nil
 	}
@@ -256,11 +200,11 @@ func Intersect(sets ...[]rune) (set []rune) {
 	return set
 }
 
-func minus(setA, setB []rune) (set []rune) {
+func minus(setA, setB []bool) (set []bool) {
 	if setA == nil {
 		return nil
 	}
-	set = make([]rune, 0)
+	set = make([]bool, 0)
 
 NEXT_A:
 	for _, a := range setA {
@@ -274,17 +218,17 @@ NEXT_A:
 	return
 }
 
-func Minus(setA []rune, setOthers ...[]rune) (set []rune) {
+func Minus(setA []bool, setOthers ...[]bool) (set []bool) {
 	return minus(setA, Union(setOthers...))
 }
 
 // Reorder : any index must less than len(arr)
-func Reorder(arr []rune, indices []int) (orders []rune) {
+func Reorder(arr []bool, indices []int) (orders []bool) {
 	if arr == nil || indices == nil {
 		return nil
 	}
 	if len(arr) == 0 || len(indices) == 0 {
-		return []rune{}
+		return []bool{}
 	}
 	for _, idx := range indices {
 		orders = append(orders, arr[idx])
@@ -293,7 +237,7 @@ func Reorder(arr []rune, indices []int) (orders []rune) {
 }
 
 // Reverse : [1,2,3] => [3,2,1]
-func Reverse(arr []rune) []rune {
+func Reverse(arr []bool) []bool {
 	indices := make([]int, len(arr))
 	for i := 0; i < len(arr); i++ {
 		indices[i] = len(arr) - 1 - i
@@ -302,12 +246,12 @@ func Reverse(arr []rune) []rune {
 }
 
 // Reduce :
-func Reduce(arr []rune, reduce func(e0, e1 rune) rune) rune {
+func Reduce(arr []bool, reduce func(e0, e1 bool) bool) bool {
 	switch len(arr) {
 	case 0, 1:
 		panic("Reduce at least receives 2 parameters")
 	default:
-		var r rune
+		var r bool
 		for i := 0; i < len(arr)-1; i++ {
 			j := i + 1
 			e0, e1 := arr[i], arr[j]
@@ -321,14 +265,14 @@ func Reduce(arr []rune, reduce func(e0, e1 rune) rune) rune {
 }
 
 // ZipArray :
-func ZipArray(arrays ...[]rune) (zipped [][]rune) {
+func ZipArray(arrays ...[]bool) (zipped [][]bool) {
 	lens := []int{}
 	for _, arr := range arrays {
 		lens = append(lens, len(arr))
 	}
 	min := ti.Min(lens...)
 	for i := 0; i < min; i++ {
-		tuple := []rune{}
+		tuple := []bool{}
 		for _, arr := range arrays {
 			tuple = append(tuple, arr[i])
 		}

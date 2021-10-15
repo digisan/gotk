@@ -974,3 +974,30 @@ func TestReduce(t *testing.T) {
 		})
 	}
 }
+
+func TestZipArray(t *testing.T) {
+	type args struct {
+		arrays [][]int
+	}
+	tests := []struct {
+		name       string
+		args       args
+		wantZipped [][]int
+	}{
+		// TODO: Add test cases.
+		{
+			name: "",
+			args: args{
+				arrays: [][]int{{1, 2, 3}, {4, 5, 6}, {7, 8}, {9, 10, 11, 12}},
+			},
+			wantZipped: [][]int{{1, 4, 7, 9}, {2, 5, 8, 10}},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if gotZipped := ZipArray(tt.args.arrays...); !reflect.DeepEqual(gotZipped, tt.wantZipped) {
+				t.Errorf("ZipArray() = %v, want %v", gotZipped, tt.wantZipped)
+			}
+		})
+	}
+}

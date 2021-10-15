@@ -315,3 +315,20 @@ func Reduce(arr []xxx, reduce func(e0, e1 xxx) xxx) xxx {
 		return r
 	}
 }
+
+// ZipArray :
+func ZipArray(arrays ...[]xxx) (zipped [][]xxx) {
+	lens := []int{}
+	for _, arr := range arrays {
+		lens = append(lens, len(arr))
+	}
+	min := ti.Min(lens...)
+	for i := 0; i < min; i++ {
+		tuple := []xxx{}
+		for _, arr := range arrays {
+			tuple = append(tuple, arr[i])
+		}
+		zipped = append(zipped, tuple)
+	}
+	return
+}

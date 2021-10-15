@@ -320,6 +320,23 @@ func Reduce(arr []int, reduce func(e0, e1 int) int) int {
 	}
 }
 
+// ZipArray :
+func ZipArray(arrays ...[]int) (zipped [][]int) {
+	lens := []int{}
+	for _, arr := range arrays {
+		lens = append(lens, len(arr))
+	}
+	min := Min(lens...)
+	for i := 0; i < min; i++ {
+		tuple := []int{}
+		for _, arr := range arrays {
+			tuple = append(tuple, arr[i])
+		}
+		zipped = append(zipped, tuple)
+	}
+	return
+}
+
 // FilterMap : Filter & Modify []int slice, return []int slice
 func FilterMap(arr []int, filter func(i int, e int) bool, modifier func(i int, e int) int) (r []int) {
 	switch {

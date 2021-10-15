@@ -1,6 +1,10 @@
 package to
 
-import "sort"
+import (
+	"sort"
+
+	"github.com/digisan/gotk/slice/ti"
+)
 
 // In : if arr has element e, return true. otherwise false
 func In(e interface{}, arr ...interface{}) bool {
@@ -262,6 +266,23 @@ func Reduce(arr []interface{}, reduce func(e0, e1 interface{}) interface{}) inte
 		}
 		return r
 	}
+}
+
+// ZipArray :
+func ZipArray(arrays ...[]interface{}) (zipped [][]interface{}) {
+	lens := []int{}
+	for _, arr := range arrays {
+		lens = append(lens, len(arr))
+	}
+	min := ti.Min(lens...)
+	for i := 0; i < min; i++ {
+		tuple := []interface{}{}
+		for _, arr := range arrays {
+			tuple = append(tuple, arr[i])
+		}
+		zipped = append(zipped, tuple)
+	}
+	return
 }
 
 // FilterMap : Filter & Modify []interface{} slice, return []interface{} slice

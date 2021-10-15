@@ -1,6 +1,10 @@
 package tf64
 
-import "sort"
+import (
+	"sort"
+
+	"github.com/digisan/gotk/slice/ti"
+)
 
 func Max(arr ...float64) float64 {
 	if len(arr) == 0 {
@@ -318,6 +322,23 @@ func Reduce(arr []float64, reduce func(e0, e1 float64) float64) float64 {
 		}
 		return r
 	}
+}
+
+// ZipArray :
+func ZipArray(arrays ...[]float64) (zipped [][]float64) {
+	lens := []int{}
+	for _, arr := range arrays {
+		lens = append(lens, len(arr))
+	}
+	min := ti.Min(lens...)
+	for i := 0; i < min; i++ {
+		tuple := []float64{}
+		for _, arr := range arrays {
+			tuple = append(tuple, arr[i])
+		}
+		zipped = append(zipped, tuple)
+	}
+	return
 }
 
 // FilterMap : Filter & Modify []float64 slice, return []float64 slice

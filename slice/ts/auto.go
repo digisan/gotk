@@ -1,6 +1,10 @@
 package ts
 
-import "sort"
+import (
+	"sort"
+
+	"github.com/digisan/gotk/slice/ti"
+)
 
 func Max(arr ...string) string {
 	if len(arr) == 0 {
@@ -318,6 +322,23 @@ func Reduce(arr []string, reduce func(e0, e1 string) string) string {
 		}
 		return r
 	}
+}
+
+// ZipArray :
+func ZipArray(arrays ...[]string) (zipped [][]string) {
+	lens := []int{}
+	for _, arr := range arrays {
+		lens = append(lens, len(arr))
+	}
+	min := ti.Min(lens...)
+	for i := 0; i < min; i++ {
+		tuple := []string{}
+		for _, arr := range arrays {
+			tuple = append(tuple, arr[i])
+		}
+		zipped = append(zipped, tuple)
+	}
+	return
 }
 
 // FilterMap : Filter & Modify []string slice, return []string slice
