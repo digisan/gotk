@@ -1,6 +1,19 @@
 package ti
 
-import "sort"
+import (
+	"reflect"
+	"sort"
+	"unsafe"
+)
+
+func DelEle(arr *[]int, i int) {
+	*arr = append((*arr)[:i], (*arr)[i+1:]...)
+}
+
+func DelEleUnordered(arr *[]int, i int) {
+	(*arr)[i] = (*arr)[len(*arr)-1]
+	(*reflect.SliceHeader)(unsafe.Pointer(arr)).Len--
+}
 
 func Max(arr ...int) int {
 	if len(arr) == 0 {

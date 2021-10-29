@@ -1,10 +1,21 @@
 package ts
 
 import (
+	"reflect"
 	"sort"
+	"unsafe"
 
 	"github.com/digisan/gotk/slice/ti"
 )
+
+func DelEle(arr *[]string, i int) {
+	*arr = append((*arr)[:i], (*arr)[i+1:]...)
+}
+
+func DelEleUnordered(arr *[]string, i int) {
+	(*arr)[i] = (*arr)[len(*arr)-1]
+	(*reflect.SliceHeader)(unsafe.Pointer(arr)).Len--
+}
 
 func Max(arr ...string) string {
 	if len(arr) == 0 {

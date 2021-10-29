@@ -1,6 +1,9 @@
 package strings
 
-import "strings"
+import (
+	"regexp"
+	"strings"
+)
 
 var (
 	sIndex = strings.Index
@@ -16,6 +19,15 @@ func IndexAll(s, sub string) (starts, ends []int) {
 		starts = append(starts, start)
 		ends = append(ends, start+len(sub))
 		s = s[i+1:]
+	}
+	return
+}
+
+func IndexAllByReg(s, sub string) (starts, ends []int) {
+	r := regexp.MustCompile(regexp.QuoteMeta(sub))
+	for _, pair := range r.FindAllStringIndex(s, -1) {
+		starts = append(starts, pair[0])
+		ends = append(ends, pair[1])
 	}
 	return
 }

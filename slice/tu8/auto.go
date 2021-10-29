@@ -1,6 +1,20 @@
 package tu8
 
-import "github.com/digisan/gotk/slice/ti"
+import (
+	"reflect"
+	"unsafe"
+
+	"github.com/digisan/gotk/slice/ti"
+)
+
+func DelEle(arr *[]byte, i int) {
+	*arr = append((*arr)[:i], (*arr)[i+1:]...)
+}
+
+func DelEleUnordered(arr *[]byte, i int) {
+	(*arr)[i] = (*arr)[len(*arr)-1]
+	(*reflect.SliceHeader)(unsafe.Pointer(arr)).Len--
+}
 
 func Max(arr ...byte) byte {
 	if len(arr) == 0 {

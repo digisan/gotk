@@ -184,3 +184,44 @@ func TestMinus(t *testing.T) {
 		})
 	}
 }
+
+func TestDelEle(t *testing.T) {
+	type args struct {
+		arr []string
+		i   int
+	}
+	tests := []struct {
+		name string
+		args args
+	}{
+		// TODO: Add test cases.
+		{
+			name: "DelEle",
+			args: args{
+				arr: []string{"1", "2", "3", "4", "5"},
+				i:   0,
+			},
+		},
+		{
+			name: "DelEle",
+			args: args{
+				arr: []string{"1", "2", "3", "4", "5"},
+				i:   1,
+			},
+		},
+		{
+			name: "DelEle",
+			args: args{
+				arr: []string{"1", "2", "3", "4", "5"},
+				i:   4,
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			DelEle(&tt.args.arr, tt.args.i)
+			// DelEleUnordered(&tt.args.arr, tt.args.i)
+			fmt.Println(tt.args.arr)
+		})
+	}
+}

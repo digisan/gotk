@@ -1,3 +1,12 @@
+func DelEle(arr *[]xxx, i int) {
+	*arr = append((*arr)[:i], (*arr)[i+1:]...)
+}
+
+func DelEleUnordered(arr *[]xxx, i int) {
+	(*arr)[i] = (*arr)[len(*arr)-1]
+	(*reflect.SliceHeader)(unsafe.Pointer(arr)).Len--
+}
+
 func Max(arr ...xxx) xxx {
 	if len(arr) == 0 {
 		panic("Max args at least has one element")

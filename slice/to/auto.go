@@ -1,10 +1,21 @@
 package to
 
 import (
+	"reflect"
 	"sort"
+	"unsafe"
 
 	"github.com/digisan/gotk/slice/ti"
 )
+
+func DelEle(arr *[]interface{}, i int) {
+	*arr = append((*arr)[:i], (*arr)[i+1:]...)
+}
+
+func DelEleUnordered(arr *[]interface{}, i int) {
+	(*arr)[i] = (*arr)[len(*arr)-1]
+	(*reflect.SliceHeader)(unsafe.Pointer(arr)).Len--
+}
 
 // In : if arr has element e, return true. otherwise false
 func In(e interface{}, arr ...interface{}) bool {
