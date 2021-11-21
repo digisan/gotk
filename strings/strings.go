@@ -3,6 +3,8 @@ package strings
 import (
 	"regexp"
 	"strings"
+
+	"github.com/digisan/gotk/slice/ti"
 )
 
 var (
@@ -30,4 +32,18 @@ func IndexAllByReg(s, sub string) (starts, ends []int) {
 		ends = append(ends, pair[1])
 	}
 	return
+}
+
+func RangeReplace(s string, ranges [][2]int, ns []string) string {
+	for i := 0; i < ti.Min(len(ranges), len(ns)); i++ {
+		lenPrev := len(s)
+		start, end := ranges[i][0], ranges[i][1]
+		s = s[:start] + ns[i] + s[end:]
+		diff := len(s) - lenPrev
+		for j := i + 1; j < len(ranges); j++ {
+			ranges[j][0] += diff
+			ranges[j][1] += diff
+		}
+	}
+	return s
 }
