@@ -14,7 +14,7 @@ func TestT2FuncGen(t *testing.T) {
 	}{
 		// TODO: Add test cases.
 		{
-			name: "OK",
+			name: "int-string",
 			args: args{
 				Tx:     "int",
 				Ty:     "string",
@@ -22,7 +22,7 @@ func TestT2FuncGen(t *testing.T) {
 			},
 		},
 		{
-			name: "OK",
+			name: "int-int",
 			args: args{
 				Tx:     "int",
 				Ty:     "int",
@@ -30,7 +30,7 @@ func TestT2FuncGen(t *testing.T) {
 			},
 		},
 		{
-			name: "OK",
+			name: "string-string",
 			args: args{
 				Tx:     "string",
 				Ty:     "string",
@@ -38,7 +38,7 @@ func TestT2FuncGen(t *testing.T) {
 			},
 		},
 		{
-			name: "OK",
+			name: "float64-float64",
 			args: args{
 				Tx:     "float64",
 				Ty:     "float64",
@@ -46,7 +46,7 @@ func TestT2FuncGen(t *testing.T) {
 			},
 		},
 		{
-			name: "OK",
+			name: "string-int",
 			args: args{
 				Tx:     "string",
 				Ty:     "int",
@@ -54,7 +54,7 @@ func TestT2FuncGen(t *testing.T) {
 			},
 		},
 		{
-			name: "OK",
+			name: "string-bool",
 			args: args{
 				Tx:     "string",
 				Ty:     "bool",
@@ -62,10 +62,18 @@ func TestT2FuncGen(t *testing.T) {
 			},
 		},
 		{
-			name: "OK",
+			name: "interface{}-interface{}",
 			args: args{
 				Tx:     "interface{}",
 				Ty:     "interface{}",
+				pkgdir: "./",
+			},
+		},
+		{
+			name: "image.Point",
+			args: args{
+				Tx:     "image.Point",
+				Ty:     "image.Point",
 				pkgdir: "./",
 			},
 		},

@@ -33,6 +33,7 @@ var mTypPkg = map[string]string{
 	"complex128":  "tc128",
 	"string":      "ts",
 	"interface{}": "to",
+	"image.Point": "tpt",
 }
 
 // T1FuncGen :

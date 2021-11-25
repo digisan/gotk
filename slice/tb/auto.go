@@ -7,11 +7,11 @@ import (
 	"github.com/digisan/gotk/slice/ti"
 )
 
-func DelEle(arr *[]bool, i int) {
+func DelEleOrderly(arr *[]bool, i int) {
 	*arr = append((*arr)[:i], (*arr)[i+1:]...)
 }
 
-func DelEleUnordered(arr *[]bool, i int) {
+func DelEle(arr *[]bool, i int) {
 	(*arr)[i] = (*arr)[len(*arr)-1]
 	(*reflect.SliceHeader)(unsafe.Pointer(arr)).Len--
 }
