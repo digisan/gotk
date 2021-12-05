@@ -1,14 +1,5 @@
 #!/bin/bash
 
-rm -rf ./slice/ti/auto.go 
-rm -rf ./slice/ti32/auto.go 
-rm -rf ./slice/tu8/auto.go 
-rm -rf ./slice/tis/auto.go 
-rm -rf ./slice/to/auto.go 
-rm -rf ./slice/ts/auto.go 
-rm -rf ./slice/tsi/auto.go
-rm -rf ./slice/tsb/auto.go
-
 rm -f ./io/*.txt
 rm -rf ./mergetest*
 

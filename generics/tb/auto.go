@@ -1,88 +1,33 @@
-package ti
+package tb
 
 import (
 	"reflect"
-	"sort"
 	"unsafe"
+
+	"github.com/digisan/gotk/generics/ti"
 )
 
-func DelEleOrderly(arr *[]int, i int) {
+func DelEleOrderly(arr *[]bool, i int) {
 	*arr = append((*arr)[:i], (*arr)[i+1:]...)
 }
 
-func DelEle(arr *[]int, i int) {
+func DelEle(arr *[]bool, i int) {
 	(*arr)[i] = (*arr)[len(*arr)-1]
 	(*reflect.SliceHeader)(unsafe.Pointer(arr)).Len--
 }
 
-func Max(arr ...int) int {
-	if len(arr) == 0 {
-		panic("Max args at least has one element")
-	}
-	m := arr[0]
-	for _, a := range arr[1:] {
-		if a > m {
-			m = a
-		}
-	}
-	return m
-}
-
-func MaxIdx(arr ...int) (int, int) {
-	if len(arr) == 0 {
-		panic("Max args at least has one element")
-	}
-	m := arr[0]
-	idx := 0
-	for i, a := range arr[1:] {
-		if a > m {
-			m = a
-			idx = i + 1
-		}
-	}
-	return m, idx
-}
-
-func Min(arr ...int) int {
-	if len(arr) == 0 {
-		panic("Min args at least has one element")
-	}
-	m := arr[0]
-	for _, a := range arr[1:] {
-		if a < m {
-			m = a
-		}
-	}
-	return m
-}
-
-func MinIdx(arr ...int) (int, int) {
-	if len(arr) == 0 {
-		panic("Min args at least has one element")
-	}
-	m := arr[0]
-	idx := 0
-	for i, a := range arr[1:] {
-		if a < m {
-			m = a
-			idx = i + 1
-		}
-	}
-	return m, idx
-}
-
 // In : if arr has element e, return true. otherwise false
-func In(e int, arr ...int) bool {
+func In(e bool, arr ...bool) bool {
 	return IdxOf(e, arr...) != -1
 }
 
 // NotIn : if arr does NOT have element e, return true. otherwise false
-func NotIn(e int, arr ...int) bool {
+func NotIn(e bool, arr ...bool) bool {
 	return !In(e, arr...)
 }
 
 // IdxOf : returns the index of the first instance of e in slice, or -1 if e is not present in slice
-func IdxOf(e int, arr ...int) int {
+func IdxOf(e bool, arr ...bool) int {
 	for i, ele := range arr {
 		if ele == e {
 			return i
@@ -92,7 +37,7 @@ func IdxOf(e int, arr ...int) int {
 }
 
 // LastIdxOf : returns the index of the last instance of e in slice, or -1 if e is not present in slice
-func LastIdxOf(e int, arr ...int) int {
+func LastIdxOf(e bool, arr ...bool) int {
 	for i := len(arr) - 1; i >= 0; i-- {
 		if arr[i] == e {
 			return i
@@ -102,11 +47,11 @@ func LastIdxOf(e int, arr ...int) int {
 }
 
 // MkSet : remove repeated elements in arr
-func MkSet(arr ...int) (set []int) {
+func MkSet(arr ...bool) (set []bool) {
 	if arr == nil {
 		return nil
 	}
-	m := make(map[int]struct{})
+	m := make(map[bool]struct{})
 	for _, ele := range arr {
 		if _, ok := m[ele]; !ok {
 			set = append(set, ele)
@@ -114,13 +59,13 @@ func MkSet(arr ...int) (set []int) {
 		}
 	}
 	if len(set) == 0 {
-		return []int{}
+		return []bool{}
 	}
 	return
 }
 
 // Superset :
-func Superset(setA, setB []int) bool {
+func Superset(setA, setB []bool) bool {
 NEXT_B:
 	for _, b := range setB {
 		for _, a := range setA {
@@ -134,12 +79,12 @@ NEXT_B:
 }
 
 // Subset :
-func Subset(setA, setB []int) bool {
+func Subset(setA, setB []bool) bool {
 	return Superset(setB, setA)
 }
 
 // equal :
-func equal(setA, setB []int) bool {
+func equal(setA, setB []bool) bool {
 	if (setA == nil && setB != nil) || (setA != nil && setB == nil) {
 		return false
 	}
@@ -147,8 +92,8 @@ func equal(setA, setB []int) bool {
 		return false
 	}
 
-	tmpA := make([]int, len(setA))
-	tmpB := make([]int, len(setB))
+	tmpA := make([]bool, len(setA))
+	tmpB := make([]bool, len(setB))
 	copy(tmpA, setA)
 	copy(tmpB, setB)
 
@@ -166,7 +111,7 @@ AGAIN:
 }
 
 // Equal
-func Equal(sets ...[]int) bool {
+func Equal(sets ...[]bool) bool {
 	for i := 0; i < len(sets)-1; i++ {
 		this := sets[i]
 		next := sets[i+1]
@@ -178,17 +123,17 @@ func Equal(sets ...[]int) bool {
 }
 
 // SuperEq :
-func SuperEq(setA, setB []int) bool {
+func SuperEq(setA, setB []bool) bool {
 	return Superset(setA, setB) || Equal(setA, setB)
 }
 
 // SubEq :
-func SubEq(setA, setB []int) bool {
+func SubEq(setA, setB []bool) bool {
 	return Subset(setA, setB) || Equal(setA, setB)
 }
 
 // union :
-func union(setA, setB []int) (set []int) {
+func union(setA, setB []bool) (set []bool) {
 	if setA == nil && setB == nil {
 		return nil
 	}
@@ -199,7 +144,7 @@ func union(setA, setB []int) (set []int) {
 		return setA
 	}
 
-	m := make(map[int]struct{})
+	m := make(map[bool]struct{})
 	for _, a := range setA {
 		if _, ok := m[a]; !ok {
 			set = append(set, a)
@@ -213,13 +158,13 @@ func union(setA, setB []int) (set []int) {
 		}
 	}
 	if set == nil {
-		return []int{}
+		return []bool{}
 	}
 	return
 }
 
 // Union :
-func Union(sets ...[]int) (set []int) {
+func Union(sets ...[]bool) (set []bool) {
 	if len(sets) == 0 {
 		return nil
 	}
@@ -231,12 +176,12 @@ func Union(sets ...[]int) (set []int) {
 }
 
 // intersect :
-func intersect(setA, setB []int) (set []int) {
+func intersect(setA, setB []bool) (set []bool) {
 	if setA == nil || setB == nil {
 		return nil
 	}
 
-	copyA, copyB := make([]int, len(setA)), make([]int, len(setB))
+	copyA, copyB := make([]bool, len(setA)), make([]bool, len(setB))
 	copy(copyA, setA)
 	copy(copyB, setB)
 
@@ -252,13 +197,13 @@ AGAIN:
 		}
 	}
 	if set == nil {
-		return []int{}
+		return []bool{}
 	}
 	return
 }
 
 // Intersect :
-func Intersect(sets ...[]int) (set []int) {
+func Intersect(sets ...[]bool) (set []bool) {
 	if len(sets) == 0 {
 		return nil
 	}
@@ -269,11 +214,11 @@ func Intersect(sets ...[]int) (set []int) {
 	return set
 }
 
-func minus(setA, setB []int) (set []int) {
+func minus(setA, setB []bool) (set []bool) {
 	if setA == nil {
 		return nil
 	}
-	set = make([]int, 0)
+	set = make([]bool, 0)
 
 NEXT_A:
 	for _, a := range setA {
@@ -287,17 +232,17 @@ NEXT_A:
 	return
 }
 
-func Minus(setA []int, setOthers ...[]int) (set []int) {
+func Minus(setA []bool, setOthers ...[]bool) (set []bool) {
 	return minus(setA, Union(setOthers...))
 }
 
 // Reorder : any index must less than len(arr)
-func Reorder(arr []int, indices []int) (orders []int) {
+func Reorder(arr []bool, indices []int) (orders []bool) {
 	if arr == nil || indices == nil {
 		return nil
 	}
 	if len(arr) == 0 || len(indices) == 0 {
-		return []int{}
+		return []bool{}
 	}
 	for _, idx := range indices {
 		orders = append(orders, arr[idx])
@@ -306,7 +251,7 @@ func Reorder(arr []int, indices []int) (orders []int) {
 }
 
 // Reverse : [1,2,3] => [3,2,1]
-func Reverse(arr []int) []int {
+func Reverse(arr []bool) []bool {
 	indices := make([]int, len(arr))
 	for i := 0; i < len(arr); i++ {
 		indices[i] = len(arr) - 1 - i
@@ -315,12 +260,12 @@ func Reverse(arr []int) []int {
 }
 
 // Reduce :
-func Reduce(arr []int, reduce func(e0, e1 int) int) int {
+func Reduce(arr []bool, reduce func(e0, e1 bool) bool) bool {
 	switch len(arr) {
 	case 0, 1:
 		panic("Reduce at least receives 2 parameters")
 	default:
-		var r int
+		var r bool
 		for i := 0; i < len(arr)-1; i++ {
 			j := i + 1
 			e0, e1 := arr[i], arr[j]
@@ -334,93 +279,18 @@ func Reduce(arr []int, reduce func(e0, e1 int) int) int {
 }
 
 // ZipArray :
-func ZipArray(arrays ...[]int) (zipped [][]int) {
+func ZipArray(arrays ...[]bool) (zipped [][]bool) {
 	lens := []int{}
 	for _, arr := range arrays {
 		lens = append(lens, len(arr))
 	}
-	min := Min(lens...)
+	min := ti.Min(lens...)
 	for i := 0; i < min; i++ {
-		tuple := []int{}
+		tuple := []bool{}
 		for _, arr := range arrays {
 			tuple = append(tuple, arr[i])
 		}
 		zipped = append(zipped, tuple)
-	}
-	return
-}
-
-// FilterMap : Filter & Modify []int slice, return []int slice
-func FilterMap(arr []int, filter func(i int, e int) bool, modifier func(i int, e int) int) (r []int) {
-	switch {
-	case filter != nil && modifier != nil:
-		for i, e := range arr {
-			if filter(i, e) {
-				r = append(r, modifier(i, e))
-			}
-		}
-	case filter != nil && modifier == nil:
-		for i, e := range arr {
-			if filter(i, e) {
-				r = append(r, e)
-			}
-		}
-	case filter == nil && modifier != nil:
-		for i, e := range arr {
-			r = append(r, modifier(i, e))
-		}
-	default:
-		return arr
-	}
-	return
-}
-
-var (
-	FM = FilterMap
-)
-
-// Map2KVs : map to key slice & value slice
-func Map2KVs(m map[int]int, less4key func(i int, j int) bool, less4value func(i int, j int) bool) (keys []int, values []int) {
-
-	if m == nil {
-		return nil, nil
-	}
-	if len(m) == 0 {
-		return []int{}, []int{}
-	}
-
-	type kv struct {
-		key   int
-		value int
-	}
-
-	kvSlc := []kv{}
-	for k, v := range m {
-		kvSlc = append(kvSlc, kv{key: k, value: v})
-	}
-
-	switch {
-	case less4key != nil && less4value == nil:
-		sort.SliceStable(kvSlc, func(i, j int) bool { return less4key(kvSlc[i].key, kvSlc[j].key) })
-
-	case less4key == nil && less4value != nil:
-		sort.SliceStable(kvSlc, func(i, j int) bool { return less4value(kvSlc[i].value, kvSlc[j].value) })
-
-	case less4key != nil && less4value != nil:
-		sort.SliceStable(kvSlc, func(i, j int) bool {
-			if kvSlc[i].value == kvSlc[j].value {
-				return less4key(kvSlc[i].key, kvSlc[j].key)
-			}
-			return less4value(kvSlc[i].value, kvSlc[j].value)
-		})
-
-	default:
-		// do not sort
-	}
-
-	for _, kvEle := range kvSlc {
-		keys = append(keys, kvEle.key)
-		values = append(values, kvEle.value)
 	}
 	return
 }

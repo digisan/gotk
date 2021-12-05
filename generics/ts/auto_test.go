@@ -225,3 +225,37 @@ func TestDelEle(t *testing.T) {
 		})
 	}
 }
+
+func TestMapMerge(t *testing.T) {
+	type args struct {
+		ms []map[string]string
+	}
+	tests := []struct {
+		name string
+		args args
+		want map[string][]string
+	}{
+		// TODO: Add test cases.
+		{
+			name: "",
+			args: args{
+				ms: []map[string]string{
+					{"id_1": "val_1"},
+					{"id_2": "val_2", "id_1": "val_1"},
+					{"id_1": "val_3"},
+				},
+			},
+			want: map[string][]string{
+				"id_1": {"val_1", "val_3"},
+				"id_2": {"val_2"},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := MapMerge(tt.args.ms...); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("MapMerge() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

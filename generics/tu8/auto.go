@@ -1,34 +1,89 @@
-package to
+package tu8
 
 import (
 	"reflect"
-	"sort"
 	"unsafe"
 
-	"github.com/digisan/gotk/slice/ti"
+	"github.com/digisan/gotk/generics/ti"
 )
 
-func DelEleOrderly(arr *[]interface{}, i int) {
+func DelEleOrderly(arr *[]byte, i int) {
 	*arr = append((*arr)[:i], (*arr)[i+1:]...)
 }
 
-func DelEle(arr *[]interface{}, i int) {
+func DelEle(arr *[]byte, i int) {
 	(*arr)[i] = (*arr)[len(*arr)-1]
 	(*reflect.SliceHeader)(unsafe.Pointer(arr)).Len--
 }
 
+func Max(arr ...byte) byte {
+	if len(arr) == 0 {
+		panic("Max args at least has one element")
+	}
+	m := arr[0]
+	for _, a := range arr[1:] {
+		if a > m {
+			m = a
+		}
+	}
+	return m
+}
+
+func MaxIdx(arr ...byte) (byte, int) {
+	if len(arr) == 0 {
+		panic("Max args at least has one element")
+	}
+	m := arr[0]
+	idx := 0
+	for i, a := range arr[1:] {
+		if a > m {
+			m = a
+			idx = i + 1
+		}
+	}
+	return m, idx
+}
+
+func Min(arr ...byte) byte {
+	if len(arr) == 0 {
+		panic("Min args at least has one element")
+	}
+	m := arr[0]
+	for _, a := range arr[1:] {
+		if a < m {
+			m = a
+		}
+	}
+	return m
+}
+
+func MinIdx(arr ...byte) (byte, int) {
+	if len(arr) == 0 {
+		panic("Min args at least has one element")
+	}
+	m := arr[0]
+	idx := 0
+	for i, a := range arr[1:] {
+		if a < m {
+			m = a
+			idx = i + 1
+		}
+	}
+	return m, idx
+}
+
 // In : if arr has element e, return true. otherwise false
-func In(e interface{}, arr ...interface{}) bool {
+func In(e byte, arr ...byte) bool {
 	return IdxOf(e, arr...) != -1
 }
 
 // NotIn : if arr does NOT have element e, return true. otherwise false
-func NotIn(e interface{}, arr ...interface{}) bool {
+func NotIn(e byte, arr ...byte) bool {
 	return !In(e, arr...)
 }
 
 // IdxOf : returns the index of the first instance of e in slice, or -1 if e is not present in slice
-func IdxOf(e interface{}, arr ...interface{}) int {
+func IdxOf(e byte, arr ...byte) int {
 	for i, ele := range arr {
 		if ele == e {
 			return i
@@ -38,7 +93,7 @@ func IdxOf(e interface{}, arr ...interface{}) int {
 }
 
 // LastIdxOf : returns the index of the last instance of e in slice, or -1 if e is not present in slice
-func LastIdxOf(e interface{}, arr ...interface{}) int {
+func LastIdxOf(e byte, arr ...byte) int {
 	for i := len(arr) - 1; i >= 0; i-- {
 		if arr[i] == e {
 			return i
@@ -48,11 +103,11 @@ func LastIdxOf(e interface{}, arr ...interface{}) int {
 }
 
 // MkSet : remove repeated elements in arr
-func MkSet(arr ...interface{}) (set []interface{}) {
+func MkSet(arr ...byte) (set []byte) {
 	if arr == nil {
 		return nil
 	}
-	m := make(map[interface{}]struct{})
+	m := make(map[byte]struct{})
 	for _, ele := range arr {
 		if _, ok := m[ele]; !ok {
 			set = append(set, ele)
@@ -60,13 +115,13 @@ func MkSet(arr ...interface{}) (set []interface{}) {
 		}
 	}
 	if len(set) == 0 {
-		return []interface{}{}
+		return []byte{}
 	}
 	return
 }
 
 // Superset :
-func Superset(setA, setB []interface{}) bool {
+func Superset(setA, setB []byte) bool {
 NEXT_B:
 	for _, b := range setB {
 		for _, a := range setA {
@@ -80,12 +135,12 @@ NEXT_B:
 }
 
 // Subset :
-func Subset(setA, setB []interface{}) bool {
+func Subset(setA, setB []byte) bool {
 	return Superset(setB, setA)
 }
 
 // equal :
-func equal(setA, setB []interface{}) bool {
+func equal(setA, setB []byte) bool {
 	if (setA == nil && setB != nil) || (setA != nil && setB == nil) {
 		return false
 	}
@@ -93,8 +148,8 @@ func equal(setA, setB []interface{}) bool {
 		return false
 	}
 
-	tmpA := make([]interface{}, len(setA))
-	tmpB := make([]interface{}, len(setB))
+	tmpA := make([]byte, len(setA))
+	tmpB := make([]byte, len(setB))
 	copy(tmpA, setA)
 	copy(tmpB, setB)
 
@@ -112,7 +167,7 @@ AGAIN:
 }
 
 // Equal
-func Equal(sets ...[]interface{}) bool {
+func Equal(sets ...[]byte) bool {
 	for i := 0; i < len(sets)-1; i++ {
 		this := sets[i]
 		next := sets[i+1]
@@ -124,17 +179,17 @@ func Equal(sets ...[]interface{}) bool {
 }
 
 // SuperEq :
-func SuperEq(setA, setB []interface{}) bool {
+func SuperEq(setA, setB []byte) bool {
 	return Superset(setA, setB) || Equal(setA, setB)
 }
 
 // SubEq :
-func SubEq(setA, setB []interface{}) bool {
+func SubEq(setA, setB []byte) bool {
 	return Subset(setA, setB) || Equal(setA, setB)
 }
 
 // union :
-func union(setA, setB []interface{}) (set []interface{}) {
+func union(setA, setB []byte) (set []byte) {
 	if setA == nil && setB == nil {
 		return nil
 	}
@@ -145,7 +200,7 @@ func union(setA, setB []interface{}) (set []interface{}) {
 		return setA
 	}
 
-	m := make(map[interface{}]struct{})
+	m := make(map[byte]struct{})
 	for _, a := range setA {
 		if _, ok := m[a]; !ok {
 			set = append(set, a)
@@ -159,13 +214,13 @@ func union(setA, setB []interface{}) (set []interface{}) {
 		}
 	}
 	if set == nil {
-		return []interface{}{}
+		return []byte{}
 	}
 	return
 }
 
 // Union :
-func Union(sets ...[]interface{}) (set []interface{}) {
+func Union(sets ...[]byte) (set []byte) {
 	if len(sets) == 0 {
 		return nil
 	}
@@ -177,12 +232,12 @@ func Union(sets ...[]interface{}) (set []interface{}) {
 }
 
 // intersect :
-func intersect(setA, setB []interface{}) (set []interface{}) {
+func intersect(setA, setB []byte) (set []byte) {
 	if setA == nil || setB == nil {
 		return nil
 	}
 
-	copyA, copyB := make([]interface{}, len(setA)), make([]interface{}, len(setB))
+	copyA, copyB := make([]byte, len(setA)), make([]byte, len(setB))
 	copy(copyA, setA)
 	copy(copyB, setB)
 
@@ -198,13 +253,13 @@ AGAIN:
 		}
 	}
 	if set == nil {
-		return []interface{}{}
+		return []byte{}
 	}
 	return
 }
 
 // Intersect :
-func Intersect(sets ...[]interface{}) (set []interface{}) {
+func Intersect(sets ...[]byte) (set []byte) {
 	if len(sets) == 0 {
 		return nil
 	}
@@ -215,11 +270,11 @@ func Intersect(sets ...[]interface{}) (set []interface{}) {
 	return set
 }
 
-func minus(setA, setB []interface{}) (set []interface{}) {
+func minus(setA, setB []byte) (set []byte) {
 	if setA == nil {
 		return nil
 	}
-	set = make([]interface{}, 0)
+	set = make([]byte, 0)
 
 NEXT_A:
 	for _, a := range setA {
@@ -233,17 +288,17 @@ NEXT_A:
 	return
 }
 
-func Minus(setA []interface{}, setOthers ...[]interface{}) (set []interface{}) {
+func Minus(setA []byte, setOthers ...[]byte) (set []byte) {
 	return minus(setA, Union(setOthers...))
 }
 
 // Reorder : any index must less than len(arr)
-func Reorder(arr []interface{}, indices []int) (orders []interface{}) {
+func Reorder(arr []byte, indices []int) (orders []byte) {
 	if arr == nil || indices == nil {
 		return nil
 	}
 	if len(arr) == 0 || len(indices) == 0 {
-		return []interface{}{}
+		return []byte{}
 	}
 	for _, idx := range indices {
 		orders = append(orders, arr[idx])
@@ -252,7 +307,7 @@ func Reorder(arr []interface{}, indices []int) (orders []interface{}) {
 }
 
 // Reverse : [1,2,3] => [3,2,1]
-func Reverse(arr []interface{}) []interface{} {
+func Reverse(arr []byte) []byte {
 	indices := make([]int, len(arr))
 	for i := 0; i < len(arr); i++ {
 		indices[i] = len(arr) - 1 - i
@@ -261,12 +316,12 @@ func Reverse(arr []interface{}) []interface{} {
 }
 
 // Reduce :
-func Reduce(arr []interface{}, reduce func(e0, e1 interface{}) interface{}) interface{} {
+func Reduce(arr []byte, reduce func(e0, e1 byte) byte) byte {
 	switch len(arr) {
 	case 0, 1:
 		panic("Reduce at least receives 2 parameters")
 	default:
-		var r interface{}
+		var r byte
 		for i := 0; i < len(arr)-1; i++ {
 			j := i + 1
 			e0, e1 := arr[i], arr[j]
@@ -280,93 +335,18 @@ func Reduce(arr []interface{}, reduce func(e0, e1 interface{}) interface{}) inte
 }
 
 // ZipArray :
-func ZipArray(arrays ...[]interface{}) (zipped [][]interface{}) {
+func ZipArray(arrays ...[]byte) (zipped [][]byte) {
 	lens := []int{}
 	for _, arr := range arrays {
 		lens = append(lens, len(arr))
 	}
 	min := ti.Min(lens...)
 	for i := 0; i < min; i++ {
-		tuple := []interface{}{}
+		tuple := []byte{}
 		for _, arr := range arrays {
 			tuple = append(tuple, arr[i])
 		}
 		zipped = append(zipped, tuple)
-	}
-	return
-}
-
-// FilterMap : Filter & Modify []interface{} slice, return []interface{} slice
-func FilterMap(arr []interface{}, filter func(i int, e interface{}) bool, modifier func(i int, e interface{}) interface{}) (r []interface{}) {
-	switch {
-	case filter != nil && modifier != nil:
-		for i, e := range arr {
-			if filter(i, e) {
-				r = append(r, modifier(i, e))
-			}
-		}
-	case filter != nil && modifier == nil:
-		for i, e := range arr {
-			if filter(i, e) {
-				r = append(r, e)
-			}
-		}
-	case filter == nil && modifier != nil:
-		for i, e := range arr {
-			r = append(r, modifier(i, e))
-		}
-	default:
-		return arr
-	}
-	return
-}
-
-var (
-	FM = FilterMap
-)
-
-// Map2KVs : map to key slice & value slice
-func Map2KVs(m map[interface{}]interface{}, less4key func(i interface{}, j interface{}) bool, less4value func(i interface{}, j interface{}) bool) (keys []interface{}, values []interface{}) {
-
-	if m == nil {
-		return nil, nil
-	}
-	if len(m) == 0 {
-		return []interface{}{}, []interface{}{}
-	}
-
-	type kv struct {
-		key   interface{}
-		value interface{}
-	}
-
-	kvSlc := []kv{}
-	for k, v := range m {
-		kvSlc = append(kvSlc, kv{key: k, value: v})
-	}
-
-	switch {
-	case less4key != nil && less4value == nil:
-		sort.SliceStable(kvSlc, func(i, j int) bool { return less4key(kvSlc[i].key, kvSlc[j].key) })
-
-	case less4key == nil && less4value != nil:
-		sort.SliceStable(kvSlc, func(i, j int) bool { return less4value(kvSlc[i].value, kvSlc[j].value) })
-
-	case less4key != nil && less4value != nil:
-		sort.SliceStable(kvSlc, func(i, j int) bool {
-			if kvSlc[i].value == kvSlc[j].value {
-				return less4key(kvSlc[i].key, kvSlc[j].key)
-			}
-			return less4value(kvSlc[i].value, kvSlc[j].value)
-		})
-
-	default:
-		// do not sort
-	}
-
-	for _, kvEle := range kvSlc {
-		keys = append(keys, kvEle.key)
-		values = append(values, kvEle.value)
 	}
 	return
 }

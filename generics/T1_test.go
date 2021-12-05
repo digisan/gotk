@@ -1,11 +1,10 @@
-package slice
+package generics
 
 import "testing"
 
-func TestT2FuncGen(t *testing.T) {
+func TestT1FuncGen(t *testing.T) {
 	type args struct {
 		Tx     string
-		Ty     string
 		pkgdir string
 	}
 	tests := []struct {
@@ -14,58 +13,51 @@ func TestT2FuncGen(t *testing.T) {
 	}{
 		// TODO: Add test cases.
 		{
-			name: "int-string",
-			args: args{
-				Tx:     "int",
-				Ty:     "string",
-				pkgdir: "./",
-			},
-		},
-		{
-			name: "int-int",
-			args: args{
-				Tx:     "int",
-				Ty:     "int",
-				pkgdir: "./",
-			},
-		},
-		{
-			name: "string-string",
+			name: "string",
 			args: args{
 				Tx:     "string",
-				Ty:     "string",
 				pkgdir: "./",
 			},
 		},
 		{
-			name: "float64-float64",
+			name: "int",
+			args: args{
+				Tx:     "int",
+				pkgdir: "./",
+			},
+		},
+		{
+			name: "bool",
+			args: args{
+				Tx:     "bool",
+				pkgdir: "./",
+			},
+		},
+		{
+			name: "byte",
+			args: args{
+				Tx:     "byte",
+				pkgdir: "./",
+			},
+		},
+		{
+			name: "rune",
+			args: args{
+				Tx:     "rune",
+				pkgdir: "./",
+			},
+		},
+		{
+			name: "float64",
 			args: args{
 				Tx:     "float64",
-				Ty:     "float64",
 				pkgdir: "./",
 			},
 		},
 		{
-			name: "string-int",
-			args: args{
-				Tx:     "string",
-				Ty:     "int",
-				pkgdir: "./",
-			},
-		},
-		{
-			name: "string-bool",
-			args: args{
-				Tx:     "string",
-				Ty:     "bool",
-				pkgdir: "./",
-			},
-		},
-		{
-			name: "interface{}-interface{}",
+			name: "interface{}",
 			args: args{
 				Tx:     "interface{}",
-				Ty:     "interface{}",
 				pkgdir: "./",
 			},
 		},
@@ -73,14 +65,13 @@ func TestT2FuncGen(t *testing.T) {
 			name: "image.Point",
 			args: args{
 				Tx:     "image.Point",
-				Ty:     "image.Point",
 				pkgdir: "./",
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			T2FuncGen(tt.args.Tx, tt.args.Ty, tt.args.pkgdir)
+			T1FuncGen(tt.args.Tx, tt.args.pkgdir)
 		})
 	}
 }

@@ -93,3 +93,21 @@ func Map2KVs(m map[xxx]yyy, less4key func(i xxx, j xxx) bool, less4value func(i 
 	}
 	return
 }
+
+// MapMerge: 
+func MapMerge(ms ...map[xxx]yyy) map[xxx][]yyy {
+    res := map[xxx][]yyy{}
+    for _, m := range ms {
+    srcMap:
+        for k, v := range m {
+            // Check if (k,v) was added before:
+            for _, v2 := range res[k] {
+                if v == v2 {
+                    continue srcMap
+                }
+            }
+            res[k] = append(res[k], v)
+        }
+    }
+    return res
+}

@@ -4,7 +4,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/digisan/gotk/slice/ti"
+	"github.com/digisan/gotk/generics/ti"
 )
 
 var (

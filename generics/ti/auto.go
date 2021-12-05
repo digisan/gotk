@@ -1,23 +1,21 @@
-package tf64
+package ti
 
 import (
 	"reflect"
 	"sort"
 	"unsafe"
-
-	"github.com/digisan/gotk/slice/ti"
 )
 
-func DelEleOrderly(arr *[]float64, i int) {
+func DelEleOrderly(arr *[]int, i int) {
 	*arr = append((*arr)[:i], (*arr)[i+1:]...)
 }
 
-func DelEle(arr *[]float64, i int) {
+func DelEle(arr *[]int, i int) {
 	(*arr)[i] = (*arr)[len(*arr)-1]
 	(*reflect.SliceHeader)(unsafe.Pointer(arr)).Len--
 }
 
-func Max(arr ...float64) float64 {
+func Max(arr ...int) int {
 	if len(arr) == 0 {
 		panic("Max args at least has one element")
 	}
@@ -30,7 +28,7 @@ func Max(arr ...float64) float64 {
 	return m
 }
 
-func MaxIdx(arr ...float64) (float64, int) {
+func MaxIdx(arr ...int) (int, int) {
 	if len(arr) == 0 {
 		panic("Max args at least has one element")
 	}
@@ -45,7 +43,7 @@ func MaxIdx(arr ...float64) (float64, int) {
 	return m, idx
 }
 
-func Min(arr ...float64) float64 {
+func Min(arr ...int) int {
 	if len(arr) == 0 {
 		panic("Min args at least has one element")
 	}
@@ -58,7 +56,7 @@ func Min(arr ...float64) float64 {
 	return m
 }
 
-func MinIdx(arr ...float64) (float64, int) {
+func MinIdx(arr ...int) (int, int) {
 	if len(arr) == 0 {
 		panic("Min args at least has one element")
 	}
@@ -74,17 +72,17 @@ func MinIdx(arr ...float64) (float64, int) {
 }
 
 // In : if arr has element e, return true. otherwise false
-func In(e float64, arr ...float64) bool {
+func In(e int, arr ...int) bool {
 	return IdxOf(e, arr...) != -1
 }
 
 // NotIn : if arr does NOT have element e, return true. otherwise false
-func NotIn(e float64, arr ...float64) bool {
+func NotIn(e int, arr ...int) bool {
 	return !In(e, arr...)
 }
 
 // IdxOf : returns the index of the first instance of e in slice, or -1 if e is not present in slice
-func IdxOf(e float64, arr ...float64) int {
+func IdxOf(e int, arr ...int) int {
 	for i, ele := range arr {
 		if ele == e {
 			return i
@@ -94,7 +92,7 @@ func IdxOf(e float64, arr ...float64) int {
 }
 
 // LastIdxOf : returns the index of the last instance of e in slice, or -1 if e is not present in slice
-func LastIdxOf(e float64, arr ...float64) int {
+func LastIdxOf(e int, arr ...int) int {
 	for i := len(arr) - 1; i >= 0; i-- {
 		if arr[i] == e {
 			return i
@@ -104,11 +102,11 @@ func LastIdxOf(e float64, arr ...float64) int {
 }
 
 // MkSet : remove repeated elements in arr
-func MkSet(arr ...float64) (set []float64) {
+func MkSet(arr ...int) (set []int) {
 	if arr == nil {
 		return nil
 	}
-	m := make(map[float64]struct{})
+	m := make(map[int]struct{})
 	for _, ele := range arr {
 		if _, ok := m[ele]; !ok {
 			set = append(set, ele)
@@ -116,13 +114,13 @@ func MkSet(arr ...float64) (set []float64) {
 		}
 	}
 	if len(set) == 0 {
-		return []float64{}
+		return []int{}
 	}
 	return
 }
 
 // Superset :
-func Superset(setA, setB []float64) bool {
+func Superset(setA, setB []int) bool {
 NEXT_B:
 	for _, b := range setB {
 		for _, a := range setA {
@@ -136,12 +134,12 @@ NEXT_B:
 }
 
 // Subset :
-func Subset(setA, setB []float64) bool {
+func Subset(setA, setB []int) bool {
 	return Superset(setB, setA)
 }
 
 // equal :
-func equal(setA, setB []float64) bool {
+func equal(setA, setB []int) bool {
 	if (setA == nil && setB != nil) || (setA != nil && setB == nil) {
 		return false
 	}
@@ -149,8 +147,8 @@ func equal(setA, setB []float64) bool {
 		return false
 	}
 
-	tmpA := make([]float64, len(setA))
-	tmpB := make([]float64, len(setB))
+	tmpA := make([]int, len(setA))
+	tmpB := make([]int, len(setB))
 	copy(tmpA, setA)
 	copy(tmpB, setB)
 
@@ -168,7 +166,7 @@ AGAIN:
 }
 
 // Equal
-func Equal(sets ...[]float64) bool {
+func Equal(sets ...[]int) bool {
 	for i := 0; i < len(sets)-1; i++ {
 		this := sets[i]
 		next := sets[i+1]
@@ -180,17 +178,17 @@ func Equal(sets ...[]float64) bool {
 }
 
 // SuperEq :
-func SuperEq(setA, setB []float64) bool {
+func SuperEq(setA, setB []int) bool {
 	return Superset(setA, setB) || Equal(setA, setB)
 }
 
 // SubEq :
-func SubEq(setA, setB []float64) bool {
+func SubEq(setA, setB []int) bool {
 	return Subset(setA, setB) || Equal(setA, setB)
 }
 
 // union :
-func union(setA, setB []float64) (set []float64) {
+func union(setA, setB []int) (set []int) {
 	if setA == nil && setB == nil {
 		return nil
 	}
@@ -201,7 +199,7 @@ func union(setA, setB []float64) (set []float64) {
 		return setA
 	}
 
-	m := make(map[float64]struct{})
+	m := make(map[int]struct{})
 	for _, a := range setA {
 		if _, ok := m[a]; !ok {
 			set = append(set, a)
@@ -215,13 +213,13 @@ func union(setA, setB []float64) (set []float64) {
 		}
 	}
 	if set == nil {
-		return []float64{}
+		return []int{}
 	}
 	return
 }
 
 // Union :
-func Union(sets ...[]float64) (set []float64) {
+func Union(sets ...[]int) (set []int) {
 	if len(sets) == 0 {
 		return nil
 	}
@@ -233,12 +231,12 @@ func Union(sets ...[]float64) (set []float64) {
 }
 
 // intersect :
-func intersect(setA, setB []float64) (set []float64) {
+func intersect(setA, setB []int) (set []int) {
 	if setA == nil || setB == nil {
 		return nil
 	}
 
-	copyA, copyB := make([]float64, len(setA)), make([]float64, len(setB))
+	copyA, copyB := make([]int, len(setA)), make([]int, len(setB))
 	copy(copyA, setA)
 	copy(copyB, setB)
 
@@ -254,13 +252,13 @@ AGAIN:
 		}
 	}
 	if set == nil {
-		return []float64{}
+		return []int{}
 	}
 	return
 }
 
 // Intersect :
-func Intersect(sets ...[]float64) (set []float64) {
+func Intersect(sets ...[]int) (set []int) {
 	if len(sets) == 0 {
 		return nil
 	}
@@ -271,11 +269,11 @@ func Intersect(sets ...[]float64) (set []float64) {
 	return set
 }
 
-func minus(setA, setB []float64) (set []float64) {
+func minus(setA, setB []int) (set []int) {
 	if setA == nil {
 		return nil
 	}
-	set = make([]float64, 0)
+	set = make([]int, 0)
 
 NEXT_A:
 	for _, a := range setA {
@@ -289,17 +287,17 @@ NEXT_A:
 	return
 }
 
-func Minus(setA []float64, setOthers ...[]float64) (set []float64) {
+func Minus(setA []int, setOthers ...[]int) (set []int) {
 	return minus(setA, Union(setOthers...))
 }
 
 // Reorder : any index must less than len(arr)
-func Reorder(arr []float64, indices []int) (orders []float64) {
+func Reorder(arr []int, indices []int) (orders []int) {
 	if arr == nil || indices == nil {
 		return nil
 	}
 	if len(arr) == 0 || len(indices) == 0 {
-		return []float64{}
+		return []int{}
 	}
 	for _, idx := range indices {
 		orders = append(orders, arr[idx])
@@ -308,7 +306,7 @@ func Reorder(arr []float64, indices []int) (orders []float64) {
 }
 
 // Reverse : [1,2,3] => [3,2,1]
-func Reverse(arr []float64) []float64 {
+func Reverse(arr []int) []int {
 	indices := make([]int, len(arr))
 	for i := 0; i < len(arr); i++ {
 		indices[i] = len(arr) - 1 - i
@@ -317,12 +315,12 @@ func Reverse(arr []float64) []float64 {
 }
 
 // Reduce :
-func Reduce(arr []float64, reduce func(e0, e1 float64) float64) float64 {
+func Reduce(arr []int, reduce func(e0, e1 int) int) int {
 	switch len(arr) {
 	case 0, 1:
 		panic("Reduce at least receives 2 parameters")
 	default:
-		var r float64
+		var r int
 		for i := 0; i < len(arr)-1; i++ {
 			j := i + 1
 			e0, e1 := arr[i], arr[j]
@@ -336,14 +334,14 @@ func Reduce(arr []float64, reduce func(e0, e1 float64) float64) float64 {
 }
 
 // ZipArray :
-func ZipArray(arrays ...[]float64) (zipped [][]float64) {
+func ZipArray(arrays ...[]int) (zipped [][]int) {
 	lens := []int{}
 	for _, arr := range arrays {
 		lens = append(lens, len(arr))
 	}
-	min := ti.Min(lens...)
+	min := Min(lens...)
 	for i := 0; i < min; i++ {
-		tuple := []float64{}
+		tuple := []int{}
 		for _, arr := range arrays {
 			tuple = append(tuple, arr[i])
 		}
@@ -352,8 +350,8 @@ func ZipArray(arrays ...[]float64) (zipped [][]float64) {
 	return
 }
 
-// FilterMap : Filter & Modify []float64 slice, return []float64 slice
-func FilterMap(arr []float64, filter func(i int, e float64) bool, modifier func(i int, e float64) float64) (r []float64) {
+// FilterMap : Filter & Modify []int slice, return []int slice
+func FilterMap(arr []int, filter func(i int, e int) bool, modifier func(i int, e int) int) (r []int) {
 	switch {
 	case filter != nil && modifier != nil:
 		for i, e := range arr {
@@ -382,18 +380,18 @@ var (
 )
 
 // Map2KVs : map to key slice & value slice
-func Map2KVs(m map[float64]float64, less4key func(i float64, j float64) bool, less4value func(i float64, j float64) bool) (keys []float64, values []float64) {
+func Map2KVs(m map[int]int, less4key func(i int, j int) bool, less4value func(i int, j int) bool) (keys []int, values []int) {
 
 	if m == nil {
 		return nil, nil
 	}
 	if len(m) == 0 {
-		return []float64{}, []float64{}
+		return []int{}, []int{}
 	}
 
 	type kv struct {
-		key   float64
-		value float64
+		key   int
+		value int
 	}
 
 	kvSlc := []kv{}
@@ -425,4 +423,22 @@ func Map2KVs(m map[float64]float64, less4key func(i float64, j float64) bool, le
 		values = append(values, kvEle.value)
 	}
 	return
+}
+
+// MapMerge:
+func MapMerge(ms ...map[int]int) map[int][]int {
+	res := map[int][]int{}
+	for _, m := range ms {
+	srcMap:
+		for k, v := range m {
+			// Check if (k,v) was added before:
+			for _, v2 := range res[k] {
+				if v == v2 {
+					continue srcMap
+				}
+			}
+			res[k] = append(res[k], v)
+		}
+	}
+	return res
 }

@@ -1,23 +1,22 @@
-package ts
+package ti32
 
 import (
 	"reflect"
-	"sort"
 	"unsafe"
 
-	"github.com/digisan/gotk/slice/ti"
+	"github.com/digisan/gotk/generics/ti"
 )
 
-func DelEleOrderly(arr *[]string, i int) {
+func DelEleOrderly(arr *[]rune, i int) {
 	*arr = append((*arr)[:i], (*arr)[i+1:]...)
 }
 
-func DelEle(arr *[]string, i int) {
+func DelEle(arr *[]rune, i int) {
 	(*arr)[i] = (*arr)[len(*arr)-1]
 	(*reflect.SliceHeader)(unsafe.Pointer(arr)).Len--
 }
 
-func Max(arr ...string) string {
+func Max(arr ...rune) rune {
 	if len(arr) == 0 {
 		panic("Max args at least has one element")
 	}
@@ -30,7 +29,7 @@ func Max(arr ...string) string {
 	return m
 }
 
-func MaxIdx(arr ...string) (string, int) {
+func MaxIdx(arr ...rune) (rune, int) {
 	if len(arr) == 0 {
 		panic("Max args at least has one element")
 	}
@@ -45,7 +44,7 @@ func MaxIdx(arr ...string) (string, int) {
 	return m, idx
 }
 
-func Min(arr ...string) string {
+func Min(arr ...rune) rune {
 	if len(arr) == 0 {
 		panic("Min args at least has one element")
 	}
@@ -58,7 +57,7 @@ func Min(arr ...string) string {
 	return m
 }
 
-func MinIdx(arr ...string) (string, int) {
+func MinIdx(arr ...rune) (rune, int) {
 	if len(arr) == 0 {
 		panic("Min args at least has one element")
 	}
@@ -74,17 +73,17 @@ func MinIdx(arr ...string) (string, int) {
 }
 
 // In : if arr has element e, return true. otherwise false
-func In(e string, arr ...string) bool {
+func In(e rune, arr ...rune) bool {
 	return IdxOf(e, arr...) != -1
 }
 
 // NotIn : if arr does NOT have element e, return true. otherwise false
-func NotIn(e string, arr ...string) bool {
+func NotIn(e rune, arr ...rune) bool {
 	return !In(e, arr...)
 }
 
 // IdxOf : returns the index of the first instance of e in slice, or -1 if e is not present in slice
-func IdxOf(e string, arr ...string) int {
+func IdxOf(e rune, arr ...rune) int {
 	for i, ele := range arr {
 		if ele == e {
 			return i
@@ -94,7 +93,7 @@ func IdxOf(e string, arr ...string) int {
 }
 
 // LastIdxOf : returns the index of the last instance of e in slice, or -1 if e is not present in slice
-func LastIdxOf(e string, arr ...string) int {
+func LastIdxOf(e rune, arr ...rune) int {
 	for i := len(arr) - 1; i >= 0; i-- {
 		if arr[i] == e {
 			return i
@@ -104,11 +103,11 @@ func LastIdxOf(e string, arr ...string) int {
 }
 
 // MkSet : remove repeated elements in arr
-func MkSet(arr ...string) (set []string) {
+func MkSet(arr ...rune) (set []rune) {
 	if arr == nil {
 		return nil
 	}
-	m := make(map[string]struct{})
+	m := make(map[rune]struct{})
 	for _, ele := range arr {
 		if _, ok := m[ele]; !ok {
 			set = append(set, ele)
@@ -116,13 +115,13 @@ func MkSet(arr ...string) (set []string) {
 		}
 	}
 	if len(set) == 0 {
-		return []string{}
+		return []rune{}
 	}
 	return
 }
 
 // Superset :
-func Superset(setA, setB []string) bool {
+func Superset(setA, setB []rune) bool {
 NEXT_B:
 	for _, b := range setB {
 		for _, a := range setA {
@@ -136,12 +135,12 @@ NEXT_B:
 }
 
 // Subset :
-func Subset(setA, setB []string) bool {
+func Subset(setA, setB []rune) bool {
 	return Superset(setB, setA)
 }
 
 // equal :
-func equal(setA, setB []string) bool {
+func equal(setA, setB []rune) bool {
 	if (setA == nil && setB != nil) || (setA != nil && setB == nil) {
 		return false
 	}
@@ -149,8 +148,8 @@ func equal(setA, setB []string) bool {
 		return false
 	}
 
-	tmpA := make([]string, len(setA))
-	tmpB := make([]string, len(setB))
+	tmpA := make([]rune, len(setA))
+	tmpB := make([]rune, len(setB))
 	copy(tmpA, setA)
 	copy(tmpB, setB)
 
@@ -168,7 +167,7 @@ AGAIN:
 }
 
 // Equal
-func Equal(sets ...[]string) bool {
+func Equal(sets ...[]rune) bool {
 	for i := 0; i < len(sets)-1; i++ {
 		this := sets[i]
 		next := sets[i+1]
@@ -180,17 +179,17 @@ func Equal(sets ...[]string) bool {
 }
 
 // SuperEq :
-func SuperEq(setA, setB []string) bool {
+func SuperEq(setA, setB []rune) bool {
 	return Superset(setA, setB) || Equal(setA, setB)
 }
 
 // SubEq :
-func SubEq(setA, setB []string) bool {
+func SubEq(setA, setB []rune) bool {
 	return Subset(setA, setB) || Equal(setA, setB)
 }
 
 // union :
-func union(setA, setB []string) (set []string) {
+func union(setA, setB []rune) (set []rune) {
 	if setA == nil && setB == nil {
 		return nil
 	}
@@ -201,7 +200,7 @@ func union(setA, setB []string) (set []string) {
 		return setA
 	}
 
-	m := make(map[string]struct{})
+	m := make(map[rune]struct{})
 	for _, a := range setA {
 		if _, ok := m[a]; !ok {
 			set = append(set, a)
@@ -215,13 +214,13 @@ func union(setA, setB []string) (set []string) {
 		}
 	}
 	if set == nil {
-		return []string{}
+		return []rune{}
 	}
 	return
 }
 
 // Union :
-func Union(sets ...[]string) (set []string) {
+func Union(sets ...[]rune) (set []rune) {
 	if len(sets) == 0 {
 		return nil
 	}
@@ -233,12 +232,12 @@ func Union(sets ...[]string) (set []string) {
 }
 
 // intersect :
-func intersect(setA, setB []string) (set []string) {
+func intersect(setA, setB []rune) (set []rune) {
 	if setA == nil || setB == nil {
 		return nil
 	}
 
-	copyA, copyB := make([]string, len(setA)), make([]string, len(setB))
+	copyA, copyB := make([]rune, len(setA)), make([]rune, len(setB))
 	copy(copyA, setA)
 	copy(copyB, setB)
 
@@ -254,13 +253,13 @@ AGAIN:
 		}
 	}
 	if set == nil {
-		return []string{}
+		return []rune{}
 	}
 	return
 }
 
 // Intersect :
-func Intersect(sets ...[]string) (set []string) {
+func Intersect(sets ...[]rune) (set []rune) {
 	if len(sets) == 0 {
 		return nil
 	}
@@ -271,11 +270,11 @@ func Intersect(sets ...[]string) (set []string) {
 	return set
 }
 
-func minus(setA, setB []string) (set []string) {
+func minus(setA, setB []rune) (set []rune) {
 	if setA == nil {
 		return nil
 	}
-	set = make([]string, 0)
+	set = make([]rune, 0)
 
 NEXT_A:
 	for _, a := range setA {
@@ -289,17 +288,17 @@ NEXT_A:
 	return
 }
 
-func Minus(setA []string, setOthers ...[]string) (set []string) {
+func Minus(setA []rune, setOthers ...[]rune) (set []rune) {
 	return minus(setA, Union(setOthers...))
 }
 
 // Reorder : any index must less than len(arr)
-func Reorder(arr []string, indices []int) (orders []string) {
+func Reorder(arr []rune, indices []int) (orders []rune) {
 	if arr == nil || indices == nil {
 		return nil
 	}
 	if len(arr) == 0 || len(indices) == 0 {
-		return []string{}
+		return []rune{}
 	}
 	for _, idx := range indices {
 		orders = append(orders, arr[idx])
@@ -308,7 +307,7 @@ func Reorder(arr []string, indices []int) (orders []string) {
 }
 
 // Reverse : [1,2,3] => [3,2,1]
-func Reverse(arr []string) []string {
+func Reverse(arr []rune) []rune {
 	indices := make([]int, len(arr))
 	for i := 0; i < len(arr); i++ {
 		indices[i] = len(arr) - 1 - i
@@ -317,12 +316,12 @@ func Reverse(arr []string) []string {
 }
 
 // Reduce :
-func Reduce(arr []string, reduce func(e0, e1 string) string) string {
+func Reduce(arr []rune, reduce func(e0, e1 rune) rune) rune {
 	switch len(arr) {
 	case 0, 1:
 		panic("Reduce at least receives 2 parameters")
 	default:
-		var r string
+		var r rune
 		for i := 0; i < len(arr)-1; i++ {
 			j := i + 1
 			e0, e1 := arr[i], arr[j]
@@ -336,93 +335,18 @@ func Reduce(arr []string, reduce func(e0, e1 string) string) string {
 }
 
 // ZipArray :
-func ZipArray(arrays ...[]string) (zipped [][]string) {
+func ZipArray(arrays ...[]rune) (zipped [][]rune) {
 	lens := []int{}
 	for _, arr := range arrays {
 		lens = append(lens, len(arr))
 	}
 	min := ti.Min(lens...)
 	for i := 0; i < min; i++ {
-		tuple := []string{}
+		tuple := []rune{}
 		for _, arr := range arrays {
 			tuple = append(tuple, arr[i])
 		}
 		zipped = append(zipped, tuple)
-	}
-	return
-}
-
-// FilterMap : Filter & Modify []string slice, return []string slice
-func FilterMap(arr []string, filter func(i int, e string) bool, modifier func(i int, e string) string) (r []string) {
-	switch {
-	case filter != nil && modifier != nil:
-		for i, e := range arr {
-			if filter(i, e) {
-				r = append(r, modifier(i, e))
-			}
-		}
-	case filter != nil && modifier == nil:
-		for i, e := range arr {
-			if filter(i, e) {
-				r = append(r, e)
-			}
-		}
-	case filter == nil && modifier != nil:
-		for i, e := range arr {
-			r = append(r, modifier(i, e))
-		}
-	default:
-		return arr
-	}
-	return
-}
-
-var (
-	FM = FilterMap
-)
-
-// Map2KVs : map to key slice & value slice
-func Map2KVs(m map[string]string, less4key func(i string, j string) bool, less4value func(i string, j string) bool) (keys []string, values []string) {
-
-	if m == nil {
-		return nil, nil
-	}
-	if len(m) == 0 {
-		return []string{}, []string{}
-	}
-
-	type kv struct {
-		key   string
-		value string
-	}
-
-	kvSlc := []kv{}
-	for k, v := range m {
-		kvSlc = append(kvSlc, kv{key: k, value: v})
-	}
-
-	switch {
-	case less4key != nil && less4value == nil:
-		sort.SliceStable(kvSlc, func(i, j int) bool { return less4key(kvSlc[i].key, kvSlc[j].key) })
-
-	case less4key == nil && less4value != nil:
-		sort.SliceStable(kvSlc, func(i, j int) bool { return less4value(kvSlc[i].value, kvSlc[j].value) })
-
-	case less4key != nil && less4value != nil:
-		sort.SliceStable(kvSlc, func(i, j int) bool {
-			if kvSlc[i].value == kvSlc[j].value {
-				return less4key(kvSlc[i].key, kvSlc[j].key)
-			}
-			return less4value(kvSlc[i].value, kvSlc[j].value)
-		})
-
-	default:
-		// do not sort
-	}
-
-	for _, kvEle := range kvSlc {
-		keys = append(keys, kvEle.key)
-		values = append(values, kvEle.value)
 	}
 	return
 }

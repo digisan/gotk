@@ -72,3 +72,21 @@ func Map2KVs(m map[string]int, less4key func(i string, j string) bool, less4valu
 	}
 	return
 }
+
+// MapMerge:
+func MapMerge(ms ...map[string]int) map[string][]int {
+	res := map[string][]int{}
+	for _, m := range ms {
+	srcMap:
+		for k, v := range m {
+			// Check if (k,v) was added before:
+			for _, v2 := range res[k] {
+				if v == v2 {
+					continue srcMap
+				}
+			}
+			res[k] = append(res[k], v)
+		}
+	}
+	return res
+}

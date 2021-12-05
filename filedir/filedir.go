@@ -9,7 +9,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/digisan/gotk/slice/ts"
+	"github.com/digisan/gotk/generics/ts"
 )
 
 // ".txt" => ".txt", "txt" => ".txt", " " => "", "" => ""

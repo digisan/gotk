@@ -20,7 +20,7 @@ func TestFileLineScan(t *testing.T) {
 		{
 			name: "OK",
 			args: args{
-				filepath: "../slice/T1.template",
+				filepath: "../generics/T1.template",
 				f: func(line string) (bool, string) {
 					return true, sReplaceAll(sReplaceAll(line, "Xxx", "Int"), "xxx", "int")
 				},

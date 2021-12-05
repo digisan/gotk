@@ -1,35 +1,90 @@
-package tpt
+package ts
 
 import (
-	"image"
 	"reflect"
 	"sort"
 	"unsafe"
 
-	"github.com/digisan/gotk/slice/ti"
+	"github.com/digisan/gotk/generics/ti"
 )
 
-func DelEleOrderly(arr *[]image.Point, i int) {
+func DelEleOrderly(arr *[]string, i int) {
 	*arr = append((*arr)[:i], (*arr)[i+1:]...)
 }
 
-func DelEle(arr *[]image.Point, i int) {
+func DelEle(arr *[]string, i int) {
 	(*arr)[i] = (*arr)[len(*arr)-1]
 	(*reflect.SliceHeader)(unsafe.Pointer(arr)).Len--
 }
 
+func Max(arr ...string) string {
+	if len(arr) == 0 {
+		panic("Max args at least has one element")
+	}
+	m := arr[0]
+	for _, a := range arr[1:] {
+		if a > m {
+			m = a
+		}
+	}
+	return m
+}
+
+func MaxIdx(arr ...string) (string, int) {
+	if len(arr) == 0 {
+		panic("Max args at least has one element")
+	}
+	m := arr[0]
+	idx := 0
+	for i, a := range arr[1:] {
+		if a > m {
+			m = a
+			idx = i + 1
+		}
+	}
+	return m, idx
+}
+
+func Min(arr ...string) string {
+	if len(arr) == 0 {
+		panic("Min args at least has one element")
+	}
+	m := arr[0]
+	for _, a := range arr[1:] {
+		if a < m {
+			m = a
+		}
+	}
+	return m
+}
+
+func MinIdx(arr ...string) (string, int) {
+	if len(arr) == 0 {
+		panic("Min args at least has one element")
+	}
+	m := arr[0]
+	idx := 0
+	for i, a := range arr[1:] {
+		if a < m {
+			m = a
+			idx = i + 1
+		}
+	}
+	return m, idx
+}
+
 // In : if arr has element e, return true. otherwise false
-func In(e image.Point, arr ...image.Point) bool {
+func In(e string, arr ...string) bool {
 	return IdxOf(e, arr...) != -1
 }
 
 // NotIn : if arr does NOT have element e, return true. otherwise false
-func NotIn(e image.Point, arr ...image.Point) bool {
+func NotIn(e string, arr ...string) bool {
 	return !In(e, arr...)
 }
 
 // IdxOf : returns the index of the first instance of e in slice, or -1 if e is not present in slice
-func IdxOf(e image.Point, arr ...image.Point) int {
+func IdxOf(e string, arr ...string) int {
 	for i, ele := range arr {
 		if ele == e {
 			return i
@@ -39,7 +94,7 @@ func IdxOf(e image.Point, arr ...image.Point) int {
 }
 
 // LastIdxOf : returns the index of the last instance of e in slice, or -1 if e is not present in slice
-func LastIdxOf(e image.Point, arr ...image.Point) int {
+func LastIdxOf(e string, arr ...string) int {
 	for i := len(arr) - 1; i >= 0; i-- {
 		if arr[i] == e {
 			return i
@@ -49,11 +104,11 @@ func LastIdxOf(e image.Point, arr ...image.Point) int {
 }
 
 // MkSet : remove repeated elements in arr
-func MkSet(arr ...image.Point) (set []image.Point) {
+func MkSet(arr ...string) (set []string) {
 	if arr == nil {
 		return nil
 	}
-	m := make(map[image.Point]struct{})
+	m := make(map[string]struct{})
 	for _, ele := range arr {
 		if _, ok := m[ele]; !ok {
 			set = append(set, ele)
@@ -61,13 +116,13 @@ func MkSet(arr ...image.Point) (set []image.Point) {
 		}
 	}
 	if len(set) == 0 {
-		return []image.Point{}
+		return []string{}
 	}
 	return
 }
 
 // Superset :
-func Superset(setA, setB []image.Point) bool {
+func Superset(setA, setB []string) bool {
 NEXT_B:
 	for _, b := range setB {
 		for _, a := range setA {
@@ -81,12 +136,12 @@ NEXT_B:
 }
 
 // Subset :
-func Subset(setA, setB []image.Point) bool {
+func Subset(setA, setB []string) bool {
 	return Superset(setB, setA)
 }
 
 // equal :
-func equal(setA, setB []image.Point) bool {
+func equal(setA, setB []string) bool {
 	if (setA == nil && setB != nil) || (setA != nil && setB == nil) {
 		return false
 	}
@@ -94,8 +149,8 @@ func equal(setA, setB []image.Point) bool {
 		return false
 	}
 
-	tmpA := make([]image.Point, len(setA))
-	tmpB := make([]image.Point, len(setB))
+	tmpA := make([]string, len(setA))
+	tmpB := make([]string, len(setB))
 	copy(tmpA, setA)
 	copy(tmpB, setB)
 
@@ -113,7 +168,7 @@ AGAIN:
 }
 
 // Equal
-func Equal(sets ...[]image.Point) bool {
+func Equal(sets ...[]string) bool {
 	for i := 0; i < len(sets)-1; i++ {
 		this := sets[i]
 		next := sets[i+1]
@@ -125,17 +180,17 @@ func Equal(sets ...[]image.Point) bool {
 }
 
 // SuperEq :
-func SuperEq(setA, setB []image.Point) bool {
+func SuperEq(setA, setB []string) bool {
 	return Superset(setA, setB) || Equal(setA, setB)
 }
 
 // SubEq :
-func SubEq(setA, setB []image.Point) bool {
+func SubEq(setA, setB []string) bool {
 	return Subset(setA, setB) || Equal(setA, setB)
 }
 
 // union :
-func union(setA, setB []image.Point) (set []image.Point) {
+func union(setA, setB []string) (set []string) {
 	if setA == nil && setB == nil {
 		return nil
 	}
@@ -146,7 +201,7 @@ func union(setA, setB []image.Point) (set []image.Point) {
 		return setA
 	}
 
-	m := make(map[image.Point]struct{})
+	m := make(map[string]struct{})
 	for _, a := range setA {
 		if _, ok := m[a]; !ok {
 			set = append(set, a)
@@ -160,13 +215,13 @@ func union(setA, setB []image.Point) (set []image.Point) {
 		}
 	}
 	if set == nil {
-		return []image.Point{}
+		return []string{}
 	}
 	return
 }
 
 // Union :
-func Union(sets ...[]image.Point) (set []image.Point) {
+func Union(sets ...[]string) (set []string) {
 	if len(sets) == 0 {
 		return nil
 	}
@@ -178,12 +233,12 @@ func Union(sets ...[]image.Point) (set []image.Point) {
 }
 
 // intersect :
-func intersect(setA, setB []image.Point) (set []image.Point) {
+func intersect(setA, setB []string) (set []string) {
 	if setA == nil || setB == nil {
 		return nil
 	}
 
-	copyA, copyB := make([]image.Point, len(setA)), make([]image.Point, len(setB))
+	copyA, copyB := make([]string, len(setA)), make([]string, len(setB))
 	copy(copyA, setA)
 	copy(copyB, setB)
 
@@ -199,13 +254,13 @@ AGAIN:
 		}
 	}
 	if set == nil {
-		return []image.Point{}
+		return []string{}
 	}
 	return
 }
 
 // Intersect :
-func Intersect(sets ...[]image.Point) (set []image.Point) {
+func Intersect(sets ...[]string) (set []string) {
 	if len(sets) == 0 {
 		return nil
 	}
@@ -216,11 +271,11 @@ func Intersect(sets ...[]image.Point) (set []image.Point) {
 	return set
 }
 
-func minus(setA, setB []image.Point) (set []image.Point) {
+func minus(setA, setB []string) (set []string) {
 	if setA == nil {
 		return nil
 	}
-	set = make([]image.Point, 0)
+	set = make([]string, 0)
 
 NEXT_A:
 	for _, a := range setA {
@@ -234,17 +289,17 @@ NEXT_A:
 	return
 }
 
-func Minus(setA []image.Point, setOthers ...[]image.Point) (set []image.Point) {
+func Minus(setA []string, setOthers ...[]string) (set []string) {
 	return minus(setA, Union(setOthers...))
 }
 
 // Reorder : any index must less than len(arr)
-func Reorder(arr []image.Point, indices []int) (orders []image.Point) {
+func Reorder(arr []string, indices []int) (orders []string) {
 	if arr == nil || indices == nil {
 		return nil
 	}
 	if len(arr) == 0 || len(indices) == 0 {
-		return []image.Point{}
+		return []string{}
 	}
 	for _, idx := range indices {
 		orders = append(orders, arr[idx])
@@ -253,7 +308,7 @@ func Reorder(arr []image.Point, indices []int) (orders []image.Point) {
 }
 
 // Reverse : [1,2,3] => [3,2,1]
-func Reverse(arr []image.Point) []image.Point {
+func Reverse(arr []string) []string {
 	indices := make([]int, len(arr))
 	for i := 0; i < len(arr); i++ {
 		indices[i] = len(arr) - 1 - i
@@ -262,12 +317,12 @@ func Reverse(arr []image.Point) []image.Point {
 }
 
 // Reduce :
-func Reduce(arr []image.Point, reduce func(e0, e1 image.Point) image.Point) image.Point {
+func Reduce(arr []string, reduce func(e0, e1 string) string) string {
 	switch len(arr) {
 	case 0, 1:
 		panic("Reduce at least receives 2 parameters")
 	default:
-		var r image.Point
+		var r string
 		for i := 0; i < len(arr)-1; i++ {
 			j := i + 1
 			e0, e1 := arr[i], arr[j]
@@ -281,14 +336,14 @@ func Reduce(arr []image.Point, reduce func(e0, e1 image.Point) image.Point) imag
 }
 
 // ZipArray :
-func ZipArray(arrays ...[]image.Point) (zipped [][]image.Point) {
+func ZipArray(arrays ...[]string) (zipped [][]string) {
 	lens := []int{}
 	for _, arr := range arrays {
 		lens = append(lens, len(arr))
 	}
 	min := ti.Min(lens...)
 	for i := 0; i < min; i++ {
-		tuple := []image.Point{}
+		tuple := []string{}
 		for _, arr := range arrays {
 			tuple = append(tuple, arr[i])
 		}
@@ -297,8 +352,8 @@ func ZipArray(arrays ...[]image.Point) (zipped [][]image.Point) {
 	return
 }
 
-// FilterMap : Filter & Modify []image.Point slice, return []image.Point slice
-func FilterMap(arr []image.Point, filter func(i int, e image.Point) bool, modifier func(i int, e image.Point) image.Point) (r []image.Point) {
+// FilterMap : Filter & Modify []string slice, return []string slice
+func FilterMap(arr []string, filter func(i int, e string) bool, modifier func(i int, e string) string) (r []string) {
 	switch {
 	case filter != nil && modifier != nil:
 		for i, e := range arr {
@@ -327,18 +382,18 @@ var (
 )
 
 // Map2KVs : map to key slice & value slice
-func Map2KVs(m map[image.Point]image.Point, less4key func(i image.Point, j image.Point) bool, less4value func(i image.Point, j image.Point) bool) (keys []image.Point, values []image.Point) {
+func Map2KVs(m map[string]string, less4key func(i string, j string) bool, less4value func(i string, j string) bool) (keys []string, values []string) {
 
 	if m == nil {
 		return nil, nil
 	}
 	if len(m) == 0 {
-		return []image.Point{}, []image.Point{}
+		return []string{}, []string{}
 	}
 
 	type kv struct {
-		key   image.Point
-		value image.Point
+		key   string
+		value string
 	}
 
 	kvSlc := []kv{}
@@ -370,4 +425,22 @@ func Map2KVs(m map[image.Point]image.Point, less4key func(i image.Point, j image
 		values = append(values, kvEle.value)
 	}
 	return
+}
+
+// MapMerge:
+func MapMerge(ms ...map[string]string) map[string][]string {
+	res := map[string][]string{}
+	for _, m := range ms {
+	srcMap:
+		for k, v := range m {
+			// Check if (k,v) was added before:
+			for _, v2 := range res[k] {
+				if v == v2 {
+					continue srcMap
+				}
+			}
+			res[k] = append(res[k], v)
+		}
+	}
+	return res
 }

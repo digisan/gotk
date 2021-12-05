@@ -1,9 +1,9 @@
-package tis
+package tsb
 
 import "sort"
 
-// FilterMap : Filter & Modify []int slice, return []string slice
-func FilterMap(arr []int, filter func(i int, e int) bool, modifier func(i int, e int) string) (r []string) {
+// FilterMap : Filter & Modify []string slice, return []bool slice
+func FilterMap(arr []string, filter func(i int, e string) bool, modifier func(i int, e string) bool) (r []bool) {
 	if modifier == nil {
 		panic("modifier cannot be nil")
 	}
@@ -28,18 +28,18 @@ var (
 )
 
 // Map2KVs : map to key slice & value slice
-func Map2KVs(m map[int]string, less4key func(i int, j int) bool, less4value func(i string, j string) bool) (keys []int, values []string) {
+func Map2KVs(m map[string]bool, less4key func(i string, j string) bool, less4value func(i bool, j bool) bool) (keys []string, values []bool) {
 
 	if m == nil {
 		return nil, nil
 	}
 	if len(m) == 0 {
-		return []int{}, []string{}
+		return []string{}, []bool{}
 	}
 
 	type kv struct {
-		key   int
-		value string
+		key   string
+		value bool
 	}
 
 	kvSlc := []kv{}
@@ -71,4 +71,22 @@ func Map2KVs(m map[int]string, less4key func(i int, j int) bool, less4value func
 		values = append(values, kvEle.value)
 	}
 	return
+}
+
+// MapMerge:
+func MapMerge(ms ...map[string]bool) map[string][]bool {
+	res := map[string][]bool{}
+	for _, m := range ms {
+	srcMap:
+		for k, v := range m {
+			// Check if (k,v) was added before:
+			for _, v2 := range res[k] {
+				if v == v2 {
+					continue srcMap
+				}
+			}
+			res[k] = append(res[k], v)
+		}
+	}
+	return res
 }
