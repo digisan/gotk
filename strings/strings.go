@@ -4,7 +4,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/digisan/gotk/generics/ti"
+	"github.com/digisan/go-generics/i32"
 )
 
 var (
@@ -35,7 +35,7 @@ func IndexAllByReg(s, sub string) (starts, ends []int) {
 }
 
 func RangeReplace(s string, ranges [][2]int, ns []string) string {
-	for i := 0; i < ti.Min(len(ranges), len(ns)); i++ {
+	for i := 0; i < i32.Min(len(ranges), len(ns)); i++ {
 		lenPrev := len(s)
 		start, end := ranges[i][0], ranges[i][1]
 		s = s[:start] + ns[i] + s[end:]

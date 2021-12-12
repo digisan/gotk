@@ -6,9 +6,9 @@ import (
 	"os"
 	"strings"
 
+	"github.com/digisan/go-generics/str"
 	fd "github.com/digisan/gotk/filedir"
 	"github.com/digisan/gotk/io"
-	"github.com/digisan/gotk/generics/ts"
 )
 
 // Chunk2Map :
@@ -45,7 +45,7 @@ func Chunk2Map(filepath, markstart, markend, sep string, env, val4path2abs bool)
 	}
 
 	// keyvars, _ := mapslice.KsVs2Slc(m, "KL-DESC")
-	keyvars, _ := ts.Map2KVs(m, func(i string, j string) bool { return len(i) > len(j) }, nil)
+	keyvars, _ := str.Map2KVs(m, func(i string, j string) bool { return len(i) > len(j) }, nil)
 
 	// replace '$XYZ $XY $X' to its value
 AGAIN1:
@@ -69,7 +69,7 @@ AGAIN2:
 	}
 
 	// keyvars, _ = mapslice.KsVs2Slc(m, "KL-DESC")
-	keyvars, _ = ts.Map2KVs(m, func(i string, j string) bool { return len(i) > len(j) }, nil)
+	keyvars, _ = str.Map2KVs(m, func(i string, j string) bool { return len(i) > len(j) }, nil)
 
 	// replace '${XYZ} ${XY} ${X}' to its value
 AGAIN3:
@@ -104,7 +104,7 @@ AGAIN3:
 }
 
 // EnvValued : if m is empty, environment variables as m apply to s
-func EnvValued(str string, m map[string]string) (valstr string) {
+func EnvValued(s string, m map[string]string) (valstr string) {
 
 	if len(m) == 0 {
 		m = make(map[string]string)
@@ -115,8 +115,8 @@ func EnvValued(str string, m map[string]string) (valstr string) {
 	}
 
 	// keyvars, _ := mapslice.KsVs2Slc(m, "KL-DESC")
-	keyvars, _ := ts.Map2KVs(m, func(i string, j string) bool { return len(i) > len(j) }, nil)
-	valstr = str
+	keyvars, _ := str.Map2KVs(m, func(i string, j string) bool { return len(i) > len(j) }, nil)
+	valstr = s
 
 	// replace '$XYZ $XY $X' to its value
 	for _, variable := range keyvars {
