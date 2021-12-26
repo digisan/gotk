@@ -57,3 +57,8 @@ func IsContInts(ints []int) (ok bool, minIfOk int, maxIfOk int) {
 	}
 	return reflect.DeepEqual(iter.Iter2Slc(s, e-1), ints), e, s
 }
+
+// nil-pointer could be non-nil interface{}
+func IsInterfaceNil(i interface{}) bool {
+	return reflect.ValueOf(i).IsNil()
+}

@@ -1,6 +1,9 @@
 package gotk
 
 import (
+	"fmt"
+	"io"
+	"os"
 	"testing"
 	"time"
 )
@@ -200,4 +203,25 @@ func TestIsCSV(t *testing.T) {
 			}
 		})
 	}
+}
+
+func checkInterface(i io.Reader) {
+	fmt.Println("[i == nil]", i == nil)
+	fmt.Println("[nil interface{}]", IsInterfaceNil(i))
+}
+
+func TestIsInterfaceNil(t *testing.T) {
+	file, err := os.Open("./go.mod")
+	if err != nil {
+		panic(err)
+	}
+	checkInterface(file)
+
+	fmt.Println("-----------------")
+	file = nil
+	checkInterface(file)
+
+	fmt.Println("-----------------")
+	var file1 *os.File = nil
+	checkInterface(file1)
 }
