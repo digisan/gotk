@@ -60,5 +60,5 @@ func IsContInts(ints []int) (ok bool, minIfOk int, maxIfOk int) {
 
 // nil-pointer could be non-nil interface{}
 func IsInterfaceNil(i interface{}) bool {
-	return reflect.ValueOf(i).IsNil()
+	return i == nil || reflect.ValueOf(i).IsNil()
 }

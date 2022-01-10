@@ -211,6 +211,10 @@ func checkInterface(i io.Reader) {
 }
 
 func TestIsInterfaceNil(t *testing.T) {
+
+	fmt.Println(IsInterfaceNil(nil))
+	fmt.Println("-----------------")
+
 	file, err := os.Open("./go.mod")
 	if err != nil {
 		panic(err)
@@ -219,9 +223,11 @@ func TestIsInterfaceNil(t *testing.T) {
 
 	fmt.Println("-----------------")
 	file = nil
+	fmt.Println("[file == nil]", file == nil)
 	checkInterface(file)
 
 	fmt.Println("-----------------")
 	var file1 *os.File = nil
+	fmt.Println("[file1 == nil]", file1 == nil)
 	checkInterface(file1)
 }
