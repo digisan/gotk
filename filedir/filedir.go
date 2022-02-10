@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/fs"
 	"log"
+	"math"
 	"os"
 	"os/user"
 	"path/filepath"
@@ -26,9 +27,9 @@ func DotExt(ext string) string {
 }
 
 // DirExists :
-func DirExists(dirname string) bool {
-	dirname, _ = AbsPath(dirname, false)
-	info, err := os.Stat(dirname)
+func DirExists(path string) bool {
+	path, _ = AbsPath(path, false)
+	info, err := os.Stat(path)
 	if os.IsNotExist(err) {
 		return false
 	}
@@ -56,13 +57,13 @@ func FilesAllExist(filenames []string) bool {
 }
 
 // DirsAllExist :
-func DirsAllExist(dirnames []string) bool {
-	for _, dirname := range dirnames {
-		if !DirExists(dirname) {
+func DirsAllExist(paths []string) bool {
+	for _, path := range paths {
+		if !DirExists(path) {
 			return false
 		}
 	}
-	return len(dirnames) > 0
+	return len(paths) > 0
 }
 
 // FileIsEmpty :
@@ -80,13 +81,13 @@ func FileIsEmpty(filename string) (bool, error) {
 }
 
 // DirIsEmpty :
-func DirIsEmpty(dirname string) (bool, error) {
-	dirname, err := AbsPath(dirname, true)
+func DirIsEmpty(path string) (bool, error) {
+	path, err := AbsPath(path, true)
 	if err != nil {
 		return true, err
 	}
 
-	fs, err := os.ReadDir(dirname)
+	fs, err := os.ReadDir(path)
 	if err != nil {
 		log.Fatalf("Could NOT ReadDir: %v", err)
 	}
@@ -180,17 +181,44 @@ func GrandParent(path string) string {
 	return ""
 }
 
-// WalkFileDir : ignore hidden file or directory
-func WalkFileDir(dirname string, recursive bool, exctypes ...string) (filepaths, directories []string, err error) {
+func DirSize(path, unit string) (float64, error) {
+	mUnitScale := map[string]float64{
+		"k": 1024,
+		"K": 1024,
+		"m": 1024 * 1024,
+		"M": 1024 * 1024,
+		"g": 1024 * 1024 * 1024,
+		"G": 1024 * 1024 * 1024,
+		"t": 1024 * 1024 * 1024 * 1024,
+		"T": 1024 * 1024 * 1024 * 1024,
+	}
+	var size float64
+	err := filepath.Walk(path, func(_ string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		if !info.IsDir() {
+			size += float64(info.Size())
+		}
+		return err
+	})
+	if scale, ok := mUnitScale[unit]; ok {
+		return math.Ceil(size / scale), err
+	}
+	return math.Ceil(size), err
+}
 
-	dirname, err = AbsPath(dirname, true)
+// WalkFileDir : ignore hidden file or directory
+func WalkFileDir(path string, recursive bool, exctypes ...string) (filepaths, directories []string, err error) {
+
+	path, err = AbsPath(path, true)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	if !recursive {
 
-		files, err := os.ReadDir(dirname)
+		files, err := os.ReadDir(path)
 		if err != nil {
 			return nil, nil, err
 		}
@@ -212,17 +240,17 @@ func WalkFileDir(dirname string, recursive bool, exctypes ...string) (filepaths,
 				}
 			}
 
-			if path := filepath.Join(dirname, filename); FileExists(path) {
-				filepaths = append(filepaths, path)
+			if fp := filepath.Join(path, filename); FileExists(fp) {
+				filepaths = append(filepaths, fp)
 			} else {
-				directories = append(directories, path)
+				directories = append(directories, fp)
 			}
 		}
 
 	} else {
 
 		skipself := true
-		if err = filepath.WalkDir(dirname,
+		if err = filepath.WalkDir(path,
 			func(path string, d fs.DirEntry, err error) error {
 				if err != nil {
 					return err

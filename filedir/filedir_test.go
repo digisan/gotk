@@ -569,3 +569,8 @@ func TestRemove(t *testing.T) {
 		})
 	}
 }
+
+func TestDirSize(t *testing.T) {
+	sz, err := DirSize("../../", "k")
+	fmt.Printf("%f %v", sz, err)
+}
