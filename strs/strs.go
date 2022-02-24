@@ -1,4 +1,4 @@
-package strings
+package strs
 
 import (
 	"regexp"
@@ -46,4 +46,22 @@ func RangeReplace(s string, ranges [][2]int, ns []string) string {
 		}
 	}
 	return s
+}
+
+func HasAnyPrefix(s string, prefixGrp ...string) bool {
+	for _, prefix := range prefixGrp {
+		if strings.HasPrefix(s, prefix) {
+			return true
+		}
+	}
+	return false
+}
+
+func HasAnySuffix(s string, suffixGrp ...string) bool {
+	for _, suffix := range suffixGrp {
+		if strings.HasSuffix(s, suffix) {
+			return true
+		}
+	}
+	return false
 }
