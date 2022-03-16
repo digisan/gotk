@@ -1,5 +1,5 @@
 module github.com/digisan/gotk
 
-go 1.17
+go 1.18
 
-require github.com/digisan/go-generics v0.0.11
+require github.com/digisan/go-generics v0.1.0
