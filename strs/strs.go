@@ -4,7 +4,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/digisan/go-generics/i64"
+	. "github.com/digisan/go-generics/v2"
 )
 
 var (
@@ -35,7 +35,7 @@ func IndexAllByReg(s, sub string) (starts, ends []int) {
 }
 
 func RangeReplace(s string, ranges [][2]int, ns []string) string {
-	for i := 0; i < i64.Min(len(ranges), len(ns)); i++ {
+	for i := 0; i < Min(len(ranges), len(ns)); i++ {
 		lenPrev := len(s)
 		start, end := ranges[i][0], ranges[i][1]
 		s = s[:start] + ns[i] + s[end:]
@@ -64,4 +64,16 @@ func HasAnySuffix(s string, suffixGrp ...string) bool {
 		}
 	}
 	return false
+}
+
+func SplitPart(s, sep string, idx int) string {
+	ss := strings.Split(s, sep)
+	if idx < 0 && idx >= len(ss) {
+		panic("[idx] is out of range")
+	}
+	return ss[idx]
+}
+
+func SplitPartFromLast(s, sep string, idx int) string {
+	return Last(strings.Split(s, sep), idx)
 }

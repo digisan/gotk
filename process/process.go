@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"strconv"
 
-	"github.com/digisan/go-generics/str"
+	. "github.com/digisan/go-generics/v2"
 	fd "github.com/digisan/gotk/filedir"
 	"github.com/digisan/gotk/io"
 )
@@ -74,7 +74,7 @@ func GetRunningPID(pathOfExe string) (pidGrp []int) {
 		}
 
 		procpath := sSplit(sTrim(string(out), " \t\r\n"), ": ")[1]
-		if dir == procpath && str.In(fmt.Sprint(pid), pidGrpPGrep...) {
+		if dir == procpath && In(fmt.Sprint(pid), pidGrpPGrep...) {
 			pidGrp = append(pidGrp, pid)
 		}
 	}

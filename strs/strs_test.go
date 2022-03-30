@@ -79,3 +79,113 @@ func TestRangeReplace(t *testing.T) {
 		})
 	}
 }
+
+func TestSplitPart(t *testing.T) {
+	{
+		type args struct {
+			s   string
+			sep string
+			idx int
+		}
+		tests := []struct {
+			name string
+			args args
+			want string
+		}{
+			// TODO: Add test cases.
+			{
+				args: args{
+					s:   "abc^def^ghi",
+					sep: "^",
+					idx: 0,
+				},
+				want: "abc",
+			},
+			{
+				args: args{
+					s:   "abc^def^",
+					sep: "^",
+					idx: 2,
+				},
+				want: "",
+			},
+			{
+				args: args{
+					s:   "^def^ghi",
+					sep: "^",
+					idx: 0,
+				},
+				want: "",
+			},
+			{
+				args: args{
+					s:   "abcdefghi",
+					sep: "^",
+					idx: 0,
+				},
+				want: "abcdefghi",
+			},
+		}
+		for _, tt := range tests {
+			t.Run(tt.name, func(t *testing.T) {
+				if got := SplitPart(tt.args.s, tt.args.sep, tt.args.idx); got != tt.want {
+					t.Errorf("SplitPart() = %v, want %v", got, tt.want)
+				}
+			})
+		}
+	}
+
+	{
+		type args struct {
+			s   string
+			sep string
+			idx int
+		}
+		tests := []struct {
+			name string
+			args args
+			want string
+		}{
+			// TODO: Add test cases.
+			{
+				args: args{
+					s:   "abc^def^ghi",
+					sep: "^",
+					idx: 1,
+				},
+				want: "ghi",
+			},
+			{
+				args: args{
+					s:   "abc^def^",
+					sep: "^",
+					idx: 1,
+				},
+				want: "",
+			},
+			{
+				args: args{
+					s:   "^def^ghi",
+					sep: "^",
+					idx: 3,
+				},
+				want: "",
+			},
+			{
+				args: args{
+					s:   "abcdefghi",
+					sep: "^",
+					idx: 1,
+				},
+				want: "abcdefghi",
+			},
+		}
+		for _, tt := range tests {
+			t.Run(tt.name, func(t *testing.T) {
+				if got := SplitPartFromLast(tt.args.s, tt.args.sep, tt.args.idx); got != tt.want {
+					t.Errorf("SplitPart() = %v, want %v", got, tt.want)
+				}
+			})
+		}
+	}
+}

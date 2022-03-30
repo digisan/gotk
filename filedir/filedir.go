@@ -10,7 +10,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/digisan/go-generics/str"
+	. "github.com/digisan/go-generics/v2"
 )
 
 // ".txt" => ".txt", "txt" => ".txt", " " => "", "" => ""
@@ -147,7 +147,7 @@ func AncestorList(path string) (ancestors []string) {
 		}
 		ancestors = append(ancestors, abspath)
 	}
-	ancestors = str.Reverse(ancestors)
+	ancestors = Reverse(ancestors)
 	// fmt.Println(ancestors)
 
 	for i := len(ancestors) - 1; i >= 1; i-- {
@@ -326,7 +326,7 @@ func MergeDir(destdir string, move bool, onConflict func(existing, incoming []by
 		for _, file := range files {
 			dirs = append(dirs, filepath.Dir(file))
 		}
-		for _, dir := range str.MkSet(dirs...) {
+		for _, dir := range Settify(dirs...) {
 			aimdir := filepath.Clean(destdir) + dir[len(srcdir):]
 			os.Mkdir(aimdir, 0700)
 		}
