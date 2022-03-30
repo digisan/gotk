@@ -5,11 +5,11 @@ import (
 	"reflect"
 )
 
-func funcWrap(fn interface{}) func(...interface{}) interface{} {
+func funcWrap(fn any) func(...any) any {
 	if reflect.TypeOf(fn).Kind() != reflect.Func {
 		panic("[fn] argument is not a function")
 	}
-	return func(args ...interface{}) (rt interface{}) {
+	return func(args ...any) (rt any) {
 		defer func() {
 			if r := recover(); r != nil {
 				rt = fmt.Errorf("%v", r)
@@ -20,7 +20,7 @@ func funcWrap(fn interface{}) func(...interface{}) interface{} {
 		for n, v := range args {
 			vArgs[n] = reflect.ValueOf(v)
 		}
-		var rtVal []interface{}
+		var rtVal []any
 		for _, v := range reflect.ValueOf(fn).Call(vArgs) {
 			rtVal = append(rtVal, v.Interface())
 		}
@@ -29,11 +29,11 @@ func funcWrap(fn interface{}) func(...interface{}) interface{} {
 }
 
 // Task : only accept one param.
-// Define " cP4f, cR4f := make(chan interface{}), make(chan interface{}) "
+// Define " cP4f, cR4f := make(chan any), make(chan any) "
 // Then   " Task(true, f, cP4f, cR4f) "
 // Then   " go func() { -> for { -> select { -> case rf := <-cR4f: ... "
 // Please see "task_test.go"
-func Task(async bool, fn interface{}, cParam <-chan interface{}, cRet chan<- interface{}) (err error) {
+func Task(async bool, fn any, cParam <-chan any, cRet chan<- any) (err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			err = fmt.Errorf("%v", r)
@@ -43,7 +43,7 @@ func Task(async bool, fn interface{}, cParam <-chan interface{}, cRet chan<- int
 	go func() {
 		if async {
 			for param := range cParam {
-				go func(param interface{}) { cRet <- svrFn(param) }(param)
+				go func(param any) { cRet <- svrFn(param) }(param)
 			}
 		} else {
 			for param := range cParam {

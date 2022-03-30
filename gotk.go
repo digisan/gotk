@@ -22,12 +22,12 @@ func TrackTime(start time.Time) {
 
 // IsXML : Check str is valid XML
 func IsXML(str string) bool {
-	return xml.Unmarshal([]byte(str), new(interface{})) == nil
+	return xml.Unmarshal([]byte(str), new(any)) == nil
 }
 
 // IsJSON : Check str is valid JSON
 func IsJSON(str string) bool {
-	return json.Unmarshal([]byte(str), new(interface{})) == nil
+	return json.Unmarshal([]byte(str), new(any)) == nil
 }
 
 // IsCSV : Check str is valid CSV
@@ -59,6 +59,6 @@ func IsContInts(ints []int) (ok bool, minIfOk int, maxIfOk int) {
 }
 
 // nil-pointer could be non-nil interface{}
-func IsInterfaceNil(i interface{}) bool {
+func IsInterfaceNil(i any) bool {
 	return i == nil || reflect.ValueOf(i).IsNil()
 }

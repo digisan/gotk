@@ -36,23 +36,23 @@ func TestTask(t *testing.T) {
 	//
 	// Define Task & Parameters & Returns
 
-	cP4a, cR4a := make(chan interface{}), make(chan interface{})
+	cP4a, cR4a := make(chan any), make(chan any)
 	if err := Task(true, add, cP4a, cR4a); err != nil {
 		fmt.Println(err)
 	}
 
-	cP4b, cR4b := make(chan interface{}), make(chan interface{})
+	cP4b, cR4b := make(chan any), make(chan any)
 	if err := Task(true, b, cP4b, cR4b); err != nil {
 		fmt.Println(err)
 	}
 
-	cP4p, cR4p := make(chan interface{}), make(chan interface{})
+	cP4p, cR4p := make(chan any), make(chan any)
 	p := P{name: "Tick"}
 	if err := Task(true, p.Greeting, cP4p, cR4p); err != nil {
 		fmt.Println(err)
 	}
 
-	cP4c, cR4c := make(chan interface{}), make(chan interface{})
+	cP4c, cR4c := make(chan any), make(chan any)
 	if err := Task(true, c, cP4c, cR4c); err != nil {
 		fmt.Println(err)
 	}
