@@ -1,24 +1,16 @@
-package gotk
+package typetool
 
 import (
 	"encoding/csv"
 	"encoding/json"
 	"encoding/xml"
-	"fmt"
 	"math"
 	"reflect"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/digisan/gotk/iter"
 )
-
-// TrackTime : defer TrackTime(time.Now())
-func TrackTime(start time.Time) {
-	elapsed := time.Since(start)
-	fmt.Printf("Took %s\n", elapsed)
-}
 
 // IsXML : Check str is valid XML
 func IsXML(str string) bool {
@@ -43,7 +35,7 @@ func IsNumeric(str string) bool {
 }
 
 // IsContInts : check ints is continuous int slice
-func IsContInts(ints []int) (ok bool, minIfOk int, maxIfOk int) {
+func IsContInts(ints ...int) (ok bool, minIfOk int, maxIfOk int) {
 	if len(ints) == 0 {
 		return false, math.MinInt32, math.MaxInt32
 	}
@@ -58,7 +50,7 @@ func IsContInts(ints []int) (ok bool, minIfOk int, maxIfOk int) {
 	return reflect.DeepEqual(iter.Iter2Slc(s, e-1), ints), e, s
 }
 
-// nil-pointer could be non-nil interface{}
+// nil-pointer could be non-nil any
 func IsInterfaceNil(i any) bool {
 	return i == nil || reflect.ValueOf(i).IsNil()
 }

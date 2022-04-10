@@ -1,29 +1,11 @@
-package gotk
+package typetool
 
 import (
 	"fmt"
 	"io"
 	"os"
 	"testing"
-	"time"
 )
-
-func TestTrackTime(t *testing.T) {
-	type args struct {
-		start time.Time
-	}
-	tests := []struct {
-		name string
-		args args
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			TrackTime(tt.args.start)
-		})
-	}
-}
 
 func TestIsXML(t *testing.T) {
 	type args struct {
@@ -143,7 +125,7 @@ func TestIsContInts(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotOk, gotMin, gotMax := IsContInts(tt.args.ints)
+			gotOk, gotMin, gotMax := IsContInts(tt.args.ints...)
 			if gotOk != tt.wantOk {
 				t.Errorf("IsContInts() gotOk = %v, want %v", gotOk, tt.wantOk)
 			}
@@ -207,7 +189,7 @@ func TestIsCSV(t *testing.T) {
 
 func checkInterface(i io.Reader) {
 	fmt.Println("[i == nil]", i == nil)
-	fmt.Println("[nil interface{}]", IsInterfaceNil(i))
+	fmt.Println("[nil any]", IsInterfaceNil(i))
 }
 
 func TestIsInterfaceNil(t *testing.T) {
@@ -215,7 +197,7 @@ func TestIsInterfaceNil(t *testing.T) {
 	fmt.Println(IsInterfaceNil(nil))
 	fmt.Println("-----------------")
 
-	file, err := os.Open("./go.mod")
+	file, err := os.Open("../go.mod")
 	if err != nil {
 		panic(err)
 	}

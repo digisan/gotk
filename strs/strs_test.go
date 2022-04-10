@@ -189,3 +189,113 @@ func TestSplitPart(t *testing.T) {
 		}
 	}
 }
+
+func TestSplitLn(t *testing.T) {
+	type args struct {
+		s string
+	}
+	tests := []struct {
+		name string
+		args args
+		want []string
+	}{
+		// TODO: Add test cases.
+		{
+			args: args{
+				s: "abc\ndef",
+			},
+			want: []string{"abc", "def"},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := SplitLn(tt.args.s); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("SplitLn() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestTrimTailFromLast(t *testing.T) {
+	type args struct {
+		s    string
+		mark string
+	}
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		// TODO: Add test cases.
+		{
+			args: args{
+				s:    "abcd#efgh#i",
+				mark: "#",
+			},
+			want: "abcd#efgh",
+		},
+		{
+			args: args{
+				s:    "abcd#",
+				mark: "#",
+			},
+			want: "abcd",
+		},
+		{
+			args: args{
+				s:    "abcd",
+				mark: "#",
+			},
+			want: "abcd",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := TrimTailFromLast(tt.args.s, tt.args.mark); got != tt.want {
+				t.Errorf("TrimTailFromLast() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestTrimHeadToLast(t *testing.T) {
+	type args struct {
+		s    string
+		mark string
+	}
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		// TODO: Add test cases.
+		{
+			args: args{
+				s:    "abcd#efgh#i",
+				mark: "#",
+			},
+			want: "i",
+		},
+		{
+			args: args{
+				s:    "abcd#",
+				mark: "#",
+			},
+			want: "",
+		},
+		{
+			args: args{
+				s:    "abcd",
+				mark: "#",
+			},
+			want: "abcd",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := TrimHeadToLast(tt.args.s, tt.args.mark); got != tt.want {
+				t.Errorf("TrimHeadToLast() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

@@ -2,17 +2,14 @@ package strs
 
 import (
 	"regexp"
+	"runtime"
 	"strings"
 
 	. "github.com/digisan/go-generics/v2"
 )
 
-var (
-	sIndex = strings.Index
-)
-
 func IndexAll(s, sub string) (starts, ends []int) {
-	for i := sIndex(s, sub); i != -1; i = sIndex(s, sub) {
+	for i := strings.Index(s, sub); i != -1; i = strings.Index(s, sub) {
 		last := 0
 		if len(starts) > 0 {
 			last = starts[len(starts)-1] + 1
@@ -76,4 +73,23 @@ func SplitPart(s, sep string, idx int) string {
 
 func SplitPartFromLast(s, sep string, idx int) string {
 	return Last(strings.Split(s, sep), idx)
+}
+
+func TrimTailFromLast(s, mark string) string {
+	if i := strings.LastIndex(s, mark); i >= 0 {
+		return s[:i]
+	}
+	return s
+}
+
+func TrimHeadToLast(s, mark string) string {
+	if i := strings.LastIndex(s, mark); i >= 0 {
+		return s[i+len(mark):]
+	}
+	return s
+}
+
+func SplitLn(s string) []string {
+	sep := MATCH(runtime.GOOS, "windows", "linux", "darwin", "\r\n", "\n", "\r", "\n")
+	return strings.Split(s, sep)
 }
