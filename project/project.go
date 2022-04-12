@@ -1,6 +1,7 @@
 package project
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"os/exec"
@@ -47,8 +48,16 @@ func GitTag() (tag string, err error) {
 	// run git
 	cmd := exec.Command("bash", "-c", "git describe --tags")
 	output, err := cmd.Output()
+	if err != nil {
+		es := err.Error() 
+		switch {
+		case strings.Contains(es, "127"):
+			err = errors.New("[git] command not found")
+		}
+		return "", err
+	}
 	if outstr := strings.Trim(string(output), " \n\t"); outstr != "" {
-		return strings.Split(outstr, "-")[0], nil
+		return outstr, nil
 	}
 	return "", nil
 }
@@ -58,6 +67,7 @@ func GitVer(dfltVer string) (string, bool) {
 	if err != nil {
 		return dfltVer, false
 	}
+	tag = strings.Split(tag, "-")[0]
 	if r := regexp.MustCompile(`^v\d+\.\d+\.\d+$`); r.MatchString(tag) {
 		return tag, true
 	}
