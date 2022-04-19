@@ -104,6 +104,9 @@ func Remove(path string) error {
 
 // AbsPath : if check(false), error always nil
 func AbsPath(path string, check bool) (string, error) {
+	if filepath.IsAbs(path) {
+		return path, nil
+	}
 	if sHasPrefix(path, "~/") {
 		user, err := user.Current()
 		if err != nil {

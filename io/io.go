@@ -85,6 +85,30 @@ func MustAppendFile(filename string, data []byte, newline bool) {
 	}
 }
 
+// RmFileAndEmptyDir :
+func RmFileAndEmptyDir(path string) error {
+	if err := os.RemoveAll(path); err != nil {
+		return err
+	}
+	ls := fd.AncestorList(path)
+	for i := len(ls); i > 0; i-- {
+		p := "/" + filepath.Join(ls[:i]...)
+		empty, err := fd.DirIsEmpty(p)
+		if err != nil {
+			log.Println(err)
+			return err
+		}
+		if empty {
+			if err := os.RemoveAll(p); err != nil {
+				return err
+			}
+		} else {
+			break
+		}
+	}
+	return nil
+}
+
 // readByLine :
 func readByLine(r io.Reader, f func(line string) (bool, string), outfile string) (string, error) {
 	lines := []string{}
