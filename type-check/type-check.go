@@ -1,4 +1,4 @@
-package typetool
+package typecheck
 
 import (
 	"encoding/csv"
