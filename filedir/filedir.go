@@ -1,7 +1,12 @@
 package filedir
 
 import (
+	"crypto/md5"
+	"crypto/sha1"
+	"crypto/sha256"
 	"fmt"
+	"hash"
+	"io"
 	"io/fs"
 	"log"
 	"math"
@@ -370,4 +375,33 @@ func MergeDir(destdir string, move bool, onConflict func(existing, incoming []by
 		}
 	}
 	return nil
+}
+
+// h: [md5.New() / sha1.New() / sha256.New()]
+func FileHash(file string, h hash.Hash) string {
+	if !FileExists(file) {
+		return ""
+	}
+	f, err := os.Open(file)
+	if err != nil {
+		panic(err)
+	}
+	defer f.Close()
+	_, err = io.Copy(h, f)
+	if err != nil {
+		panic(err)
+	}
+	return fmt.Sprintf("%x", h.Sum(nil))
+}
+
+func SelfMD5() string {
+	return FileHash(os.Args[0], md5.New())
+}
+
+func SelfSHA1() string {
+	return FileHash(os.Args[0], sha1.New())
+}
+
+func SelfSHA256() string {
+	return FileHash(os.Args[0], sha256.New())
 }

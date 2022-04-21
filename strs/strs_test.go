@@ -299,3 +299,59 @@ func TestTrimHeadToLast(t *testing.T) {
 		})
 	}
 }
+
+func TestMaxlen(t *testing.T) {
+	type args struct {
+		s      string
+		length int
+	}
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		// TODO: Add test cases.
+		{
+			args: args{
+				s:      "abc",
+				length: 5,
+			},
+			want: "abc",
+		},
+		{
+			args: args{
+				s:      "abc",
+				length: 2,
+			},
+			want: "ab",
+		},
+		{
+			args: args{
+				s:      "abc",
+				length: 3,
+			},
+			want: "abc",
+		},
+		{
+			args: args{
+				s:      "",
+				length: 3,
+			},
+			want: "",
+		},
+		{
+			args: args{
+				s:      "",
+				length: 0,
+			},
+			want: "",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := Maxlen(tt.args.s, tt.args.length); got != tt.want {
+				t.Errorf("Maxlen() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

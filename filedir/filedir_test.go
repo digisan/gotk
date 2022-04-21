@@ -574,3 +574,9 @@ func TestDirSize(t *testing.T) {
 	sz, err := DirSize("../../", "k")
 	fmt.Printf("%f %v", sz, err)
 }
+
+func TestSelfHash(t *testing.T) {
+	fmt.Println(SelfMD5())
+	fmt.Println(SelfSHA1())
+	fmt.Println(SelfSHA256())
+}

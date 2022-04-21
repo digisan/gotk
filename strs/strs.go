@@ -8,6 +8,13 @@ import (
 	. "github.com/digisan/go-generics/v2"
 )
 
+func Maxlen(s string, length int) string {
+	if len(s) < length {
+		return s
+	}
+	return s[:length]
+}
+
 func IndexAll(s, sub string) (starts, ends []int) {
 	for i := strings.Index(s, sub); i != -1; i = strings.Index(s, sub) {
 		last := 0

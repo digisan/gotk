@@ -2,6 +2,7 @@ package io
 
 import (
 	"bufio"
+	"bytes"
 	"io"
 	"log"
 	"os"
@@ -149,4 +150,22 @@ func FileLineScan(filepath string, f func(line string) (bool, string), outfile s
 // StrLineScan :
 func StrLineScan(str string, f func(line string) (bool, string), outfile string) (string, error) {
 	return readByLine(strings.NewReader(str), f, outfile)
+}
+
+func StreamToBytes(stream io.Reader) []byte {
+	buf := new(bytes.Buffer)
+	_, err := buf.ReadFrom(stream)
+	if err != nil {
+		panic(err)
+	}
+	return buf.Bytes()
+}
+
+func StreamToString(stream io.Reader) string {
+	buf := new(bytes.Buffer)
+	_, err := buf.ReadFrom(stream)
+	if err != nil {
+		panic(err)
+	}
+	return buf.String()
 }
