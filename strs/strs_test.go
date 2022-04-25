@@ -355,3 +355,131 @@ func TestMaxlen(t *testing.T) {
 		})
 	}
 }
+
+func TestSplitPartToNum(t *testing.T) {
+	type args struct {
+		s   string
+		sep string
+		idx int
+	}
+	tests := []struct {
+		name string
+		args args
+		want float64
+	}{
+		// TODO: Add test cases.
+		{
+			args: args{
+				s:   "1-2-3-4-5",
+				sep: "-",
+				idx: 0,
+			},
+			want: 1.0,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := SplitPartToNum(tt.args.s, tt.args.sep, tt.args.idx); got != tt.want {
+				t.Errorf("SplitPartToNum() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestSplitPartToBool(t *testing.T) {
+	type args struct {
+		s   string
+		sep string
+		idx int
+	}
+	tests := []struct {
+		name string
+		args args
+		want bool
+	}{
+		// TODO: Add test cases.
+		{
+			args: args{
+				s:   "t-true-FALSE-false-True",
+				sep: "-",
+				idx: 0,
+			},
+			want: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := SplitPartToBool(tt.args.s, tt.args.sep, tt.args.idx); got != tt.want {
+				t.Errorf("SplitPartToBool() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestSplitPartFromLastToNum(t *testing.T) {
+	type args struct {
+		s   string
+		sep string
+		idx int
+	}
+	tests := []struct {
+		name string
+		args args
+		want float64
+	}{
+		// TODO: Add test cases.
+		{
+			args: args{
+				s:   "1-2-3-4-5",
+				sep: "-",
+				idx: 1,
+			},
+			want: 5.0,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := SplitPartFromLastToNum(tt.args.s, tt.args.sep, tt.args.idx); got != tt.want {
+				t.Errorf("SplitPartFromLastToNum() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestSplitPartFromLastToBool(t *testing.T) {
+	type args struct {
+		s   string
+		sep string
+		idx int
+	}
+	tests := []struct {
+		name string
+		args args
+		want bool
+	}{
+		// TODO: Add test cases.
+		{
+			args: args{
+				s:   "T-f-true-FALSE-F-0",
+				sep: "-",
+				idx: 2,
+			},
+			want: false,
+		},
+		{
+			args: args{
+				s:   "T-f-true-FALSE-F-0",
+				sep: "-",
+				idx: 6,
+			},
+			want: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := SplitPartFromLastToBool(tt.args.s, tt.args.sep, tt.args.idx); got != tt.want {
+				t.Errorf("SplitPartFromLastToBool() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

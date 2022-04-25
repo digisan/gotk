@@ -3,6 +3,7 @@ package strs
 import (
 	"regexp"
 	"runtime"
+	"strconv"
 	"strings"
 
 	. "github.com/digisan/go-generics/v2"
@@ -78,8 +79,45 @@ func SplitPart(s, sep string, idx int) string {
 	return ss[idx]
 }
 
+func SplitPartToNum(s, sep string, idx int) float64 {
+	part := SplitPart(s, sep, idx)
+	num, err := strconv.ParseFloat(part, 64)
+	if err != nil {
+		panic(err)
+	}
+	return num
+}
+
+func SplitPartToBool(s, sep string, idx int) bool {
+	part := SplitPart(s, sep, idx)
+	boolean, err := strconv.ParseBool(part)
+	if err != nil {
+		panic(err)
+	}
+	return boolean
+}
+
+// idx 1 is the last element, idx 2 is the second last, etc...
 func SplitPartFromLast(s, sep string, idx int) string {
 	return Last(strings.Split(s, sep), idx)
+}
+
+func SplitPartFromLastToNum(s, sep string, idx int) float64 {
+	part := SplitPartFromLast(s, sep, idx)
+	num, err := strconv.ParseFloat(part, 64)
+	if err != nil {
+		panic(err)
+	}
+	return num
+}
+
+func SplitPartFromLastToBool(s, sep string, idx int) bool {
+	part := SplitPartFromLast(s, sep, idx)
+	boolean, err := strconv.ParseBool(part)
+	if err != nil {
+		panic(err)
+	}
+	return boolean
 }
 
 func TrimTailFromLast(s, mark string) string {
