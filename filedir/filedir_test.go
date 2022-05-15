@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"reflect"
 	"testing"
+	// . "github.com/digisan/go-generics/v2"
 )
 
 func TestParent(t *testing.T) {
@@ -579,4 +580,101 @@ func TestSelfHash(t *testing.T) {
 	fmt.Println(SelfMD5())
 	fmt.Println(SelfSHA1())
 	fmt.Println(SelfSHA256())
+}
+
+func TestChangePath(t *testing.T) {
+	type args struct {
+		path     string
+		newtail  string
+		fromlast int
+		keepext  bool
+		cp       bool
+		mv       bool
+	}
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		// TODO: Add test cases.
+		{
+			name: "",
+			args: args{
+				path:     "a/b/c/d.txt",
+				newtail:  "D",
+				fromlast: 1,
+				keepext:  true,
+			},
+			want: "a/b/c/D.txt",
+		},
+		{
+			name: "",
+			args: args{
+				path:     "a/b/c/d.txt",
+				newtail:  "D",
+				fromlast: 1,
+				keepext:  false,
+			},
+			want: "a/b/c/D",
+		},
+		{
+			name: "",
+			args: args{
+				path:     "a/b/c/d.txt",
+				newtail:  "D",
+				fromlast: 2,
+				keepext:  true,
+			},
+			want: "a/b/D.txt",
+		},
+		{
+			name: "",
+			args: args{
+				path:     "a/b/c/d.txt",
+				newtail:  "D.json",
+				fromlast: 2,
+				keepext:  false,
+			},
+			want: "a/b/D.json",
+		},
+		{
+			name: "",
+			args: args{
+				path:     "/d.txt",
+				newtail:  "D",
+				fromlast: 1,
+				keepext:  true,
+			},
+			want: "/D.txt",
+		},
+		{
+			name: "",
+			args: args{
+				path:     "/d.txt",
+				newtail:  "D.json",
+				fromlast: 1,
+				keepext:  false,
+			},
+			want: "/D.json",
+		},
+		{
+			name: "move",
+			args: args{
+				path:     "./var.go",
+				newtail:  "test/v",
+				fromlast: 1,
+				keepext:  true,
+				cp:       true,
+				mv:       true,
+			},
+			want: "./test/v.go",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := ChangePath(tt.args.path, tt.args.newtail, tt.args.fromlast, tt.args.keepext, tt.args.cp, tt.args.mv); got != tt.want {
+				t.Errorf("PathChange() = %v, want %v", got, tt.want)
+			}
+		})
+	}
 }

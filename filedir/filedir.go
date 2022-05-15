@@ -16,7 +16,62 @@ import (
 	"strings"
 
 	. "github.com/digisan/go-generics/v2"
+	"github.com/digisan/gotk/strs"
 )
+
+// e.g. path is "/a/b/c/d.txt",
+// if [fromlast] is 1 and newtail is [D], return is "/a/b/c/D.txt"
+// if [fromlast] is 2 and newtail is [D], return is "/a/b/D.txt"
+// if [fromlast] is 1 and newtail is [D/E.txt] return is "/a/b/c/D/E.txt"
+func ChangePath(path, newtail string, fromlast int, keepext, cp, mv bool) string {
+	sep := string(os.PathSeparator)
+
+	ext := ""
+	if keepext {
+		iLastExt := strings.LastIndex(path, ".")
+		iLastPart := strings.LastIndex(path, sep)
+		if iLastExt > iLastPart {
+			ext = path[iLastExt:]
+		}
+	}
+
+	newpath := ""
+	head, tail := "", strs.SplitPartFromLast(path, sep, fromlast)
+	if fromlast == 1 {
+		head = strings.TrimRight(path, tail)
+		newpath = head + newtail + ext
+	} else {
+		idx := strings.LastIndex(path, sep+tail+sep)
+		head = path[:idx]
+		newpath = head + sep + newtail + ext
+	}
+
+	if !cp && !mv {
+		return newpath
+	}
+
+	if FileExists(path) {
+		if err := os.MkdirAll(filepath.Dir(newpath), os.ModePerm); err != nil {
+			log.Fatalln(err)
+		}
+		switch {
+		case cp:
+			buf, err := os.ReadFile(path)
+			if err != nil {
+				log.Fatalln(err)
+			}
+			if err = os.WriteFile(newpath, buf, os.ModePerm); err != nil {
+				log.Fatalln(err)
+			}
+		case mv:
+			if err := os.Rename(path, newpath); err != nil {
+				log.Fatalln(err)
+			}
+		}
+	}
+
+	return newpath
+}
 
 // ".txt" => ".txt", "txt" => ".txt", " " => "", "" => ""
 func DotExt(ext string) string {
