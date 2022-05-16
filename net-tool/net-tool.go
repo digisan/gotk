@@ -99,3 +99,31 @@ func LocIP2PubIP(path string) error {
 	}
 	return os.WriteFile(path, []byte(src), os.ModePerm)
 }
+
+func LocalhostToIP127(fpath string) error {
+	data, err := os.ReadFile(fpath)
+	if err != nil {
+		return err
+	}
+
+	src := string(data)
+	r := regexp.MustCompile(`https?://localhost(:\d+)?/`)
+	src = r.ReplaceAllStringFunc(src, func(s string) string {
+		return strings.ReplaceAll(s, "localhost", "127.0.0.1")
+	})
+	return os.WriteFile(fpath, []byte(src), os.ModePerm)
+}
+
+func IP127ToLocalhost(fpath string) error {
+	data, err := os.ReadFile(fpath)
+	if err != nil {
+		return err
+	}
+
+	src := string(data)
+	r := regexp.MustCompile(`https?://127.0.0.1(:\d+)?/`)
+	src = r.ReplaceAllStringFunc(src, func(s string) string {
+		return strings.ReplaceAll(s, "127.0.0.1", "localhost")
+	})
+	return os.WriteFile(fpath, []byte(src), os.ModePerm)
+}

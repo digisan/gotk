@@ -50,3 +50,11 @@ func TestChangeLocalPort(t *testing.T) {
 func TestIPLoc2Pub(t *testing.T) {
 	fmt.Println(LocIP2PubIP("./test-sample.ejs"))
 }
+
+func TestLhTo127(t *testing.T) {
+	fmt.Println(LocalhostToIP127("./test-sample.ejs"))
+}
+
+func Test127ToLh(t *testing.T) {
+	fmt.Println(IP127ToLocalhost("./test-sample.ejs"))
+}
