@@ -19,30 +19,35 @@ import (
 	"github.com/digisan/gotk/strs"
 )
 
-// e.g. path is "/a/b/c/d.txt",
+// e.g. fpath is "/a/b/c/d.txt",
 // if [fromlast] is 1 and newtail is [D], return is "/a/b/c/D.txt"
 // if [fromlast] is 2 and newtail is [D], return is "/a/b/D.txt"
 // if [fromlast] is 1 and newtail is [D/E.txt] return is "/a/b/c/D/E.txt"
-func ChangePath(path, newtail string, fromlast int, keepext, cp, mv bool) string {
+func ChangeFilePath(strict bool, fpath, newtail string, fromlast int, keepext, cp, mv bool) string {
+
+	if strict && !FileExists(fpath) {
+		log.Fatalf("[%s] is not existing", fpath)
+	}
+
 	sep := string(os.PathSeparator)
 
 	ext := ""
 	if keepext {
-		iLastExt := strings.LastIndex(path, ".")
-		iLastPart := strings.LastIndex(path, sep)
+		iLastExt := strings.LastIndex(fpath, ".")
+		iLastPart := strings.LastIndex(fpath, sep)
 		if iLastExt > iLastPart {
-			ext = path[iLastExt:]
+			ext = fpath[iLastExt:]
 		}
 	}
 
 	newpath := ""
-	head, tail := "", strs.SplitPartFromLast(path, sep, fromlast)
+	head, tail := "", strs.SplitPartFromLast(fpath, sep, fromlast)
 	if fromlast == 1 {
-		head = strings.TrimRight(path, tail)
+		head = strings.TrimRight(fpath, tail)
 		newpath = head + newtail + ext
 	} else {
-		idx := strings.LastIndex(path, sep+tail+sep)
-		head = path[:idx]
+		idx := strings.LastIndex(fpath, sep+tail+sep)
+		head = fpath[:idx]
 		newpath = head + sep + newtail + ext
 	}
 
@@ -50,13 +55,13 @@ func ChangePath(path, newtail string, fromlast int, keepext, cp, mv bool) string
 		return newpath
 	}
 
-	if FileExists(path) {
+	if FileExists(fpath) {
 		if err := os.MkdirAll(filepath.Dir(newpath), os.ModePerm); err != nil {
 			log.Fatalln(err)
 		}
 		switch {
 		case cp:
-			buf, err := os.ReadFile(path)
+			buf, err := os.ReadFile(fpath)
 			if err != nil {
 				log.Fatalln(err)
 			}
@@ -64,7 +69,7 @@ func ChangePath(path, newtail string, fromlast int, keepext, cp, mv bool) string
 				log.Fatalln(err)
 			}
 		case mv:
-			if err := os.Rename(path, newpath); err != nil {
+			if err := os.Rename(fpath, newpath); err != nil {
 				log.Fatalln(err)
 			}
 		}

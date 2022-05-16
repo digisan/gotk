@@ -584,7 +584,8 @@ func TestSelfHash(t *testing.T) {
 
 func TestChangePath(t *testing.T) {
 	type args struct {
-		path     string
+		strict   bool
+		fpath    string
 		newtail  string
 		fromlast int
 		keepext  bool
@@ -600,7 +601,7 @@ func TestChangePath(t *testing.T) {
 		{
 			name: "",
 			args: args{
-				path:     "a/b/c/d.txt",
+				fpath:    "a/b/c/d.txt",
 				newtail:  "D",
 				fromlast: 1,
 				keepext:  true,
@@ -610,7 +611,7 @@ func TestChangePath(t *testing.T) {
 		{
 			name: "",
 			args: args{
-				path:     "a/b/c/d.txt",
+				fpath:    "a/b/c/d.txt",
 				newtail:  "D",
 				fromlast: 1,
 				keepext:  false,
@@ -620,17 +621,19 @@ func TestChangePath(t *testing.T) {
 		{
 			name: "",
 			args: args{
-				path:     "a/b/c/d.txt",
-				newtail:  "D",
+				strict:   true,
+				cp:       true,
+				fpath:    "./test/v.go",
+				newtail:  "C/D",
 				fromlast: 2,
 				keepext:  true,
 			},
-			want: "a/b/D.txt",
+			want: "./C/D.go",
 		},
 		{
 			name: "",
 			args: args{
-				path:     "a/b/c/d.txt",
+				fpath:    "a/b/c/d.txt",
 				newtail:  "D.json",
 				fromlast: 2,
 				keepext:  false,
@@ -640,7 +643,7 @@ func TestChangePath(t *testing.T) {
 		{
 			name: "",
 			args: args{
-				path:     "/d.txt",
+				fpath:    "/d.txt",
 				newtail:  "D",
 				fromlast: 1,
 				keepext:  true,
@@ -650,7 +653,7 @@ func TestChangePath(t *testing.T) {
 		{
 			name: "",
 			args: args{
-				path:     "/d.txt",
+				fpath:    "/d.txt",
 				newtail:  "D.json",
 				fromlast: 1,
 				keepext:  false,
@@ -660,7 +663,7 @@ func TestChangePath(t *testing.T) {
 		{
 			name: "move",
 			args: args{
-				path:     "./var.go",
+				fpath:    "./var.go",
 				newtail:  "test/v",
 				fromlast: 1,
 				keepext:  true,
@@ -669,11 +672,24 @@ func TestChangePath(t *testing.T) {
 			},
 			want: "./test/v.go",
 		},
+		// {
+		// 	name: "strict",
+		// 	args: args{
+		// 		strict: true,
+		// 		fpath:    "./Var.go",
+		// 		newtail:  "test/v",
+		// 		fromlast: 1,
+		// 		keepext:  true,
+		// 		cp:       true,
+		// 		mv:       true,
+		// 	},
+		// 	want: "./test/v.go",
+		// },
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := ChangePath(tt.args.path, tt.args.newtail, tt.args.fromlast, tt.args.keepext, tt.args.cp, tt.args.mv); got != tt.want {
-				t.Errorf("PathChange() = %v, want %v", got, tt.want)
+			if got := ChangeFilePath(tt.args.strict, tt.args.fpath, tt.args.newtail, tt.args.fromlast, tt.args.keepext, tt.args.cp, tt.args.mv); got != tt.want {
+				t.Errorf("ChangeFilePath() = %v, want %v", got, tt.want)
 			}
 		})
 	}
