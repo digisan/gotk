@@ -144,7 +144,7 @@ func TestRelPath(t *testing.T) {
 
 func TestFilesAllExist(t *testing.T) {
 	type args struct {
-		filenames []string
+		paths []string
 	}
 	tests := []struct {
 		name string
@@ -155,7 +155,7 @@ func TestFilesAllExist(t *testing.T) {
 		{
 			name: "OK",
 			args: args{
-				filenames: []string{
+				paths: []string{
 					"/home/qmiao/Desktop/nats-stream.service",
 					"~/Desktop/nats-stream.service",
 					"../../nats-stream.service",
@@ -166,7 +166,7 @@ func TestFilesAllExist(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := FilesAllExist(tt.args.filenames); got != tt.want {
+			if got := AllFilesExist(tt.args.paths...); got != tt.want {
 				t.Errorf("FilesExist() = %v, want %v", got, tt.want)
 			}
 		})
@@ -175,7 +175,7 @@ func TestFilesAllExist(t *testing.T) {
 
 func TestDirsAllExist(t *testing.T) {
 	type args struct {
-		dirnames []string
+		paths []string
 	}
 	tests := []struct {
 		name string
@@ -186,7 +186,7 @@ func TestDirsAllExist(t *testing.T) {
 		{
 			name: "OK",
 			args: args{
-				dirnames: []string{
+				paths: []string{
 					"~/Desktop/",
 					"~/Desktop/gotk",
 				},
@@ -196,11 +196,46 @@ func TestDirsAllExist(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := DirsAllExist(tt.args.dirnames); got != tt.want {
+			if got := AllDirsExist(tt.args.paths...); got != tt.want {
 				t.Errorf("DirsExist() = %v, want %v", got, tt.want)
 			}
 		})
 	}
+}
+
+func TestAllExistAsWhole(t *testing.T) {
+	type args struct {
+		paths []string
+	}
+	tests := []struct {
+		name string
+		args args
+		want bool
+	}{
+		// TODO: Add test cases.
+		{
+			args: args{
+				paths: []string{
+					"./a.txt",
+					"./c/c.txt",
+					"./b.txt",
+					"./d.txt",
+				},
+			},
+			want: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := AllExistAsWhole(tt.args.paths...); got != tt.want {
+				t.Errorf("AllExistAsWhole() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestRmFileWithEmptyDir(t *testing.T) {
+	RmFileAndEmptyDir("./a/b/c/d/txt.txt")
 }
 
 func TestFileIsEmpty(t *testing.T) {
@@ -229,7 +264,7 @@ func TestFileIsEmpty(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := FileIsEmpty(tt.args.filename)
+			got, err := IsFileEmpty(tt.args.filename)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("FileIsEmpty() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -267,7 +302,7 @@ func TestDirIsEmpty(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := DirIsEmpty(tt.args.dirname)
+			got, err := IsDirEmpty(tt.args.dirname)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("DirIsEmpty() error = %v, wantErr %v", err, tt.wantErr)
 				return

@@ -24,23 +24,23 @@ func init() {
 }
 
 // MustCreateDir :
-func MustCreateDir(dir string) {
+func MustCreateDir(path string) {
 
 	mtx4crtdir.Lock()
 	defer mtx4crtdir.Unlock()
 
-	dir, _ = fd.AbsPath(dir, false)
-	filename := dir + "/MustCreateDir.temp"
-	MustWriteFile(filename, []byte{})
-	if err := os.Remove(filename); err != nil {
+	path, _ = fd.AbsPath(path, false)
+	fpath := path + "/MustCreateDir.temp"
+	MustWriteFile(fpath, []byte{})
+	if err := os.Remove(fpath); err != nil {
 		log.Fatalf("%v", err)
 	}
 }
 
 // MustWriteFile :
-func MustWriteFile(filename string, data []byte) {
+func MustWriteFile(path string, data []byte) {
 
-	dir, _ := fd.AbsPath(filepath.Dir(filename), false)
+	dir, _ := fd.AbsPath(filepath.Dir(path), false)
 	_, err := os.Stat(dir)
 	if err != nil && os.IsNotExist(err) {
 		if err := os.MkdirAll(dir, DirPerm); err != nil { // dir must be 0777 to put writes in
@@ -52,27 +52,27 @@ func MustWriteFile(filename string, data []byte) {
 		log.Fatalf("Could NOT Get file Status: %v", err)
 	}
 
-	filename = filepath.Join(dir, filepath.Base(filename))
+	path = filepath.Join(dir, filepath.Base(path))
 WRITE:
-	if err := os.WriteFile(filename, data, FilePerm); err != nil {
+	if err := os.WriteFile(path, data, FilePerm); err != nil {
 		log.Fatalf("Could NOT Write File: %v", err)
 	}
 }
 
 // MustAppendFile :
-func MustAppendFile(filename string, data []byte, newline bool) {
+func MustAppendFile(path string, data []byte, newline bool) {
 
-	filename, _ = fd.AbsPath(filename, false)
-	_, err := os.Stat(filename)
+	path, _ = fd.AbsPath(path, false)
+	_, err := os.Stat(path)
 	if err != nil && os.IsNotExist(err) {
-		MustWriteFile(filename, data)
+		MustWriteFile(path, data)
 		return
 	}
 	if err != nil {
 		log.Fatalf("Could NOT Get file Status: %v", err)
 	}
 
-	file, err := os.OpenFile(filename, os.O_APPEND|os.O_WRONLY, FilePerm)
+	file, err := os.OpenFile(path, os.O_APPEND|os.O_WRONLY, FilePerm)
 	if err != nil {
 		log.Fatalf("Could NOT Open File to Append: %v", err)
 	}
@@ -84,30 +84,6 @@ func MustAppendFile(filename string, data []byte, newline bool) {
 	if _, err = file.Write(data); err != nil {
 		log.Fatalf("Could NOT Append File: %v", err)
 	}
-}
-
-// RmFileAndEmptyDir :
-func RmFileAndEmptyDir(path string) error {
-	if err := os.RemoveAll(path); err != nil {
-		return err
-	}
-	ls := fd.AncestorList(path)
-	for i := len(ls); i > 0; i-- {
-		p := "/" + filepath.Join(ls[:i]...)
-		empty, err := fd.DirIsEmpty(p)
-		if err != nil {
-			log.Println(err)
-			return err
-		}
-		if empty {
-			if err := os.RemoveAll(p); err != nil {
-				return err
-			}
-		} else {
-			break
-		}
-	}
-	return nil
 }
 
 // readByLine :
@@ -130,12 +106,12 @@ func readByLine(r io.Reader, f func(line string) (bool, string), outfile string)
 }
 
 // FileLineScan :
-func FileLineScan(filepath string, f func(line string) (bool, string), outfile string) (string, error) {
-	filepath, err := fd.AbsPath(filepath, true)
+func FileLineScan(path string, f func(line string) (bool, string), outfile string) (string, error) {
+	path, err := fd.AbsPath(path, true)
 	if err != nil {
 		return "", err
 	}
-	file, err := os.Open(filepath)
+	file, err := os.Open(path)
 	if err != nil {
 		return "", err
 	}

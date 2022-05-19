@@ -127,6 +127,3 @@ func TestMustCreateDir(t *testing.T) {
 	}
 }
 
-func TestRmFileWithEmptyDir(t *testing.T) {
-	RmFileAndEmptyDir("./a/b/c/d/txt.txt")
-}

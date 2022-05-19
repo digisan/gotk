@@ -102,27 +102,27 @@ func DirExists(path string) bool {
 }
 
 // FileExists :
-func FileExists(filename string) bool {
-	filename, _ = AbsPath(filename, false)
-	info, err := os.Stat(filename)
+func FileExists(path string) bool {
+	path, _ = AbsPath(path, false)
+	info, err := os.Stat(path)
 	if os.IsNotExist(err) {
 		return false
 	}
 	return !info.IsDir()
 }
 
-// FilesAllExist :
-func FilesAllExist(filenames []string) bool {
-	for _, filename := range filenames {
+// AllFilesExist:
+func AllFilesExist(paths ...string) bool {
+	for _, filename := range paths {
 		if !FileExists(filename) {
 			return false
 		}
 	}
-	return len(filenames) > 0
+	return len(paths) > 0
 }
 
-// DirsAllExist :
-func DirsAllExist(paths []string) bool {
+// AllDirsExist:
+func AllDirsExist(paths ...string) bool {
 	for _, path := range paths {
 		if !DirExists(path) {
 			return false
@@ -131,22 +131,43 @@ func DirsAllExist(paths []string) bool {
 	return len(paths) > 0
 }
 
-// FileIsEmpty :
-func FileIsEmpty(filename string) (bool, error) {
-	filename, err := AbsPath(filename, true)
+// AllExistAsWhole: If not all of paths exist, then remove all of them.
+// in other words, all exist OR all gone.
+func AllExistAsWhole(paths ...string) bool {
+	allExist := true
+	for _, path := range paths {
+		if FileExists(path) || DirExists(path) {
+			continue
+		}
+		allExist = false
+		break
+	}
+	if !allExist {
+		for _, path := range paths {
+			if err := RmFileAndEmptyDir(path); err != nil {
+				log.Fatalln(err)
+			}
+		}
+	}
+	return allExist
+}
+
+// IsFileEmpty :
+func IsFileEmpty(path string) (bool, error) {
+	path, err := AbsPath(path, true)
 	if err != nil {
 		return true, err
 	}
 
-	info, err := os.Stat(filename)
+	info, err := os.Stat(path)
 	if err != nil {
 		log.Fatalf("Could NOT Get file Status: %v", err)
 	}
 	return info.Size() == 0, nil
 }
 
-// DirIsEmpty :
-func DirIsEmpty(path string) (bool, error) {
+// IsDirEmpty :
+func IsDirEmpty(path string) (bool, error) {
 	path, err := AbsPath(path, true)
 	if err != nil {
 		return true, err
@@ -172,7 +193,7 @@ func AbsPath(path string, check bool) (string, error) {
 	if filepath.IsAbs(path) {
 		return path, nil
 	}
-	if sHasPrefix(path, "~/") {
+	if strings.HasPrefix(path, "~/") {
 		user, err := user.Current()
 		if err != nil {
 			log.Fatalf("%v", err)
@@ -297,13 +318,13 @@ func WalkFileDir(path string, recursive bool, exctypes ...string) (filepaths, di
 			filename := file.Name()
 
 			// ignore hidden file or directory
-			if sHasPrefix(filename, ".") {
+			if strings.HasPrefix(filename, ".") {
 				continue
 			}
 
 			// ignore excluded files
 			for _, exc := range exctypes {
-				if sHasSuffix(filename, "."+exc) {
+				if strings.HasSuffix(filename, "."+exc) {
 					continue NEXT_FILE
 				}
 			}
@@ -333,20 +354,20 @@ func WalkFileDir(path string, recursive bool, exctypes ...string) (filepaths, di
 				}
 
 				// ignore hidden file or directory
-				if sHasPrefix(filename, ".") {
+				if strings.HasPrefix(filename, ".") {
 					return nil
 				}
 
 				// ignore any files under hidden directory
 				for _, pathSeg := range AncestorList(path) {
-					if sHasPrefix(pathSeg, ".") {
+					if strings.HasPrefix(pathSeg, ".") {
 						return nil
 					}
 				}
 
 				// ignore excluded files
 				for _, exc := range exctypes {
-					if sHasSuffix(filename, "."+exc) {
+					if strings.HasSuffix(filename, "."+exc) {
 						return nil
 					}
 				}
@@ -438,11 +459,11 @@ func MergeDir(destdir string, move bool, onConflict func(existing, incoming []by
 }
 
 // h: [md5.New() / sha1.New() / sha256.New()]
-func FileHash(file string, h hash.Hash) string {
-	if !FileExists(file) {
+func FileHash(path string, h hash.Hash) string {
+	if !FileExists(path) {
 		return ""
 	}
-	f, err := os.Open(file)
+	f, err := os.Open(path)
 	if err != nil {
 		panic(err)
 	}
@@ -464,4 +485,30 @@ func SelfSHA1() string {
 
 func SelfSHA256() string {
 	return FileHash(os.Args[0], sha256.New())
+}
+
+// RmFileAndEmptyDir :
+func RmFileAndEmptyDir(path string) error {
+	if err := os.RemoveAll(path); err != nil {
+		return err
+	}
+	ls := AncestorList(path)
+	for i := len(ls); i > 0; i-- {
+		p := "/" + filepath.Join(ls[:i]...)
+		if DirExists(p) {
+			empty, err := IsDirEmpty(p)
+			if err != nil {
+				log.Println(err)
+				return err
+			}
+			if empty {
+				if err := os.RemoveAll(p); err != nil {
+					return err
+				}
+			} else {
+				break
+			}
+		}
+	}
+	return nil
 }
