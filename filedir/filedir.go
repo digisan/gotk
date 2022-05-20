@@ -144,7 +144,7 @@ func AllExistAsWhole(paths ...string) bool {
 	}
 	if !allExist {
 		for _, path := range paths {
-			if err := RmFileAndEmptyDir(path); err != nil {
+			if err := Remove(path, true); err != nil {
 				log.Fatalln(err)
 			}
 		}
@@ -178,14 +178,6 @@ func IsDirEmpty(path string) (bool, error) {
 		log.Fatalf("Could NOT ReadDir: %v", err)
 	}
 	return len(fs) == 0, nil
-}
-
-func Remove(path string) error {
-	abspath, err := AbsPath(path, true)
-	if err != nil {
-		return err
-	}
-	return os.RemoveAll(abspath)
 }
 
 // AbsPath : if check(false), error always nil
@@ -487,28 +479,54 @@ func SelfSHA256() string {
 	return FileHash(os.Args[0], sha256.New())
 }
 
-// RmFileAndEmptyDir :
-func RmFileAndEmptyDir(path string) error {
+func Remove(path string, rmEmptyDir bool) error {
+	path, err := AbsPath(path, false)
+	if err != nil {
+		return err
+	}
 	if err := os.RemoveAll(path); err != nil {
 		return err
 	}
-	ls := AncestorList(path)
-	for i := len(ls); i > 0; i-- {
-		p := "/" + filepath.Join(ls[:i]...)
-		if DirExists(p) {
-			empty, err := IsDirEmpty(p)
-			if err != nil {
-				log.Println(err)
-				return err
-			}
-			if empty {
-				if err := os.RemoveAll(p); err != nil {
+	if rmEmptyDir {
+		ls := AncestorList(path)
+		for i := len(ls); i > 0; i-- {
+			p := string(os.PathSeparator) + filepath.Join(ls[:i]...)
+			if DirExists(p) {
+				empty, err := IsDirEmpty(p)
+				if err != nil {
+					log.Println(err)
 					return err
 				}
-			} else {
-				break
+				if empty {
+					if err := os.RemoveAll(p); err != nil {
+						return err
+					}
+				} else {
+					break
+				}
 			}
 		}
 	}
 	return nil
+}
+
+func RmFilesIn(path string, recursive, rmEmptyDir bool, exts ...string) error {
+	if DirExists(path) {
+		files, _, err := WalkFileDir(path, recursive)
+		if err != nil {
+			return err
+		}
+		for _, file := range files {
+			for _, ext := range exts {
+				if len(ext) > 0 && strings.HasSuffix(file, DotExt(ext)) {
+					if err = Remove(file, rmEmptyDir); err != nil {
+						return err
+					}
+					break
+				}
+			}
+		}
+		return nil
+	}
+	return fmt.Errorf("directory [%v] is not existing", path)
 }

@@ -234,10 +234,6 @@ func TestAllExistAsWhole(t *testing.T) {
 	}
 }
 
-func TestRmFileWithEmptyDir(t *testing.T) {
-	RmFileAndEmptyDir("./a/b/c/d/txt.txt")
-}
-
 func TestFileIsEmpty(t *testing.T) {
 	type args struct {
 		filename string
@@ -581,7 +577,8 @@ func TestDotExt(t *testing.T) {
 
 func TestRemove(t *testing.T) {
 	type args struct {
-		path string
+		path       string
+		rmEmptyDir bool
 	}
 	tests := []struct {
 		name    string
@@ -592,14 +589,15 @@ func TestRemove(t *testing.T) {
 		{
 			name: "OK",
 			args: args{
-				path: "~/Desktop/testout.txt",
+				path:       "~/Desktop/test/a.txt",
+				rmEmptyDir: true,
 			},
 			wantErr: false,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := Remove(tt.args.path); (err != nil) != tt.wantErr {
+			if err := Remove(tt.args.path, tt.args.rmEmptyDir); (err != nil) != tt.wantErr {
 				t.Errorf("Remove() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
@@ -728,4 +726,8 @@ func TestChangePath(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestRmFiles(t *testing.T) {
+	RmFilesIn("~/Desktop/test", true, true, "jpg", "json")
 }
