@@ -1,8 +1,10 @@
 package strs
 
 import (
+	"fmt"
 	"regexp"
 	"runtime"
+	"sort"
 	"strconv"
 	"strings"
 
@@ -69,6 +71,46 @@ func HasAnySuffix(s string, suffixGrp ...string) bool {
 		}
 	}
 	return false
+}
+
+func ReplaceFirstOnAnyOf(str string, new string, aims ...string) string {
+	type sp struct {
+		s string
+		p int
+	}
+	spGrp := []sp{}
+	for _, aim := range aims {
+		if p := strings.Index(str, aim); p >= 0 {
+			spGrp = append(spGrp, sp{s: aim, p: p})
+		}
+	}
+	if len(spGrp) > 0 {
+		sort.Slice(spGrp, func(i, j int) bool {
+			if spGrp[i].p == spGrp[j].p {
+				return len(spGrp[i].s) > len(spGrp[j].s)
+			}
+			return spGrp[i].p < spGrp[j].p
+		})
+		return strings.Replace(str, spGrp[0].s, new, 1)
+	}
+	return str
+}
+
+func ReplaceAllOnAnyOf(str string, new string, aims ...string) string {
+	sb := strings.Builder{}
+	for i, aim := range aims {
+		sb.WriteString(fmt.Sprintf("(%s)", aim))
+		if i < len(aims)-1 {
+			sb.WriteString("|")
+		}
+	}
+	rs := sb.String()
+	// fmt.Println(rs)
+	r := regexp.MustCompile(rs)
+	str = r.ReplaceAllStringFunc(str, func(s string) string {
+		return new
+	})
+	return str
 }
 
 func SplitPart(s, sep string, idx int) string {

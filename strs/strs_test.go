@@ -3,6 +3,7 @@ package strs
 import (
 	"reflect"
 	"testing"
+	// . "github.com/digisan/go-generics/v2"
 )
 
 func TestIndexAll(t *testing.T) {
@@ -479,6 +480,90 @@ func TestSplitPartFromLastToBool(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := SplitPartFromLastToBool(tt.args.s, tt.args.sep, tt.args.idx); got != tt.want {
 				t.Errorf("SplitPartFromLastToBool() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestReplaceFirstOnAnyOf(t *testing.T) {
+	type args struct {
+		s    string
+		new  string
+		aims []string
+	}
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		// TODO: Add test cases.
+		{
+			args: args{
+				s:    "abc AdefD def abc",
+				new:  "xxx",
+				aims: []string{"def", "ab"},
+			},
+			want: "xxxc AdefD def abc",
+		},
+		{
+			args: args{
+				s:    "abc def AabcD def",
+				new:  "xxx",
+				aims: []string{"a", "abc"},
+			},
+			want: "xxx def AabcD def",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := ReplaceFirstOnAnyOf(tt.args.s, tt.args.new, tt.args.aims...); got != tt.want {
+				t.Errorf("ReplaceFirstOnAnyOf() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestReplaceAllOnAnyOf(t *testing.T) {
+	type args struct {
+		s    string
+		new  string
+		aims []string
+	}
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		// TODO: Add test cases.
+		{
+			args: args{
+				s:    "abc def AabcD def",
+				new:  "xxx",
+				aims: []string{"abc", "def"},
+			},
+			want: "xxx xxx AxxxD xxx",
+		},
+		{
+			args: args{
+				s:    "abc def AabD def yyyy",
+				new:  "xxx",
+				aims: []string{"a", "abc", "def", "yy"},
+			},
+			want: "xxxbc xxx AxxxbD xxx xxxxxx",
+		},
+		{
+			args: args{
+				s:    "1234567",
+				aims: []string{"12", "34"},
+				new:  "1234",
+			},
+			want: "12341234567",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := ReplaceAllOnAnyOf(tt.args.s, tt.args.new, tt.args.aims...); got != tt.want {
+				t.Errorf("ReplaceAllOnAnyOf() = %v, want %v", got, tt.want)
 			}
 		})
 	}

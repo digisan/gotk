@@ -2,7 +2,7 @@ module github.com/digisan/gotk
 
 go 1.18
 
-require github.com/digisan/go-generics v0.1.10
+require github.com/digisan/go-generics v0.1.13
 
 require (
 	github.com/cweill/gotests v1.6.0 // indirect
