@@ -133,13 +133,15 @@ func AllDirsExist(paths ...string) bool {
 
 // AllExistAsWhole: If not all of paths exist, then remove all of them.
 // in other words, all exist OR all gone.
-func AllExistAsWhole(paths ...string) bool {
-	allExist := true
+// return string is the first error path
+func AllExistAsWhole(paths ...string) (bool, string) {
+	allExist, errPath := true, ""
 	for _, path := range paths {
 		if FileExists(path) || DirExists(path) {
 			continue
 		}
 		allExist = false
+		errPath = path
 		break
 	}
 	if !allExist {
@@ -149,7 +151,7 @@ func AllExistAsWhole(paths ...string) bool {
 			}
 		}
 	}
-	return allExist
+	return allExist, errPath
 }
 
 // IsFileEmpty :

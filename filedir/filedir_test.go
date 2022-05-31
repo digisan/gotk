@@ -208,9 +208,10 @@ func TestAllExistAsWhole(t *testing.T) {
 		paths []string
 	}
 	tests := []struct {
-		name string
-		args args
-		want bool
+		name  string
+		args  args
+		want  bool
+		want1 string
 	}{
 		// TODO: Add test cases.
 		{
@@ -223,12 +224,13 @@ func TestAllExistAsWhole(t *testing.T) {
 				},
 			},
 			want: false,
+			want1: "./a.txt",
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := AllExistAsWhole(tt.args.paths...); got != tt.want {
-				t.Errorf("AllExistAsWhole() = %v, want %v", got, tt.want)
+			if got, got1 := AllExistAsWhole(tt.args.paths...); got != tt.want || got1 != tt.want1 {
+				t.Errorf("AllExistAsWhole() = %v %v, want %v %v", got, got1, tt.want, tt.want1)
 			}
 		})
 	}
