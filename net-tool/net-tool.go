@@ -5,10 +5,12 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"math"
 	"net"
 	"net/http"
 	"os"
 	"regexp"
+	"sort"
 	"strings"
 
 	"github.com/digisan/gotk/strs"
@@ -55,6 +57,15 @@ func ChangeLocalUrlPort(path string, portOld, portNew int, strict, onlyFirst boo
 	src := string(data)
 	locIP := LocalIP()
 
+	type sp struct {
+		s string
+		p int
+	}
+	spGrp := make([]sp, 3)
+	for i := 0; i < len(spGrp); i++ {
+		spGrp[i].p = math.MaxInt32
+	}
+
 	var rLocalIPs []*regexp.Regexp
 	if strict {
 		rLocalIPs = []*regexp.Regexp{
@@ -71,12 +82,14 @@ func ChangeLocalUrlPort(path string, portOld, portNew int, strict, onlyFirst boo
 	}
 
 	sPortOld, sPortNew := fmt.Sprintf(":%d", portOld), fmt.Sprintf(":%d", portNew)
-	for _, rip := range rLocalIPs {
+	for i, rip := range rLocalIPs {
 		if onlyFirst {
 			if found := rip.FindString(src); found != "" {
-				new := strings.Replace(found, sPortOld, sPortNew, 1)
-				src = strings.Replace(src, found, new, 1)
-				break
+				if p := strings.Index(src, found); p >= 0 {
+					new := strings.Replace(found, sPortOld, sPortNew, 1)
+					spGrp[i].s = strings.Replace(src, found, new, 1)
+					spGrp[i].p = p
+				}
 			}
 		} else {
 			src = rip.ReplaceAllStringFunc(src, func(s string) string {
@@ -84,6 +97,16 @@ func ChangeLocalUrlPort(path string, portOld, portNew int, strict, onlyFirst boo
 			})
 		}
 	}
+
+	if onlyFirst {
+		sort.Slice(spGrp, func(i, j int) bool {
+			return spGrp[i].p < spGrp[j].p
+		})
+		if spGrp[0].p < math.MaxInt32 {
+			src = spGrp[0].s
+		}
+	}
+
 	return os.WriteFile(path, []byte(src), os.ModePerm)
 }
 
@@ -96,6 +119,15 @@ func LocIP2PubIP(path string, strict, onlyFirst bool) error {
 	src := string(data)
 	locIP := LocalIP()
 	pubIP := PublicIP()
+
+	type sp struct {
+		s string
+		p int
+	}
+	spGrp := make([]sp, 3)
+	for i := 0; i < len(spGrp); i++ {
+		spGrp[i].p = math.MaxInt32
+	}
 
 	var rLocalIPs []*regexp.Regexp
 	if strict {
@@ -112,12 +144,14 @@ func LocIP2PubIP(path string, strict, onlyFirst bool) error {
 		}
 	}
 
-	for _, rip := range rLocalIPs {
+	for i, rip := range rLocalIPs {
 		if onlyFirst {
 			if found := rip.FindString(src); found != "" {
-				new := strs.ReplaceFirstOnAnyOf(found, pubIP, "localhost", "127.0.0.1", locIP)
-				src = strings.Replace(src, found, new, 1)
-				break
+				if p := strings.Index(src, found); p >= 0 {
+					new := strs.ReplaceFirstOnAnyOf(found, pubIP, "localhost", "127.0.0.1", locIP)
+					spGrp[i].s = strings.Replace(src, found, new, 1)
+					spGrp[i].p = p
+				}
 			}
 		} else {
 			src = rip.ReplaceAllStringFunc(src, func(s string) string {
@@ -125,6 +159,16 @@ func LocIP2PubIP(path string, strict, onlyFirst bool) error {
 			})
 		}
 	}
+
+	if onlyFirst {
+		sort.Slice(spGrp, func(i, j int) bool {
+			return spGrp[i].p < spGrp[j].p
+		})
+		if spGrp[0].p < math.MaxInt32 {
+			src = spGrp[0].s
+		}
+	}
+
 	return os.WriteFile(path, []byte(src), os.ModePerm)
 }
 
