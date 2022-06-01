@@ -97,6 +97,9 @@ func ReplaceFirstOnAnyOf(str string, new string, aims ...string) string {
 }
 
 func ReplaceAllOnAnyOf(str string, new string, aims ...string) string {
+	sort.Slice(aims, func(i, j int) bool {
+		return len(aims[i]) > len((aims[j]))
+	})
 	sb := strings.Builder{}
 	for i, aim := range aims {
 		sb.WriteString(fmt.Sprintf("(%s)", aim))

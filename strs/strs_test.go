@@ -545,11 +545,11 @@ func TestReplaceAllOnAnyOf(t *testing.T) {
 		},
 		{
 			args: args{
-				s:    "abc def AabD def yyyy",
+				s:    "abcabc def AabD defa yyyy",
 				new:  "xxx",
 				aims: []string{"a", "abc", "def", "yy"},
 			},
-			want: "xxxbc xxx AxxxbD xxx xxxxxx",
+			want: "xxxxxx xxx AxxxbD xxxxxx xxxxxx",
 		},
 		{
 			args: args{
