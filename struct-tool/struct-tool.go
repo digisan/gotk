@@ -56,7 +56,7 @@ func Tags(obj any, tag string, exclTags ...string) (tags []string) {
 		tags = append(tags, strings.Split(tag, ",")...)
 	}
 	tags = Settify(tags...)
-	Filter(&tags,
+	FilterFast(&tags,
 		func(i int, e string) bool {
 			return len(e) > 0 && NotIn(e, exclTags...)
 		},
