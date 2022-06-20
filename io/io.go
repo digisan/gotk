@@ -37,6 +37,12 @@ func MustCreateDir(path string) {
 	}
 }
 
+func MustCreateDirs(paths ...string) {
+	for _, path := range paths {
+		MustCreateDir(path)
+	}
+}
+
 // MustWriteFile :
 func MustWriteFile(path string, data []byte) {
 
@@ -86,8 +92,8 @@ func MustAppendFile(path string, data []byte, newline bool) {
 	}
 }
 
-// readByLine :
-func readByLine(r io.Reader, f func(line string) (bool, string), outfile string) (string, error) {
+// scanLine :
+func scanLine(r io.Reader, f func(line string) (bool, string), outfile string) (string, error) {
 	lines := []string{}
 	scanner := bufio.NewScanner(r)
 	for scanner.Scan() {
@@ -120,12 +126,12 @@ func FileLineScan(path string, f func(line string) (bool, string), outfile strin
 			file.Close()
 		}
 	}()
-	return readByLine(file, f, outfile)
+	return scanLine(file, f, outfile)
 }
 
 // StrLineScan :
 func StrLineScan(str string, f func(line string) (bool, string), outfile string) (string, error) {
-	return readByLine(strings.NewReader(str), f, outfile)
+	return scanLine(strings.NewReader(str), f, outfile)
 }
 
 func StreamToBytes(stream io.Reader) []byte {

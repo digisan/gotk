@@ -104,9 +104,9 @@ func TestMustAppendFile(t *testing.T) {
 	}
 }
 
-func TestMustCreateDir(t *testing.T) {
+func TestMustCreateDirs(t *testing.T) {
 	type args struct {
-		dir string
+		dir []string
 	}
 	tests := []struct {
 		name string
@@ -116,13 +116,17 @@ func TestMustCreateDir(t *testing.T) {
 		{
 			name: "OK",
 			args: args{
-				dir: "./test/must/create/dir/",
+				dir: []string{
+					"./test/must/create/dir/",
+					"./test/must1/create1/dir1/",
+					"./test/must2/create2/dir2/",
+				},
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			MustCreateDir(tt.args.dir)
+			MustCreateDirs(tt.args.dir...)
 		})
 	}
 }
