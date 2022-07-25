@@ -1,6 +1,6 @@
 github.com/cweill/gotests v1.6.0/go.mod h1:CaRYbxQZGQOxXDvM9l0XJVV2Tjb2E5H53vq+reR2GrA=
-github.com/digisan/go-generics v0.1.14 h1:kMopfBWx7I2qxkfnKGI9sTcFNB1JCacFa/fHOf8bFdk=
-github.com/digisan/go-generics v0.1.14/go.mod h1:uYqkhOsBlydT6uPQaapc6Bk3cbnmQ8ftBm/sWbShxAI=
+github.com/digisan/go-generics v0.2.0 h1:QQKPbbkwfElv7b8a9rQrLSGicqBAfJvozHbnifOM2/s=
+github.com/digisan/go-generics v0.2.0/go.mod h1:uYqkhOsBlydT6uPQaapc6Bk3cbnmQ8ftBm/sWbShxAI=
 golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACkg1iLfiJU5Ep61QUkGW8qpdssI0+w=
 golang.org/x/mod v0.6.0-dev.0.20220106191415-9b9b3d81d5e3/go.mod h1:3p9vT2HGsQu2K1YbXdKPJLVgG5VJdoTa1poYQBtP1AY=
 golang.org/x/net v0.0.0-20190620200207-3b0461eec859/go.mod h1:z5CRVTTTmAJ677TzLLGU+0bjPO0LkuOLi4/5GtJWs/s=

@@ -19,6 +19,16 @@ import (
 	"github.com/digisan/gotk/strs"
 )
 
+// "a/b/c/d.txt" => "a/b/c/prefix-d-suffix.txt"
+// "a/b/c/d" => "a/b/c/prefix-d-suffix"
+func ChangeFileName(fpath, prefix, suffix string) string {
+	ext := filepath.Ext(fpath)
+	fname := filepath.Base(fpath)
+	name := fname[:len(fname)-len(ext)]
+	nameNew := prefix + name + suffix + ext
+	return filepath.Join(filepath.Dir(fpath), nameNew)
+}
+
 // e.g. fpath is "/a/b/c/d.txt",
 // if [fromlast] is 1 and newtail is [D], return is "/a/b/c/D.txt"
 // if [fromlast] is 2 and newtail is [D], return is "/a/b/D.txt"

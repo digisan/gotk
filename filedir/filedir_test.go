@@ -4,8 +4,19 @@ import (
 	"fmt"
 	"reflect"
 	"testing"
-	// . "github.com/digisan/go-generics/v2"
 )
+
+func TestChangeFileName(t *testing.T) {
+	fpath := "./a/b/c/d.txt"
+	fmt.Println(fpath)
+	fmt.Println(ChangeFileName(fpath, "prefix-", "-crop"))
+
+	fmt.Println("------------------------------------")
+
+	fpath = "./a/b/c/d"
+	fmt.Println(fpath)
+	fmt.Println(ChangeFileName(fpath, "prefix-", "-crop"))
+}
 
 func TestParent(t *testing.T) {
 	type args struct {
@@ -223,7 +234,7 @@ func TestAllExistAsWhole(t *testing.T) {
 					"./d.txt",
 				},
 			},
-			want: false,
+			want:  false,
 			want1: "./a.txt",
 		},
 	}
