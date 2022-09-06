@@ -1,6 +1,7 @@
 package strs
 
 import (
+	"fmt"
 	"reflect"
 	"testing"
 	// . "github.com/digisan/go-generics/v2"
@@ -567,4 +568,17 @@ func TestReplaceAllOnAnyOf(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestHtmlContent(t *testing.T) {
+	s := `
+	<p>Links:</p><ul><li><a href="foo">Foo</a><li>
+	<a href="/bar/baz">BarBaz</a></ul><span>TEXT <b>I</b> WANT</span>
+	<script type='text/javascript'>
+	/* <![CDATA[ */
+	var post_notif_widget_ajax_obj = {"ajax_url":"http:\/\/site.com\/wp-admin\/admin-ajax.php","nonce":"9b8270e2ef","processing_msg":"Processing..."};
+	/* ]]> */
+	</script>`
+
+	fmt.Println(HtmlTextContent(s))
 }

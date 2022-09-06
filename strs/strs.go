@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	. "github.com/digisan/go-generics/v2"
+	"golang.org/x/net/html"
 )
 
 func Maxlen(s string, length int) string {
@@ -182,4 +183,27 @@ func TrimHeadToLast(s, mark string) string {
 func SplitLn(s string) []string {
 	sep := MATCH(runtime.GOOS, "windows", "linux", "darwin", "\r\n", "\n", "\r", "\n")
 	return strings.Split(s, sep)
+}
+
+func HtmlTextContent(htmlstr string) (rt []string) {
+	domDoc := html.NewTokenizer(strings.NewReader(htmlstr))
+	previousStartTokenTest := domDoc.Token()
+loopDomTest:
+	for {
+		tt := domDoc.Next()
+		switch {
+		case tt == html.ErrorToken:
+			break loopDomTest // End of the document,  done
+		case tt == html.StartTagToken:
+			previousStartTokenTest = domDoc.Token()
+		case tt == html.TextToken:
+			if previousStartTokenTest.Data == "script" {
+				continue
+			}
+			if text := strings.TrimSpace(html.UnescapeString(string(domDoc.Text()))); len(text) > 0 {
+				rt = append(rt, text)
+			}
+		}
+	}
+	return
 }
