@@ -74,6 +74,15 @@ func HasAnySuffix(s string, suffixGrp ...string) bool {
 	return false
 }
 
+func ContainsAny(s string, aims ...string) bool {
+	for _, aim := range aims {
+		if strings.Contains(s, aim) {
+			return true
+		}
+	}
+	return false
+}
+
 func ReplaceFirstOnAnyOf(str string, new string, aims ...string) string {
 	type sp struct {
 		s string

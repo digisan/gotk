@@ -570,6 +570,11 @@ func TestReplaceAllOnAnyOf(t *testing.T) {
 	}
 }
 
+func TestContainsAny(t *testing.T) {
+	fmt.Println(ContainsAny("abcdefg<p>", "<p>", "<h1>"))
+	fmt.Println(ContainsAny("abcdefg<p>", "</p>", "</h1>"))
+}
+
 func TestHtmlContent(t *testing.T) {
 	s := `
 	<p>Links:</p><ul><li><a href="foo">Foo</a><li>
@@ -579,6 +584,8 @@ func TestHtmlContent(t *testing.T) {
 	var post_notif_widget_ajax_obj = {"ajax_url":"http:\/\/site.com\/wp-admin\/admin-ajax.php","nonce":"9b8270e2ef","processing_msg":"Processing..."};
 	/* ]]> */
 	</script>`
-
 	fmt.Println(HtmlTextContent(s))
+
+	s1 := `abcde    <p>    Links:   </p>   fghijk`
+	fmt.Println(HtmlTextContent(s1))
 }
