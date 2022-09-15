@@ -4,6 +4,7 @@ import (
 	"encoding/csv"
 	"encoding/json"
 	"encoding/xml"
+	"fmt"
 	"math"
 	"reflect"
 	"strconv"
@@ -53,4 +54,8 @@ func IsContInts(ints ...int) (ok bool, minIfOk int, maxIfOk int) {
 // nil-pointer could be non-nil any
 func IsInterfaceNil(i any) bool {
 	return i == nil || reflect.ValueOf(i).IsNil()
+}
+
+func IsNil(i any) bool {
+	return IsInterfaceNil(i) || fmt.Sprint(i) == "<nil>"
 }
