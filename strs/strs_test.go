@@ -4,8 +4,116 @@ import (
 	"fmt"
 	"reflect"
 	"testing"
-	// . "github.com/digisan/go-generics/v2"
 )
+
+func TestIsIn(t *testing.T) {
+	type args struct {
+		ignoreCase  bool
+		ignoreSpace bool
+		s           string
+		group       []string
+	}
+	tests := []struct {
+		name string
+		args args
+		want bool
+	}{
+		// TODO: Add test cases.
+		{
+			name: "",
+			args: args{
+				ignoreCase: true,
+				ignoreSpace: false,
+				s:           "A",
+				group:       []string{"a ", "b", "c", "c"},
+			},
+			want: false,
+		},
+		{
+			name: "",
+			args: args{
+				ignoreCase: false,
+				ignoreSpace: false,
+				s:           "AA",
+				group:       []string{"aa", "bb", "cc", ""},
+			},
+			want: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := IsIn(tt.args.ignoreCase, tt.args.ignoreSpace, tt.args.s, tt.args.group...); got != tt.want {
+				t.Errorf("IsIn() = %v, want %v", got, tt.want)
+			}
+		})
+
+		fmt.Println(tt.args.s, tt.args.group)
+	}
+}
+
+func TestIsNotIn(t *testing.T) {
+	type args struct {
+		ignoreCase bool
+		ignoreSpace bool
+		s           string
+		group       []string
+	}
+	tests := []struct {
+		name string
+		args args
+		want bool
+	}{
+		// TODO: Add test cases.
+		{
+			name: "",
+			args: args{
+				ignoreCase: true,
+				ignoreSpace: true,
+				s:           "a",
+				group:       []string{"A", "B", "C"},
+			},
+			want: false,
+		},
+		{
+			name: "",
+			args: args{
+				ignoreCase: false,
+				ignoreSpace: true,
+				s:           "a",
+				group:       []string{"A", "B", "C"},
+			},
+			want: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := IsNotIn(tt.args.ignoreCase, tt.args.ignoreSpace, tt.args.s, tt.args.group...); got != tt.want {
+				t.Errorf("IsNotIn() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestMaxlen(t *testing.T) {
+	type args struct {
+		s      string
+		length int
+	}
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := Maxlen(tt.args.s, tt.args.length); got != tt.want {
+				t.Errorf("Maxlen() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
 
 func TestIndexAll(t *testing.T) {
 	type args struct {
@@ -19,15 +127,6 @@ func TestIndexAll(t *testing.T) {
 		wantEnds   []int
 	}{
 		// TODO: Add test cases.
-		{
-			name: "",
-			args: args{
-				s:   "abcdeabcdabe  ab",
-				sub: "ab",
-			},
-			wantStarts: []int{0, 5, 9, 14},
-			wantEnds:   []int{2, 7, 11, 16},
-		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -37,6 +136,32 @@ func TestIndexAll(t *testing.T) {
 			}
 			if !reflect.DeepEqual(gotEnds, tt.wantEnds) {
 				t.Errorf("IndexAll() gotEnds = %v, want %v", gotEnds, tt.wantEnds)
+			}
+		})
+	}
+}
+
+func TestIndexAllByReg(t *testing.T) {
+	type args struct {
+		s   string
+		sub string
+	}
+	tests := []struct {
+		name       string
+		args       args
+		wantStarts []int
+		wantEnds   []int
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			gotStarts, gotEnds := IndexAllByReg(tt.args.s, tt.args.sub)
+			if !reflect.DeepEqual(gotStarts, tt.wantStarts) {
+				t.Errorf("IndexAllByReg() gotStarts = %v, want %v", gotStarts, tt.wantStarts)
+			}
+			if !reflect.DeepEqual(gotEnds, tt.wantEnds) {
+				t.Errorf("IndexAllByReg() gotEnds = %v, want %v", gotEnds, tt.wantEnds)
 			}
 		})
 	}
@@ -54,24 +179,6 @@ func TestRangeReplace(t *testing.T) {
 		want string
 	}{
 		// TODO: Add test cases.
-		{
-			name: "",
-			args: args{
-				s:      "abcdefghijklmn",
-				ranges: [][2]int{{2, 4}, {7, 9}, {12, 13}},
-				ns:     []string{"XXX", "YYY", "ZZZZZZ"},
-			},
-			want: "abXXXefgYYYjklZZZZZZn",
-		},
-		{
-			name: "",
-			args: args{
-				s:      "abcdefghijklmn",
-				ranges: [][2]int{{2, 5}, {6, 9}},
-				ns:     []string{"", "", "ZZZZZZ"},
-			},
-			want: "abfjklmn",
-		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -82,146 +189,118 @@ func TestRangeReplace(t *testing.T) {
 	}
 }
 
+func TestHasAnyPrefix(t *testing.T) {
+	type args struct {
+		s         string
+		prefixGrp []string
+	}
+	tests := []struct {
+		name string
+		args args
+		want bool
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := HasAnyPrefix(tt.args.s, tt.args.prefixGrp...); got != tt.want {
+				t.Errorf("HasAnyPrefix() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestHasAnySuffix(t *testing.T) {
+	type args struct {
+		s         string
+		suffixGrp []string
+	}
+	tests := []struct {
+		name string
+		args args
+		want bool
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := HasAnySuffix(tt.args.s, tt.args.suffixGrp...); got != tt.want {
+				t.Errorf("HasAnySuffix() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestContainsAny(t *testing.T) {
+	type args struct {
+		s    string
+		aims []string
+	}
+	tests := []struct {
+		name string
+		args args
+		want bool
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := ContainsAny(tt.args.s, tt.args.aims...); got != tt.want {
+				t.Errorf("ContainsAny() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestReplaceFirstOnAnyOf(t *testing.T) {
+	type args struct {
+		str  string
+		new  string
+		aims []string
+	}
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := ReplaceFirstOnAnyOf(tt.args.str, tt.args.new, tt.args.aims...); got != tt.want {
+				t.Errorf("ReplaceFirstOnAnyOf() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestReplaceAllOnAnyOf(t *testing.T) {
+	type args struct {
+		str  string
+		new  string
+		aims []string
+	}
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := ReplaceAllOnAnyOf(tt.args.str, tt.args.new, tt.args.aims...); got != tt.want {
+				t.Errorf("ReplaceAllOnAnyOf() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
 func TestSplitPart(t *testing.T) {
-	{
-		type args struct {
-			s   string
-			sep string
-			idx int
-		}
-		tests := []struct {
-			name string
-			args args
-			want string
-		}{
-			// TODO: Add test cases.
-			{
-				args: args{
-					s:   "abc^def^ghi",
-					sep: "^",
-					idx: 0,
-				},
-				want: "abc",
-			},
-			{
-				args: args{
-					s:   "abc^def^",
-					sep: "^",
-					idx: 2,
-				},
-				want: "",
-			},
-			{
-				args: args{
-					s:   "^def^ghi",
-					sep: "^",
-					idx: 0,
-				},
-				want: "",
-			},
-			{
-				args: args{
-					s:   "abcdefghi",
-					sep: "^",
-					idx: 0,
-				},
-				want: "abcdefghi",
-			},
-		}
-		for _, tt := range tests {
-			t.Run(tt.name, func(t *testing.T) {
-				if got := SplitPart(tt.args.s, tt.args.sep, tt.args.idx); got != tt.want {
-					t.Errorf("SplitPart() = %v, want %v", got, tt.want)
-				}
-			})
-		}
-	}
-
-	{
-		type args struct {
-			s   string
-			sep string
-			idx int
-		}
-		tests := []struct {
-			name string
-			args args
-			want string
-		}{
-			// TODO: Add test cases.
-			{
-				args: args{
-					s:   "abc^def^ghi",
-					sep: "^",
-					idx: 1,
-				},
-				want: "ghi",
-			},
-			{
-				args: args{
-					s:   "abc^def^",
-					sep: "^",
-					idx: 1,
-				},
-				want: "",
-			},
-			{
-				args: args{
-					s:   "^def^ghi",
-					sep: "^",
-					idx: 3,
-				},
-				want: "",
-			},
-			{
-				args: args{
-					s:   "abcdefghi",
-					sep: "^",
-					idx: 1,
-				},
-				want: "abcdefghi",
-			},
-		}
-		for _, tt := range tests {
-			t.Run(tt.name, func(t *testing.T) {
-				if got := SplitPartFromLast(tt.args.s, tt.args.sep, tt.args.idx); got != tt.want {
-					t.Errorf("SplitPart() = %v, want %v", got, tt.want)
-				}
-			})
-		}
-	}
-}
-
-func TestSplitLn(t *testing.T) {
 	type args struct {
-		s string
-	}
-	tests := []struct {
-		name string
-		args args
-		want []string
-	}{
-		// TODO: Add test cases.
-		{
-			args: args{
-				s: "abc\ndef",
-			},
-			want: []string{"abc", "def"},
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := SplitLn(tt.args.s); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("SplitLn() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func TestTrimTailFromLast(t *testing.T) {
-	type args struct {
-		s    string
-		mark string
+		s   string
+		sep string
+		idx int
 	}
 	tests := []struct {
 		name string
@@ -229,130 +308,11 @@ func TestTrimTailFromLast(t *testing.T) {
 		want string
 	}{
 		// TODO: Add test cases.
-		{
-			args: args{
-				s:    "abcd#efgh#i",
-				mark: "#",
-			},
-			want: "abcd#efgh",
-		},
-		{
-			args: args{
-				s:    "abcd#",
-				mark: "#",
-			},
-			want: "abcd",
-		},
-		{
-			args: args{
-				s:    "abcd",
-				mark: "#",
-			},
-			want: "abcd",
-		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := TrimTailFromLast(tt.args.s, tt.args.mark); got != tt.want {
-				t.Errorf("TrimTailFromLast() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func TestTrimHeadToLast(t *testing.T) {
-	type args struct {
-		s    string
-		mark string
-	}
-	tests := []struct {
-		name string
-		args args
-		want string
-	}{
-		// TODO: Add test cases.
-		{
-			args: args{
-				s:    "abcd#efgh#i",
-				mark: "#",
-			},
-			want: "i",
-		},
-		{
-			args: args{
-				s:    "abcd#",
-				mark: "#",
-			},
-			want: "",
-		},
-		{
-			args: args{
-				s:    "abcd",
-				mark: "#",
-			},
-			want: "abcd",
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := TrimHeadToLast(tt.args.s, tt.args.mark); got != tt.want {
-				t.Errorf("TrimHeadToLast() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func TestMaxlen(t *testing.T) {
-	type args struct {
-		s      string
-		length int
-	}
-	tests := []struct {
-		name string
-		args args
-		want string
-	}{
-		// TODO: Add test cases.
-		{
-			args: args{
-				s:      "abc",
-				length: 5,
-			},
-			want: "abc",
-		},
-		{
-			args: args{
-				s:      "abc",
-				length: 2,
-			},
-			want: "ab",
-		},
-		{
-			args: args{
-				s:      "abc",
-				length: 3,
-			},
-			want: "abc",
-		},
-		{
-			args: args{
-				s:      "",
-				length: 3,
-			},
-			want: "",
-		},
-		{
-			args: args{
-				s:      "",
-				length: 0,
-			},
-			want: "",
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := Maxlen(tt.args.s, tt.args.length); got != tt.want {
-				t.Errorf("Maxlen() = %v, want %v", got, tt.want)
+			if got := SplitPart(tt.args.s, tt.args.sep, tt.args.idx); got != tt.want {
+				t.Errorf("SplitPart() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -370,14 +330,6 @@ func TestSplitPartToNum(t *testing.T) {
 		want float64
 	}{
 		// TODO: Add test cases.
-		{
-			args: args{
-				s:   "1-2-3-4-5",
-				sep: "-",
-				idx: 0,
-			},
-			want: 1.0,
-		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -400,19 +352,33 @@ func TestSplitPartToBool(t *testing.T) {
 		want bool
 	}{
 		// TODO: Add test cases.
-		{
-			args: args{
-				s:   "t-true-FALSE-false-True",
-				sep: "-",
-				idx: 0,
-			},
-			want: true,
-		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := SplitPartToBool(tt.args.s, tt.args.sep, tt.args.idx); got != tt.want {
 				t.Errorf("SplitPartToBool() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestSplitPartFromLast(t *testing.T) {
+	type args struct {
+		s   string
+		sep string
+		idx int
+	}
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := SplitPartFromLast(tt.args.s, tt.args.sep, tt.args.idx); got != tt.want {
+				t.Errorf("SplitPartFromLast() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -430,14 +396,6 @@ func TestSplitPartFromLastToNum(t *testing.T) {
 		want float64
 	}{
 		// TODO: Add test cases.
-		{
-			args: args{
-				s:   "1-2-3-4-5",
-				sep: "-",
-				idx: 1,
-			},
-			want: 5.0,
-		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -460,22 +418,6 @@ func TestSplitPartFromLastToBool(t *testing.T) {
 		want bool
 	}{
 		// TODO: Add test cases.
-		{
-			args: args{
-				s:   "T-f-true-FALSE-F-0",
-				sep: "-",
-				idx: 2,
-			},
-			want: false,
-		},
-		{
-			args: args{
-				s:   "T-f-true-FALSE-F-0",
-				sep: "-",
-				idx: 6,
-			},
-			want: true,
-		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -486,11 +428,10 @@ func TestSplitPartFromLastToBool(t *testing.T) {
 	}
 }
 
-func TestReplaceFirstOnAnyOf(t *testing.T) {
+func TestTrimTailFromLast(t *testing.T) {
 	type args struct {
 		s    string
-		new  string
-		aims []string
+		mark string
 	}
 	tests := []struct {
 		name string
@@ -498,37 +439,20 @@ func TestReplaceFirstOnAnyOf(t *testing.T) {
 		want string
 	}{
 		// TODO: Add test cases.
-		{
-			args: args{
-				s:    "abc AdefD def abc",
-				new:  "xxx",
-				aims: []string{"def", "ab"},
-			},
-			want: "xxxc AdefD def abc",
-		},
-		{
-			args: args{
-				s:    "abc def AabcD def",
-				new:  "xxx",
-				aims: []string{"a", "abc"},
-			},
-			want: "xxx def AabcD def",
-		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := ReplaceFirstOnAnyOf(tt.args.s, tt.args.new, tt.args.aims...); got != tt.want {
-				t.Errorf("ReplaceFirstOnAnyOf() = %v, want %v", got, tt.want)
+			if got := TrimTailFromLast(tt.args.s, tt.args.mark); got != tt.want {
+				t.Errorf("TrimTailFromLast() = %v, want %v", got, tt.want)
 			}
 		})
 	}
 }
 
-func TestReplaceAllOnAnyOf(t *testing.T) {
+func TestTrimHeadToLast(t *testing.T) {
 	type args struct {
 		s    string
-		new  string
-		aims []string
+		mark string
 	}
 	tests := []struct {
 		name string
@@ -536,56 +460,52 @@ func TestReplaceAllOnAnyOf(t *testing.T) {
 		want string
 	}{
 		// TODO: Add test cases.
-		{
-			args: args{
-				s:    "abc def AabcD def",
-				new:  "xxx",
-				aims: []string{"abc", "def"},
-			},
-			want: "xxx xxx AxxxD xxx",
-		},
-		{
-			args: args{
-				s:    "abcabc def AabD defa yyyy",
-				new:  "xxx",
-				aims: []string{"a", "abc", "def", "yy"},
-			},
-			want: "xxxxxx xxx AxxxbD xxxxxx xxxxxx",
-		},
-		{
-			args: args{
-				s:    "1234567",
-				aims: []string{"12", "34"},
-				new:  "1234",
-			},
-			want: "12341234567",
-		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := ReplaceAllOnAnyOf(tt.args.s, tt.args.new, tt.args.aims...); got != tt.want {
-				t.Errorf("ReplaceAllOnAnyOf() = %v, want %v", got, tt.want)
+			if got := TrimHeadToLast(tt.args.s, tt.args.mark); got != tt.want {
+				t.Errorf("TrimHeadToLast() = %v, want %v", got, tt.want)
 			}
 		})
 	}
 }
 
-func TestContainsAny(t *testing.T) {
-	fmt.Println(ContainsAny("abcdefg<p>", "<p>", "<h1>"))
-	fmt.Println(ContainsAny("abcdefg<p>", "</p>", "</h1>"))
+func TestSplitLn(t *testing.T) {
+	type args struct {
+		s string
+	}
+	tests := []struct {
+		name string
+		args args
+		want []string
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := SplitLn(tt.args.s); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("SplitLn() = %v, want %v", got, tt.want)
+			}
+		})
+	}
 }
 
-func TestHtmlContent(t *testing.T) {
-	s := `
-	<p>Links:</p><ul><li><a href="foo">Foo</a><li>
-	<a href="/bar/baz">BarBaz</a></ul><span>TEXT <b>I</b> WANT</span>
-	<script type='text/javascript'>
-	/* <![CDATA[ */
-	var post_notif_widget_ajax_obj = {"ajax_url":"http:\/\/site.com\/wp-admin\/admin-ajax.php","nonce":"9b8270e2ef","processing_msg":"Processing..."};
-	/* ]]> */
-	</script>`
-	fmt.Println(HtmlTextContent(s))
-
-	s1 := `abcde    <p>    Links:   </p>   fghijk`
-	fmt.Println(HtmlTextContent(s1))
+func TestHtmlTextContent(t *testing.T) {
+	type args struct {
+		htmlstr string
+	}
+	tests := []struct {
+		name   string
+		args   args
+		wantRt []string
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if gotRt := HtmlTextContent(tt.args.htmlstr); !reflect.DeepEqual(gotRt, tt.wantRt) {
+				t.Errorf("HtmlTextContent() = %v, want %v", gotRt, tt.wantRt)
+			}
+		})
+	}
 }

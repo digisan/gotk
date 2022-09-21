@@ -12,6 +12,22 @@ import (
 	"golang.org/x/net/html"
 )
 
+func IsIn(ignoreCase, ignoreSpace bool, s string, group ...string) bool {
+	if ignoreCase {
+		s = strings.ToLower(s)
+		group = FilterMap4SglTyp(group, nil, func(i int, e string) string { return strings.ToLower(e) })
+	}
+	if ignoreSpace {
+		s = strings.TrimSpace(s)
+		group = FilterMap4SglTyp(group, nil, func(i int, e string) string { return strings.TrimSpace(e) })
+	}
+	return In(s, group...)
+}
+
+func IsNotIn(insensitive, ignorespace bool, s string, group ...string) bool {
+	return !IsIn(insensitive, ignorespace, s, group...)
+}
+
 func Maxlen(s string, length int) string {
 	if len(s) < length {
 		return s
