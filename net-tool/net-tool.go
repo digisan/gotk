@@ -16,6 +16,10 @@ import (
 	"github.com/digisan/gotk/strs"
 )
 
+func CheckIP(ip string) bool {
+	return net.ParseIP(ip) != nil
+}
+
 func LocalIP() string {
 
 	conn, err := net.Dial("udp", "8.8.8.8:80")
@@ -53,7 +57,7 @@ func PublicIP() string {
 func ChangeLocalUrlPort(portOld, portNew int, strict, firstOnly bool, fpaths ...string) error {
 
 	for _, fpath := range fpaths {
-		
+
 		data, err := os.ReadFile(fpath)
 		if err != nil {
 			return err
@@ -119,7 +123,18 @@ func ChangeLocalUrlPort(portOld, portNew int, strict, firstOnly bool, fpaths ...
 	return nil
 }
 
-func LocIP2PubIP(strict, firstOnly bool, fpaths ...string) error {
+// if 'toPubIP' is true, 'aimIP' is ignored.
+// otherwise, 'aimIP' must be valid.
+func ChangeLocalIP(strict, firstOnly, toPubIP bool, aimIP string, fpaths ...string) error {
+
+	if !toPubIP && !CheckIP(aimIP) {
+		return fmt.Errorf("[%v] is invalid IP address", aimIP)
+	}
+
+	locIP := LocalIP()
+	if toPubIP {
+		aimIP = PublicIP()
+	}
 
 	for _, fpath := range fpaths {
 
@@ -127,10 +142,7 @@ func LocIP2PubIP(strict, firstOnly bool, fpaths ...string) error {
 		if err != nil {
 			return err
 		}
-
 		src := string(data)
-		locIP := LocalIP()
-		pubIP := PublicIP()
 
 		type sp struct {
 			s string
@@ -160,14 +172,14 @@ func LocIP2PubIP(strict, firstOnly bool, fpaths ...string) error {
 			if firstOnly {
 				if found := rip.FindString(src); found != "" {
 					if p := strings.Index(src, found); p >= 0 {
-						new := strs.ReplaceFirstOnAnyOf(found, pubIP, "localhost", "127.0.0.1", locIP)
+						new := strs.ReplaceFirstOnAnyOf(found, aimIP, "localhost", "127.0.0.1", locIP)
 						spGrp[i].s = strings.Replace(src, found, new, 1)
 						spGrp[i].p = p
 					}
 				}
 			} else {
 				src = rip.ReplaceAllStringFunc(src, func(s string) string {
-					return strs.ReplaceAllOnAnyOf(s, pubIP, "localhost", "127.0.0.1", locIP)
+					return strs.ReplaceAllOnAnyOf(s, aimIP, "localhost", "127.0.0.1", locIP)
 				})
 			}
 		}
