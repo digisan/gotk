@@ -54,7 +54,7 @@ func PublicIP() string {
 	return ip.Query
 }
 
-func ChangeLocalUrlPort(portOld, portNew int, strict, firstOnly bool, fpaths ...string) error {
+func ChangeLocalUrlPort(strict, firstOnly bool, portOld, portNew int, fpaths ...string) error {
 
 	for _, fpath := range fpaths {
 
@@ -124,16 +124,24 @@ func ChangeLocalUrlPort(portOld, portNew int, strict, firstOnly bool, fpaths ...
 }
 
 // if 'toPubIP' is true, 'aimIP' is ignored.
+// if 'toLocIP' is true, 'aimIP' is ignored.
+// if 'toPubIP' & 'toLocIP' are both true, return error.
 // otherwise, 'aimIP' must be valid.
-func ChangeLocalIP(strict, firstOnly, toPubIP bool, aimIP string, fpaths ...string) error {
+func ChangeLocalhost(strict, firstOnly, toPubIP, toLocIP bool, aimIP string, fpaths ...string) error {
 
-	if !toPubIP && !CheckIP(aimIP) {
+	if !toPubIP && !toLocIP && !CheckIP(aimIP) {
 		return fmt.Errorf("[%v] is invalid IP address", aimIP)
 	}
 
-	locIP := LocalIP()
+	if toPubIP && toLocIP {
+		return fmt.Errorf("only one of [toPubIP, toLocIP] can be set true")
+	}
+
 	if toPubIP {
 		aimIP = PublicIP()
+	}
+	if toLocIP {
+		aimIP = LocalIP()
 	}
 
 	for _, fpath := range fpaths {
@@ -158,12 +166,78 @@ func ChangeLocalIP(strict, firstOnly, toPubIP bool, aimIP string, fpaths ...stri
 			rLocalIPs = []*regexp.Regexp{
 				regexp.MustCompile(`https?://localhost(:\d+)?/?`),
 				regexp.MustCompile(`https?://127.0.0.1(:\d+)?/?`),
-				regexp.MustCompile(fmt.Sprintf(`https?://%s(:\d+)?/?`, locIP)),
 			}
 		} else {
 			rLocalIPs = []*regexp.Regexp{
 				regexp.MustCompile(`localhost(:\d+)?`),
 				regexp.MustCompile(`127.0.0.1(:\d+)?`),
+			}
+		}
+
+		for i, rip := range rLocalIPs {
+			if firstOnly {
+				if found := rip.FindString(src); found != "" {
+					if p := strings.Index(src, found); p >= 0 {
+						new := strs.ReplaceFirstOnAnyOf(found, aimIP, "localhost", "127.0.0.1")
+						spGrp[i].s = strings.Replace(src, found, new, 1)
+						spGrp[i].p = p
+					}
+				}
+			} else {
+				src = rip.ReplaceAllStringFunc(src, func(s string) string {
+					return strs.ReplaceAllOnAnyOf(s, aimIP, "localhost", "127.0.0.1")
+				})
+			}
+		}
+
+		if firstOnly {
+			sort.Slice(spGrp, func(i, j int) bool {
+				return spGrp[i].p < spGrp[j].p
+			})
+			if spGrp[0].p < math.MaxInt32 {
+				src = spGrp[0].s
+			}
+		}
+
+		if err := os.WriteFile(fpath, []byte(src), os.ModePerm); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// e.g 192.168.1.10 to public IP
+func LocIPToPubIP(strict, firstOnly bool, fpaths ...string) error {
+
+	var (
+		pubIP = PublicIP()
+		locIP = LocalIP()
+	)
+
+	for _, fpath := range fpaths {
+
+		data, err := os.ReadFile(fpath)
+		if err != nil {
+			return err
+		}
+		src := string(data)
+
+		type sp struct {
+			s string
+			p int
+		}
+		spGrp := make([]sp, 3)
+		for i := 0; i < len(spGrp); i++ {
+			spGrp[i].p = math.MaxInt32
+		}
+
+		var rLocalIPs []*regexp.Regexp
+		if strict {
+			rLocalIPs = []*regexp.Regexp{
+				regexp.MustCompile(fmt.Sprintf(`https?://%s(:\d+)?/?`, locIP)),
+			}
+		} else {
+			rLocalIPs = []*regexp.Regexp{
 				regexp.MustCompile(fmt.Sprintf(`%s(:\d+)?`, locIP)),
 			}
 		}
@@ -172,14 +246,14 @@ func ChangeLocalIP(strict, firstOnly, toPubIP bool, aimIP string, fpaths ...stri
 			if firstOnly {
 				if found := rip.FindString(src); found != "" {
 					if p := strings.Index(src, found); p >= 0 {
-						new := strs.ReplaceFirstOnAnyOf(found, aimIP, "localhost", "127.0.0.1", locIP)
+						new := strs.ReplaceFirstOnAnyOf(found, pubIP, locIP)
 						spGrp[i].s = strings.Replace(src, found, new, 1)
 						spGrp[i].p = p
 					}
 				}
 			} else {
 				src = rip.ReplaceAllStringFunc(src, func(s string) string {
-					return strs.ReplaceAllOnAnyOf(s, aimIP, "localhost", "127.0.0.1", locIP)
+					return strs.ReplaceAllOnAnyOf(s, pubIP, locIP)
 				})
 			}
 		}
