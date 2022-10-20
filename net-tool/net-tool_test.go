@@ -44,7 +44,7 @@ func TestPublicIP(t *testing.T) {
 }
 
 func TestChangeLocalUrlPort(t *testing.T) {
-	fmt.Println(ChangeLocalUrlPort(false, false, 3000, 5000, "./test-sample.ejs"))
+	fmt.Println(ChangeLocalUrlPort(false, false, -1, 5000, "./test-sample.ejs"))
 }
 
 func TestChangeLocalhost(t *testing.T) {

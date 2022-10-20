@@ -54,6 +54,7 @@ func PublicIP() string {
 	return ip.Query
 }
 
+// if [strict] is false && [portOld] is -1, then replace any local ip url's old port to new port.
 func ChangeLocalUrlPort(strict, firstOnly bool, portOld, portNew int, fpaths ...string) error {
 
 	for _, fpath := range fpaths {
@@ -83,25 +84,51 @@ func ChangeLocalUrlPort(strict, firstOnly bool, portOld, portNew int, fpaths ...
 				regexp.MustCompile(fmt.Sprintf(`https?://%s:%d/?`, locIP, portOld)),
 			}
 		} else {
-			rLocalIPs = []*regexp.Regexp{
-				regexp.MustCompile(fmt.Sprintf(`localhost:%d`, portOld)),
-				regexp.MustCompile(fmt.Sprintf(`127.0.0.1:%d`, portOld)),
-				regexp.MustCompile(fmt.Sprintf(`%s:%d`, locIP, portOld)),
+			if portOld != -1 {
+				rLocalIPs = []*regexp.Regexp{
+					regexp.MustCompile(fmt.Sprintf(`localhost:%d/?`, portOld)),
+					regexp.MustCompile(fmt.Sprintf(`127.0.0.1:%d/?`, portOld)),
+					regexp.MustCompile(fmt.Sprintf(`%s:%d/?`, locIP, portOld)),
+				}
+			} else {
+				rLocalIPs = []*regexp.Regexp{
+					regexp.MustCompile(`localhost:\d+/?`),
+					regexp.MustCompile(`127.0.0.1:\d+/?`),
+					regexp.MustCompile(fmt.Sprintf(`%s:\d+/?`, locIP)),
+				}
 			}
 		}
 
-		sPortOld, sPortNew := fmt.Sprintf(":%d", portOld), fmt.Sprintf(":%d", portNew)
+		var (
+			sPortOld = fmt.Sprintf(":%d", portOld)
+			sPortNew = fmt.Sprintf(":%d", portNew)
+		)
+
 		for i, rip := range rLocalIPs {
 			if firstOnly {
 				if found := rip.FindString(src); found != "" {
 					if p := strings.Index(src, found); p >= 0 {
-						new := strings.Replace(found, sPortOld, sPortNew, 1)
+						new := ""
+						if portOld == -1 {
+							new = strs.TrimTailFromLast(found, ":") + sPortNew
+							if strings.HasSuffix(found, "/") {
+								new += "/"
+							}
+						} else {
+							new = strings.Replace(found, sPortOld, sPortNew, 1)
+						}
 						spGrp[i].s = strings.Replace(src, found, new, 1)
 						spGrp[i].p = p
 					}
 				}
 			} else {
 				src = rip.ReplaceAllStringFunc(src, func(s string) string {
+					if portOld == -1 {
+						if strings.HasSuffix(s, "/") {
+							return strs.TrimTailFromLast(s, ":") + sPortNew + "/"
+						}
+						return strs.TrimTailFromLast(s, ":") + sPortNew
+					}
 					return strings.ReplaceAll(s, sPortOld, sPortNew)
 				})
 			}
