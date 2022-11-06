@@ -6,6 +6,7 @@ import (
 	"encoding/xml"
 	"fmt"
 	"math"
+	"net/mail"
 	"reflect"
 	"strconv"
 	"strings"
@@ -58,4 +59,10 @@ func IsInterfaceNil(i any) bool {
 
 func IsNil(i any) bool {
 	return IsInterfaceNil(i) || fmt.Sprint(i) == "<nil>"
+}
+
+// check string format is email
+func IsEmail(str string) bool {
+	_, err := mail.ParseAddress(str)
+	return err == nil
 }

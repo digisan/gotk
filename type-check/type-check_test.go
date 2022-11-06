@@ -257,3 +257,7 @@ func TestIsNil(t *testing.T) {
 	fmt.Println("IsNil p1", IsNil(p1))
 	fmt.Println("IsNil p2", IsNil(p2))
 }
+
+func TestIsEmail(t *testing.T) {
+	fmt.Println(IsEmail("abdf@asd.com"))
+}

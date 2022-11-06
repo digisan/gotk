@@ -1,0 +1,49 @@
+
+// 134.22.33.211:1323
+
+// localhost:1322/
+
+<script>
+    const scrollToTop = (eleID) => {
+      $('#' + eleID)[0].scrollIntoView(true)
+      $('#main')[0].scrollTop = 0
+    }
+
+    const scrollToBottom = (eleID) => {
+      $('#' + eleID)[0].scrollIntoView(false)
+      $('#main')[0].scrollTop = 0
+    }
+
+    const check_form = async (form) => {
+
+      let sv = $('#search-entity').val()
+
+      if (!isNaN(sv)) {
+        sv = String(sv).padStart(4, '0')
+      }
+
+      let api_list = [
+        `http://127.0.0.1:3000/api/entity/${sv}`,
+        `http://localhost:3000/api/identifier/${sv}`,
+        `https://192.168.31.227:3001/`,
+        `https://115.70.114.243:4001/`,
+      ]
+
+      for (let api of api_list) {
+        const resp = await fetch(
+          api, {
+            method: 'GET',
+            mode: 'cors',
+          }
+        )
+        const code = await resp.status
+        if (code == 200) {
+          form.submit()
+          return
+        }
+      }
+
+      alert(`Couldn't find ${sv}`)
+
+    }
+  </script>
