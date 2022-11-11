@@ -1,7 +1,6 @@
 package structtool
 
 import (
-	"errors"
 	"fmt"
 	"reflect"
 	"strings"
@@ -11,12 +10,12 @@ import (
 )
 
 // get all fields
-func Fields(obj any) (fields []string) {
-	if reflect.ValueOf(obj).Kind() == reflect.Ptr {
-		ptr := reflect.ValueOf(obj).Elem()
-		obj = ptr.Interface()
+func Fields(object any) (fields []string) {
+	if reflect.ValueOf(object).Kind() == reflect.Ptr {
+		ptr := reflect.ValueOf(object).Elem()
+		object = ptr.Interface()
 	}
-	typ := reflect.TypeOf(obj)
+	typ := reflect.TypeOf(object)
 	// fmt.Println("Type:", typ.Name(), "Kind:", typ.Kind())
 	for i := 0; i < typ.NumField(); i++ {
 		field := typ.Field(i)
@@ -26,29 +25,44 @@ func Fields(obj any) (fields []string) {
 }
 
 // get only exported field value
-func FieldValue(obj any, field string) any {
+func FieldValue(object any, field string) (any, error) {
 	if len(field) > 0 && unicode.IsUpper(rune(field[0])) {
-		if reflect.ValueOf(obj).Kind() == reflect.Ptr {
-			ptr := reflect.ValueOf(obj).Elem()
-			obj = ptr.Interface()
+		if reflect.ValueOf(object).Kind() == reflect.Ptr {
+			ptr := reflect.ValueOf(object).Elem()
+			object = ptr.Interface()
 		}
-		r := reflect.ValueOf(obj)
+		r := reflect.ValueOf(object)
 		f := reflect.Indirect(r).FieldByName(field)
-		return f.Interface()
+		if f.Kind() == 0 {
+			return nil, fmt.Errorf("field '%s' is NOT in struct '%v'", field, reflect.TypeOf(object))
+		}
+		return f.Interface(), nil
 	}
-	return errors.New(fmt.Sprintf("'[%s] is unexported'", field))
+	return nil, fmt.Errorf("field '%s' is NOT exported", field)
+}
+
+func Partial(object any, fields ...string) (map[string]any, error) {
+	part := make(map[string]any)
+	for _, field := range fields {
+		v, err := FieldValue(object, field)
+		if err != nil {
+			return nil, err
+		}
+		part[field] = v
+	}
+	return part, nil
 }
 
 // get all tags
-func Tags(obj any, tag string, exclTags ...string) (tags []string) {
+func Tags(object any, tag string, exclTags ...string) (tags []string) {
 	if NotIn(tag, "json", "validate") {
 		panic("tag must be [json, validate]")
 	}
-	if reflect.ValueOf(obj).Kind() == reflect.Ptr {
-		ptr := reflect.ValueOf(obj).Elem()
-		obj = ptr.Interface()
+	if reflect.ValueOf(object).Kind() == reflect.Ptr {
+		ptr := reflect.ValueOf(object).Elem()
+		object = ptr.Interface()
 	}
-	typ := reflect.TypeOf(obj)
+	typ := reflect.TypeOf(object)
 	for i := 0; i < typ.NumField(); i++ {
 		field := typ.Field(i)
 		tag := field.Tag.Get(tag)
@@ -65,11 +79,11 @@ func Tags(obj any, tag string, exclTags ...string) (tags []string) {
 }
 
 // get all validator tags
-func ValidatorTags(obj any, exclTags ...string) (tags []string) {
-	return Tags(obj, "validate", exclTags...)
+func ValidatorTags(object any, exclTags ...string) (tags []string) {
+	return Tags(object, "validate", exclTags...)
 }
 
 // get all json tags
-func JsonTags(obj any, exclTags ...string) (tags []string) {
-	return Tags(obj, "json", exclTags...)
+func JsonTags(object any, exclTags ...string) (tags []string) {
+	return Tags(object, "json", exclTags...)
 }

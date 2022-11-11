@@ -6,8 +6,9 @@ import (
 )
 
 type TEST struct {
-	a int    `json:"email0" validate:"required,email,email-db"`
-	A int    `json:"email1" validate:"email1,email-db"`
+	a int `json:"email0" validate:"required,email,email-db"`
+	A int `json:"email1" validate:"email1,email-db"`
+	B int
 	s string `json:"email2" validate:"email2,email-db"`
 	S string `json:"email3" validate:"email3,email-db"`
 }
@@ -21,14 +22,24 @@ func TestFields(t *testing.T) {
 		S: "SS",
 	}
 
+	fmt.Println(Partial(test, "A", "S", "B", "s"))
+
+	fmt.Println(FieldValue(test, "Z"))
+
+	fmt.Println()
+
+	fmt.Println(FieldValue(*test, "Z"))
+
+	fmt.Println()
+
 	for _, f := range Fields(test) {
-		fmt.Println(f, FieldValue(test, f))
+		fmt.Println(FieldValue(test, f))
 	}
 
 	fmt.Println()
 
 	for _, f := range Fields(*test) {
-		fmt.Println(f, FieldValue(*test, f))
+		fmt.Println(FieldValue(*test, f))
 	}
 
 	fmt.Println()

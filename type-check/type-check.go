@@ -54,7 +54,7 @@ func IsContInts(ints ...int) (ok bool, minIfOk int, maxIfOk int) {
 
 // nil-pointer could be non-nil any
 func IsInterfaceNil(i any) bool {
-	return i == nil || reflect.ValueOf(i).IsNil()
+	return i == nil || reflect.ValueOf(i).Kind() == 0 || reflect.ValueOf(i).IsNil()
 }
 
 func IsNil(i any) bool {
