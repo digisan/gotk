@@ -6,25 +6,54 @@ import (
 )
 
 type TEST struct {
-	a int `json:"email0" validate:"required,email,email-db"`
-	A int `json:"email1" validate:"email1,email-db"`
-	B int
-	s string `json:"email2" validate:"email2,email-db"`
-	S string `json:"email3" validate:"email3,email-db"`
+	a   int `json:"email0" validate:"required,email,email-db"`
+	A   int `json:"email1" validate:"email1,email-db"`
+	B   int
+	s   string `json:"email2" validate:"email2,email-db"`
+	S   string `json:"email3" validate:"email3,email-db"`
+	Sub SUB
+	sub SUB
+}
+
+type SUB struct {
+	c int
+	C int
+	d complex128
+	D complex128
 }
 
 func TestFields(t *testing.T) {
+
+	m := map[string]any{
+		"a": 1,
+		"b": 2,
+	}
+
+	v, _ := FieldValue(m, "a")
+	fmt.Printf("%v\n", v)
+
+	fmt.Println()
 
 	test := &TEST{
 		a: 1,
 		A: 12,
 		s: "s",
 		S: "SS",
+		Sub: SUB{
+			c: 9,
+			C: 99,
+			d: 4 + 5i,
+			D: 5 + 6i,
+		},
+		sub: SUB{},
 	}
 
-	fmt.Println(Partial(test, "A", "S", "B", "s"))
+	fmt.Println(PartialAsMap(test, "A", "S", "B", "Sub", "sub"))
 
-	fmt.Println(FieldValue(test, "Z"))
+	sub, _ := FieldValue(test, "Sub")
+	fmt.Printf("%v\n", sub)
+
+	fmt.Println(FieldValue(sub, "D"))
 
 	fmt.Println()
 

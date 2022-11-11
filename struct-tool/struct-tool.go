@@ -24,13 +24,16 @@ func Fields(object any) (fields []string) {
 	return
 }
 
+// func PathValue(object any, path string) (any, error) {
+// }
+
 // get only exported field value
 func FieldValue(object any, field string) (any, error) {
+	if reflect.ValueOf(object).Kind() == reflect.Ptr {
+		ptr := reflect.ValueOf(object).Elem()
+		object = ptr.Interface()
+	}
 	if len(field) > 0 && unicode.IsUpper(rune(field[0])) {
-		if reflect.ValueOf(object).Kind() == reflect.Ptr {
-			ptr := reflect.ValueOf(object).Elem()
-			object = ptr.Interface()
-		}
 		r := reflect.ValueOf(object)
 		f := reflect.Indirect(r).FieldByName(field)
 		if f.Kind() == 0 {
@@ -38,10 +41,10 @@ func FieldValue(object any, field string) (any, error) {
 		}
 		return f.Interface(), nil
 	}
-	return nil, fmt.Errorf("field '%s' is NOT exported", field)
+	return nil, fmt.Errorf("'%v' field '%s' is NOT exported", reflect.TypeOf(object), field)
 }
 
-func Partial(object any, fields ...string) (map[string]any, error) {
+func PartialAsMap(object any, fields ...string) (any, error) {
 	part := make(map[string]any)
 	for _, field := range fields {
 		v, err := FieldValue(object, field)
