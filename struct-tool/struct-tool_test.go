@@ -26,11 +26,13 @@ func TestFields(t *testing.T) {
 
 	m := map[string]any{
 		"a": 1,
+		"A": 11,
 		"b": 2,
 	}
 
-	v, _ := FieldValue(m, "a")
-	fmt.Printf("%v\n", v)
+	v, err := FieldValue(m, "A")
+	fmt.Printf("FieldValue applies to map: %v\n", v)
+	fmt.Printf("Err: %v\n", err)
 
 	fmt.Println()
 
@@ -47,6 +49,12 @@ func TestFields(t *testing.T) {
 		},
 		sub: SUB{},
 	}
+
+	v, err = PathValue(test, "Sub.C")
+	fmt.Printf("Sub.C: %v\n", v)
+	fmt.Printf("Err: %v\n", err)
+
+	fmt.Println()
 
 	fmt.Println(PartialAsMap(test, "A", "S", "B", "Sub", "sub"))
 

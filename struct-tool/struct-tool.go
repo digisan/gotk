@@ -2,6 +2,7 @@ package structtool
 
 import (
 	"fmt"
+	"log"
 	"reflect"
 	"strings"
 	"unicode"
@@ -24,11 +25,13 @@ func Fields(object any) (fields []string) {
 	return
 }
 
-// func PathValue(object any, path string) (any, error) {
-// }
-
 // get only exported field value
 func FieldValue(object any, field string) (any, error) {
+	defer func() {
+		if r := recover(); r != nil {
+			log.Printf("Cannot get field '%s' in struct '%v'\n", field, reflect.TypeOf(object))
+		}
+	}()
 	if reflect.ValueOf(object).Kind() == reflect.Ptr {
 		ptr := reflect.ValueOf(object).Elem()
 		object = ptr.Interface()
@@ -42,6 +45,16 @@ func FieldValue(object any, field string) (any, error) {
 		return f.Interface(), nil
 	}
 	return nil, fmt.Errorf("'%v' field '%s' is NOT exported", reflect.TypeOf(object), field)
+}
+
+func PathValue(object any, path string) (v any, err error) {
+	for _, seg := range strings.Split(path, ".") {
+		if v, err = FieldValue(object, seg); err != nil {
+			return nil, err
+		}
+		object = v
+	}
+	return v, err
 }
 
 func PartialAsMap(object any, fields ...string) (any, error) {
