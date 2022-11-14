@@ -16,14 +16,42 @@ type TEST struct {
 }
 
 type SUB struct {
-	c int
-	C int
-	d complex128
-	D complex128
+	c    int
+	C    int
+	d    complex128
+	D    complex128
+	M    string
+	Ssub SSUB
 }
 
-func TestFields(t *testing.T) {
+type SSUB struct {
+	Z float64
+}
 
+func TestPartialAsMap(t *testing.T) {
+
+	test := &TEST{
+		a: 1,
+		A: 12,
+		s: "s",
+		S: "SS",
+		Sub: SUB{
+			c: 9,
+			C: 99,
+			d: 4 + 5i,
+			D: 5 + 6i,
+			M: "sub",
+			Ssub: SSUB{
+				Z: 1.11,
+			},
+		},
+		sub: SUB{},
+	}
+
+	fmt.Println(PartialAsMap(test, "A", "S", "B", "Sub.C", "Sub.M", "Sub.Ssub.Z"))
+}
+
+func TestFieldValueOnMap(t *testing.T) {
 	m := map[string]any{
 		"a": 1,
 		"A": 11,
@@ -33,8 +61,9 @@ func TestFields(t *testing.T) {
 	v, err := FieldValue(m, "A")
 	fmt.Printf("FieldValue applies to map: %v\n", v)
 	fmt.Printf("Err: %v\n", err)
+}
 
-	fmt.Println()
+func TestFields(t *testing.T) {
 
 	test := &TEST{
 		a: 1,
@@ -50,13 +79,11 @@ func TestFields(t *testing.T) {
 		sub: SUB{},
 	}
 
-	v, err = PathValue(test, "Sub.C")
+	v, err := PathValue(test, "Sub.C")
 	fmt.Printf("Sub.C: %v\n", v)
 	fmt.Printf("Err: %v\n", err)
 
 	fmt.Println()
-
-	fmt.Println(PartialAsMap(test, "A", "S", "B", "Sub", "sub"))
 
 	sub, _ := FieldValue(test, "Sub")
 	fmt.Printf("%v\n", sub)

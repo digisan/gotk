@@ -57,16 +57,28 @@ func PathValue(object any, path string) (v any, err error) {
 	return v, err
 }
 
-func PartialAsMap(object any, fields ...string) (any, error) {
-	part := make(map[string]any)
-	for _, field := range fields {
-		v, err := FieldValue(object, field)
+// func PartialAsMap(object any, fields ...string) (any, error) {
+// 	part := make(map[string]any)
+// 	for _, field := range fields {
+// 		v, err := FieldValue(object, field)
+// 		if err != nil {
+// 			return nil, err
+// 		}
+// 		part[field] = v
+// 	}
+// 	return part, nil
+// }
+
+func PartialAsMap(object any, paths ...string) (any, error) {
+	mFlat := make(map[string]any)
+	for _, path := range paths {
+		v, err := PathValue(object, path)
 		if err != nil {
 			return nil, err
 		}
-		part[field] = v
+		mFlat[path] = v
 	}
-	return part, nil
+	return MapFlatToNested(mFlat), nil
 }
 
 // get all tags
