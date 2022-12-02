@@ -45,7 +45,7 @@ func Chunk2Map(filepath, markstart, markend, sep string, env, val4path2abs bool)
 	}
 
 	// keyvars, _ := mapslice.KsVs2Slc(m, "KL-DESC")
-	keyvars, _ := Map2KVs(m, func(i string, j string) bool { return len(i) > len(j) }, nil)
+	keyvars, _ := MapToKVs(m, func(i string, j string) bool { return len(i) > len(j) }, nil)
 
 	// replace '$XYZ $XY $X' to its value
 AGAIN1:
@@ -69,7 +69,7 @@ AGAIN2:
 	}
 
 	// keyvars, _ = mapslice.KsVs2Slc(m, "KL-DESC")
-	keyvars, _ = Map2KVs(m, func(i string, j string) bool { return len(i) > len(j) }, nil)
+	keyvars, _ = MapToKVs(m, func(i string, j string) bool { return len(i) > len(j) }, nil)
 
 	// replace '${XYZ} ${XY} ${X}' to its value
 AGAIN3:
@@ -115,7 +115,7 @@ func EnvValued(s string, m map[string]string) (valstr string) {
 	}
 
 	// keyvars, _ := mapslice.KsVs2Slc(m, "KL-DESC")
-	keyvars, _ := Map2KVs(m, func(i string, j string) bool { return len(i) > len(j) }, nil)
+	keyvars, _ := MapToKVs(m, func(i string, j string) bool { return len(i) > len(j) }, nil)
 	valstr = s
 
 	// replace '$XYZ $XY $X' to its value
