@@ -3,8 +3,8 @@ module github.com/digisan/gotk
 go 1.19
 
 require (
-	github.com/digisan/go-generics v0.2.11
-	golang.org/x/net v0.3.0
+	github.com/digisan/go-generics v0.2.14
+	golang.org/x/net v0.4.0
 )
 
 require (

@@ -718,19 +718,19 @@ func TestChangePath(t *testing.T) {
 			},
 			want: "./test/v.go",
 		},
-		// {
-		// 	name: "strict",
-		// 	args: args{
-		// 		strict: true,
-		// 		fpath:    "./Var.go",
-		// 		newtail:  "test/v",
-		// 		fromlast: 1,
-		// 		keepext:  true,
-		// 		cp:       true,
-		// 		mv:       true,
-		// 	},
-		// 	want: "./test/v.go",
-		// },
+		{
+			name: "strict",
+			args: args{
+				strict:   true,
+				fpath:    "./Var.go",
+				newtail:  "test/v",
+				fromlast: 1,
+				keepext:  true,
+				cp:       true,
+				mv:       true,
+			},
+			want: "./test/v.go",
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

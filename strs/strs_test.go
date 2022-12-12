@@ -22,7 +22,7 @@ func TestIsIn(t *testing.T) {
 		{
 			name: "",
 			args: args{
-				ignoreCase: true,
+				ignoreCase:  true,
 				ignoreSpace: false,
 				s:           "A",
 				group:       []string{"a ", "b", "c", "c"},
@@ -32,7 +32,7 @@ func TestIsIn(t *testing.T) {
 		{
 			name: "",
 			args: args{
-				ignoreCase: false,
+				ignoreCase:  false,
 				ignoreSpace: false,
 				s:           "AA",
 				group:       []string{"aa", "bb", "cc", ""},
@@ -53,7 +53,7 @@ func TestIsIn(t *testing.T) {
 
 func TestIsNotIn(t *testing.T) {
 	type args struct {
-		ignoreCase bool
+		ignoreCase  bool
 		ignoreSpace bool
 		s           string
 		group       []string
@@ -67,7 +67,7 @@ func TestIsNotIn(t *testing.T) {
 		{
 			name: "",
 			args: args{
-				ignoreCase: true,
+				ignoreCase:  true,
 				ignoreSpace: true,
 				s:           "a",
 				group:       []string{"A", "B", "C"},
@@ -77,7 +77,7 @@ func TestIsNotIn(t *testing.T) {
 		{
 			name: "",
 			args: args{
-				ignoreCase: false,
+				ignoreCase:  false,
 				ignoreSpace: true,
 				s:           "a",
 				group:       []string{"A", "B", "C"},
@@ -296,138 +296,6 @@ func TestReplaceAllOnAnyOf(t *testing.T) {
 	}
 }
 
-func TestSplitPart(t *testing.T) {
-	type args struct {
-		s   string
-		sep string
-		idx int
-	}
-	tests := []struct {
-		name string
-		args args
-		want string
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := SplitPart(tt.args.s, tt.args.sep, tt.args.idx); got != tt.want {
-				t.Errorf("SplitPart() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func TestSplitPartToNum(t *testing.T) {
-	type args struct {
-		s   string
-		sep string
-		idx int
-	}
-	tests := []struct {
-		name string
-		args args
-		want float64
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := SplitPartToNum(tt.args.s, tt.args.sep, tt.args.idx); got != tt.want {
-				t.Errorf("SplitPartToNum() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func TestSplitPartToBool(t *testing.T) {
-	type args struct {
-		s   string
-		sep string
-		idx int
-	}
-	tests := []struct {
-		name string
-		args args
-		want bool
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := SplitPartToBool(tt.args.s, tt.args.sep, tt.args.idx); got != tt.want {
-				t.Errorf("SplitPartToBool() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func TestSplitPartFromLast(t *testing.T) {
-	type args struct {
-		s   string
-		sep string
-		idx int
-	}
-	tests := []struct {
-		name string
-		args args
-		want string
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := SplitPartFromLast(tt.args.s, tt.args.sep, tt.args.idx); got != tt.want {
-				t.Errorf("SplitPartFromLast() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func TestSplitPartFromLastToNum(t *testing.T) {
-	type args struct {
-		s   string
-		sep string
-		idx int
-	}
-	tests := []struct {
-		name string
-		args args
-		want float64
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := SplitPartFromLastToNum(tt.args.s, tt.args.sep, tt.args.idx); got != tt.want {
-				t.Errorf("SplitPartFromLastToNum() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func TestSplitPartFromLastToBool(t *testing.T) {
-	type args struct {
-		s   string
-		sep string
-		idx int
-	}
-	tests := []struct {
-		name string
-		args args
-		want bool
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := SplitPartFromLastToBool(tt.args.s, tt.args.sep, tt.args.idx); got != tt.want {
-				t.Errorf("SplitPartFromLastToBool() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
 func TestTrimTailFromLast(t *testing.T) {
 	type args struct {
 		s    string
@@ -508,4 +376,10 @@ func TestHtmlTextContent(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestSplitPart(t *testing.T) {	
+	// fmt.Println(SplitPartTo[int]("abc.23.ss", ".", 2))
+	// fmt.Println(SplitPartTo[int]("abc.23.ss", ".", 6))
+	fmt.Println(SplitPartTo[int]("abc.23.ss", ".", 1))
 }

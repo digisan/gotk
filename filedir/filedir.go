@@ -51,7 +51,7 @@ func ChangeFilePath(strict bool, fpath, newtail string, fromlast int, keepext, c
 	}
 
 	newpath := ""
-	head, tail := "", strs.SplitPartFromLast(fpath, sep, fromlast)
+	head, tail := "", strs.SplitPartFromLastTo[string](fpath, sep, fromlast)
 	if fromlast == 1 {
 		head = strings.TrimRight(fpath, tail)
 		newpath = head + newtail + ext

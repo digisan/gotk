@@ -2,10 +2,10 @@ package strs
 
 import (
 	"fmt"
+	"log"
 	"regexp"
 	"runtime"
 	"sort"
-	"strconv"
 	"strings"
 
 	. "github.com/digisan/go-generics/v2"
@@ -142,53 +142,24 @@ func ReplaceAllOnAnyOf(str string, new string, aims ...string) string {
 	return str
 }
 
-func SplitPart(s, sep string, idx int) string {
+func SplitPartTo[T any](s, sep string, idx int) T {
 	ss := strings.Split(s, sep)
 	if idx < 0 && idx >= len(ss) {
-		panic("[idx] is out of range")
+		log.Fatalf("index@ [%d] of '%s' is out of range", idx, s)
 	}
-	return ss[idx]
-}
-
-func SplitPartToNum(s, sep string, idx int) float64 {
-	part := SplitPart(s, sep, idx)
-	num, err := strconv.ParseFloat(part, 64)
-	if err != nil {
-		panic(err)
+	if rt, ok := AnyTryToType[T](ss[idx]); ok {
+		return rt
 	}
-	return num
-}
-
-func SplitPartToBool(s, sep string, idx int) bool {
-	part := SplitPart(s, sep, idx)
-	boolean, err := strconv.ParseBool(part)
-	if err != nil {
-		panic(err)
-	}
-	return boolean
+	panic(fmt.Sprintf("index@ [%d] of '%s' cannot be converted to [%T]", idx, s, *new(T)))
 }
 
 // idx 1 is the last element, idx 2 is the second last, etc...
-func SplitPartFromLast(s, sep string, idx int) string {
-	return Last(strings.Split(s, sep), idx)
-}
-
-func SplitPartFromLastToNum(s, sep string, idx int) float64 {
-	part := SplitPartFromLast(s, sep, idx)
-	num, err := strconv.ParseFloat(part, 64)
-	if err != nil {
-		panic(err)
+func SplitPartFromLastTo[T any](s, sep string, idx int) T {
+	laststr := Last(strings.Split(s, sep), idx)
+	if rt, ok := AnyTryToType[T](laststr); ok {
+		return rt
 	}
-	return num
-}
-
-func SplitPartFromLastToBool(s, sep string, idx int) bool {
-	part := SplitPartFromLast(s, sep, idx)
-	boolean, err := strconv.ParseBool(part)
-	if err != nil {
-		panic(err)
-	}
-	return boolean
+	panic(fmt.Sprintf("index@ [%d] of '%s' cannot be converted to [%T]", idx, s, *new(T)))
 }
 
 func TrimTailFromLast(s, mark string) string {
