@@ -3,7 +3,7 @@ module github.com/digisan/gotk
 go 1.19
 
 require (
-	github.com/digisan/go-generics v0.2.14
+	github.com/digisan/go-generics v0.2.15
 	golang.org/x/net v0.4.0
 )
 

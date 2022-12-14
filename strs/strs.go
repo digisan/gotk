@@ -203,3 +203,30 @@ loopDomTest:
 	}
 	return
 }
+
+func SortPaths(paths ...string) []string {
+	sort.SliceStable(paths, func(i, j int) bool {
+		pathi, pathj := paths[i], paths[j]
+		ni, nj := strings.Count(pathi, "."), strings.Count(pathj, ".")
+		minDot := Min(ni, nj)
+		ssi, ssj := strings.Split(pathi, "."), strings.Split(pathj, ".")
+	NEXT:
+		for i := 0; i < minDot+1; i++ {
+			si, sj := ssi[i], ssj[i]
+			if si == sj {
+				continue NEXT
+			}
+			if IsUint(si) && IsUint(sj) {
+				idxI, _ := AnyTryToType[uint](si)
+				idxJ, _ := AnyTryToType[uint](sj)
+				if idxI == idxJ {
+					continue NEXT
+				}
+				return idxI < idxJ
+			}
+			return si < sj // ascii ASC, uppercase first
+		}
+		return ni < nj
+	})
+	return paths
+}

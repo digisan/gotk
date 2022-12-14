@@ -378,8 +378,25 @@ func TestHtmlTextContent(t *testing.T) {
 	}
 }
 
-func TestSplitPart(t *testing.T) {	
+func TestSplitPart(t *testing.T) {
 	// fmt.Println(SplitPartTo[int]("abc.23.ss", ".", 2))
 	// fmt.Println(SplitPartTo[int]("abc.23.ss", ".", 6))
 	fmt.Println(SplitPartTo[int]("abc.23.ss", ".", 1))
+}
+
+func TestSortPaths(t *testing.T) {
+	paths := SortPaths(
+		"B.m.1.u",
+		"A.z",
+		"B.m.1.t",
+		"B.m.1.t.W",
+		"A.b.1",
+		"B.m.2.T",
+		"A.Z",
+		"b.0.A",
+		"B.m.3.t",
+	)
+	for _, path := range paths {
+		fmt.Println(path)
+	}
 }
