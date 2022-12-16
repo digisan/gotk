@@ -6,10 +6,17 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strconv"
+	"strings"
 
 	. "github.com/digisan/go-generics/v2"
 	fd "github.com/digisan/gotk/filedir"
 	"github.com/digisan/gotk/io"
+)
+
+var (
+	fSf    = fmt.Sprintf
+	sTrim  = strings.Trim
+	sSplit = strings.Split
 )
 
 // GetRunningPID:

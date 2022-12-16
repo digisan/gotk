@@ -5,9 +5,16 @@ import (
 	"path/filepath"
 	"reflect"
 	"runtime"
+	"time"
 
 	. "github.com/digisan/gotk/strs"
 )
+
+// TrackTime : defer TrackTime(time.Now())
+func TrackTime(start time.Time) {
+	elapsed := time.Since(start)
+	fmt.Printf("Took %s\n", elapsed)
+}
 
 // running track(0) in caller(), return 1. caller.go, 2. caller.go line number, 3. caller package & name
 func track(lvl int) (string, int, string) {
@@ -29,17 +36,17 @@ func CallerSrc() (dir, src string) {
 	return filepath.Dir(file), filepath.Base(file)
 }
 
-func Caller(fullpath bool) string {
+func Caller(fullPath bool) string {
 	_, _, fn := track(1)
-	if fullpath {
+	if fullPath {
 		return fn
 	}
 	return TrimHeadToLast(fn, ".")
 }
 
-func ParentCaller(fullpath bool) string {
+func ParentCaller(fullPath bool) string {
 	_, _, fn := track(2)
-	if fullpath {
+	if fullPath {
 		return fn
 	}
 	return TrimHeadToLast(fn, ".")

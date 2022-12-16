@@ -30,10 +30,10 @@ func ChangeFileName(fpath, prefix, suffix string) string {
 }
 
 // e.g. fpath is "/a/b/c/d.txt",
-// if [fromlast] is 1 and newtail is [D], return is "/a/b/c/D.txt"
-// if [fromlast] is 2 and newtail is [D], return is "/a/b/D.txt"
-// if [fromlast] is 1 and newtail is [D/E.txt] return is "/a/b/c/D/E.txt"
-func ChangeFilePath(strict bool, fpath, newtail string, fromlast int, keepext, cp, mv bool) string {
+// if [fromLast] is 1 and newTail is [D], return is "/a/b/c/D.txt"
+// if [fromLast] is 2 and newTail is [D], return is "/a/b/D.txt"
+// if [fromLast] is 1 and newTail is [D/E.txt] return is "/a/b/c/D/E.txt"
+func ChangeFilePath(strict bool, fpath, newTail string, fromLast int, keepExt, cp, mv bool) string {
 
 	if strict && !FileExists(fpath) {
 		log.Fatalf("[%s] is not existing", fpath)
@@ -42,7 +42,7 @@ func ChangeFilePath(strict bool, fpath, newtail string, fromlast int, keepext, c
 	sep := string(os.PathSeparator)
 
 	ext := ""
-	if keepext {
+	if keepExt {
 		iLastExt := strings.LastIndex(fpath, ".")
 		iLastPart := strings.LastIndex(fpath, sep)
 		if iLastExt > iLastPart {
@@ -50,23 +50,23 @@ func ChangeFilePath(strict bool, fpath, newtail string, fromlast int, keepext, c
 		}
 	}
 
-	newpath := ""
-	head, tail := "", strs.SplitPartFromLastTo[string](fpath, sep, fromlast)
-	if fromlast == 1 {
+	newPath := ""
+	head, tail := "", strs.SplitPartFromLastTo[string](fpath, sep, fromLast)
+	if fromLast == 1 {
 		head = strings.TrimRight(fpath, tail)
-		newpath = head + newtail + ext
+		newPath = head + newTail + ext
 	} else {
 		idx := strings.LastIndex(fpath, sep+tail+sep)
 		head = fpath[:idx]
-		newpath = head + sep + newtail + ext
+		newPath = head + sep + newTail + ext
 	}
 
 	if !cp && !mv {
-		return newpath
+		return newPath
 	}
 
 	if FileExists(fpath) {
-		if err := os.MkdirAll(filepath.Dir(newpath), os.ModePerm); err != nil {
+		if err := os.MkdirAll(filepath.Dir(newPath), os.ModePerm); err != nil {
 			log.Fatalln(err)
 		}
 		switch {
@@ -75,17 +75,17 @@ func ChangeFilePath(strict bool, fpath, newtail string, fromlast int, keepext, c
 			if err != nil {
 				log.Fatalln(err)
 			}
-			if err = os.WriteFile(newpath, buf, os.ModePerm); err != nil {
+			if err = os.WriteFile(newPath, buf, os.ModePerm); err != nil {
 				log.Fatalln(err)
 			}
 		case mv:
-			if err := os.Rename(fpath, newpath); err != nil {
+			if err := os.Rename(fpath, newPath); err != nil {
 				log.Fatalln(err)
 			}
 		}
 	}
 
-	return newpath
+	return newPath
 }
 
 // ".txt" => ".txt", "txt" => ".txt", " " => "", "" => ""
@@ -302,7 +302,7 @@ func DirSize(path, unit string) (float64, error) {
 }
 
 // WalkFileDir : ignore hidden file or directory
-func WalkFileDir(path string, recursive bool, exctypes ...string) (filepaths, directories []string, err error) {
+func WalkFileDir(path string, recursive bool, excTypes ...string) (filepaths, directories []string, err error) {
 
 	path, err = AbsPath(path, true)
 	if err != nil {
@@ -327,7 +327,7 @@ func WalkFileDir(path string, recursive bool, exctypes ...string) (filepaths, di
 			}
 
 			// ignore excluded files
-			for _, exc := range exctypes {
+			for _, exc := range excTypes {
 				if strings.HasSuffix(filename, "."+exc) {
 					continue NEXT_FILE
 				}
@@ -342,7 +342,7 @@ func WalkFileDir(path string, recursive bool, exctypes ...string) (filepaths, di
 
 	} else {
 
-		skipself := true
+		skipSelf := true
 		if err = filepath.WalkDir(path,
 			func(path string, d fs.DirEntry, err error) error {
 				if err != nil {
@@ -352,8 +352,8 @@ func WalkFileDir(path string, recursive bool, exctypes ...string) (filepaths, di
 				filename := d.Name()
 
 				// ignore self folder
-				if skipself {
-					skipself = false
+				if skipSelf {
+					skipSelf = false
 					return nil
 				}
 
@@ -370,7 +370,7 @@ func WalkFileDir(path string, recursive bool, exctypes ...string) (filepaths, di
 				}
 
 				// ignore excluded files
-				for _, exc := range exctypes {
+				for _, exc := range excTypes {
 					if strings.HasSuffix(filename, "."+exc) {
 						return nil
 					}
@@ -393,9 +393,9 @@ func WalkFileDir(path string, recursive bool, exctypes ...string) (filepaths, di
 }
 
 // MergeDir: if onConflict == nil, overwrites previous when conflict
-func MergeDir(destdir string, move bool, onConflict func(existing, incoming []byte) (overwrite bool, overwriteData []byte), srcdirs ...string) error {
+func MergeDir(destDir string, move bool, onConflict func(existing, incoming []byte) (overwrite bool, overwriteData []byte), srcdirs ...string) error {
 
-	destdir, _ = AbsPath(destdir, false)
+	destDir, _ = AbsPath(destDir, false)
 
 	for _, srcdir := range srcdirs {
 		srcdir, err := AbsPath(srcdir, true)
@@ -410,7 +410,7 @@ func MergeDir(destdir string, move bool, onConflict func(existing, incoming []by
 
 		// create each folder
 		for _, dir := range dirs {
-			aimdir := filepath.Clean(destdir) + dir[len(srcdir):]
+			aimdir := filepath.Clean(destDir) + dir[len(srcdir):]
 			os.MkdirAll(aimdir, 0700)
 		}
 
@@ -420,12 +420,12 @@ func MergeDir(destdir string, move bool, onConflict func(existing, incoming []by
 			dirs = append(dirs, filepath.Dir(file))
 		}
 		for _, dir := range Settify(dirs...) {
-			aimdir := filepath.Clean(destdir) + dir[len(srcdir):]
+			aimdir := filepath.Clean(destDir) + dir[len(srcdir):]
 			os.Mkdir(aimdir, 0700)
 		}
 
 		// fmt.Println("src-dir:", srcdir)
-		// fmt.Println("dest-dir:", destdir)
+		// fmt.Println("dest-dir:", destDir)
 
 		// copy files
 	NEXT_FILE:
@@ -435,7 +435,7 @@ func MergeDir(destdir string, move bool, onConflict func(existing, incoming []by
 				return err
 			}
 
-			destfile := strings.Replace(file, srcdir, destdir, 1)
+			destfile := strings.Replace(file, srcdir, destDir, 1)
 
 			if FileExists(destfile) && onConflict != nil {
 				// fmt.Printf("conflict at: %s\n", destfile)
