@@ -230,3 +230,7 @@ func SortPaths(paths ...string) []string {
 	})
 	return paths
 }
+
+func ReversePath(path string) string {
+	return strings.Join(Reverse(strings.Split(path, ".")), ".")
+}

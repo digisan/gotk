@@ -400,3 +400,8 @@ func TestSortPaths(t *testing.T) {
 		fmt.Println(path)
 	}
 }
+
+func TestReversePath(t *testing.T) {
+	path := "B.m.1.t.W"
+	fmt.Println(ReversePath(path))
+}
