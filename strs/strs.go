@@ -204,6 +204,10 @@ loopDomTest:
 	return
 }
 
+func ReversePath(path string) string {
+	return strings.Join(Reverse(strings.Split(path, ".")), ".")
+}
+
 func SortPaths(paths ...string) []string {
 	sort.SliceStable(paths, func(i, j int) bool {
 		pathi, pathj := paths[i], paths[j]
@@ -229,8 +233,4 @@ func SortPaths(paths ...string) []string {
 		return ni < nj
 	})
 	return paths
-}
-
-func ReversePath(path string) string {
-	return strings.Join(Reverse(strings.Split(path, ".")), ".")
 }
