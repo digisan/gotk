@@ -1,4 +1,4 @@
-github.com/digisan/go-generics v0.2.29 h1:KyjyYj21E02AGcS9w776lOpuGR0INocazc6/nhPwMLc=
-github.com/digisan/go-generics v0.2.29/go.mod h1:HoHbkpjEgiw3YQ3QaADIfeFt/kpdODb0qerSbs0PSBA=
+github.com/digisan/go-generics v0.2.31 h1:QTxk98ZuyMfLeWJxoZRQigHT3jI5Au+2phJ0GzNf8Z0=
+github.com/digisan/go-generics v0.2.31/go.mod h1:HoHbkpjEgiw3YQ3QaADIfeFt/kpdODb0qerSbs0PSBA=
 golang.org/x/net v0.5.0 h1:GyT4nK/YDHSqa1c4753ouYCDajOYKTja9Xb/OHtgvSw=
 golang.org/x/net v0.5.0/go.mod h1:DivGGAXEgPSlEBzxGzZI+ZLohi+xUj054jfeKui00ws=

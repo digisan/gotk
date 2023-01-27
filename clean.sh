@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 rm -f ./io/*.txt
 
 # delete all binary files
