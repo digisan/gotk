@@ -43,22 +43,22 @@ func TestPublicIP(t *testing.T) {
 	}
 }
 
-func TestChangeLocalUrlPort(t *testing.T) {
-	fmt.Println(ChangeLocalUrlPort(false, false, -1, 5000, "./test-sample.ejs"))
+func TestReplacePort4LocalUrl(t *testing.T) {
+	fmt.Println(ReplacePort4LocalUrl(-1, 5000, false, false, "./test-sample.ejs"))
 }
 
-func TestChangeLocalhost(t *testing.T) {
-	fmt.Println(ChangeLocalhost(false, true, false, true, "134.22.33.211", "./test-sample.ejs"))
+func TestLoc127To(t *testing.T) {
+	fmt.Println(Loc127To(false, true, "134.22.33.211", false, true, "./test-sample.ejs"))
 }
 
-func TestLocIPToPubIP(t *testing.T) {
-	fmt.Println(LocIPToPubIP(false, true, "./test-sample.ejs"))
+func TestLocIP2PubIP(t *testing.T) {
+	fmt.Println(LocIP2PubIP(false, true, "./test-sample.ejs"))
 }
 
-func TestLhTo127(t *testing.T) {
-	fmt.Println(LocalhostToIP127(false, true, "./test-sample.ejs"))
-}
-
-func Test127ToLh(t *testing.T) {
-	fmt.Println(IP127ToLocalhost(false, true, "./test-sample.ejs"))
+func TestModifyOriginOrIP(t *testing.T) {
+	// fmt.Println(ModifyOriginOrIP("localhost", "127.0.0.1", false, true, false, "./test-sample.ejs"))
+	// fmt.Println(ModifyOriginOrIP("127.0.0.1", "localhost", false, true, false, "./test-sample.ejs"))
+	// fmt.Println(ModifyOriginOrIP("localhost", "my.example.com", false, false, true, "./test-sample.ejs"))
+	// fmt.Println(ModifyOriginOrIP("localhost", "my.example.com", false, false, false, "./test-sample.ejs"))
+	fmt.Println(ModifyOriginOrIP("localhost", "my.example.com", true, false, false, "./test-sample.ejs"))
 }
