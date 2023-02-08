@@ -43,22 +43,19 @@ func TestPublicIP(t *testing.T) {
 	}
 }
 
-func TestReplacePort4LocalUrl(t *testing.T) {
-	fmt.Println(ReplacePort4LocalUrl(-1, 5000, false, false, "./test-sample.ejs"))
-}
-
-func TestLoc127To(t *testing.T) {
-	fmt.Println(Loc127To(false, true, "134.22.33.211", false, true, "./test-sample.ejs"))
-}
-
-func TestLocIP2PubIP(t *testing.T) {
-	fmt.Println(LocIP2PubIP(false, true, "./test-sample.ejs"))
-}
-
 func TestModifyOriginOrIP(t *testing.T) {
-	// fmt.Println(ModifyOriginOrIP("localhost", "127.0.0.1", false, true, false, "./test-sample.ejs"))
-	// fmt.Println(ModifyOriginOrIP("127.0.0.1", "localhost", false, true, false, "./test-sample.ejs"))
-	// fmt.Println(ModifyOriginOrIP("localhost", "my.example.com", false, false, true, "./test-sample.ejs"))
-	// fmt.Println(ModifyOriginOrIP("localhost", "my.example.com", false, false, false, "./test-sample.ejs"))
-	fmt.Println(ModifyOriginOrIP("localhost", "my.example.com", true, false, false, "./test-sample.ejs"))
+
+	s := `
+	http://127.0.0.1:3000/api/
+	https://127.0.0.1:3000/api/
+	http://localhost:3001/api/
+	https://localhost:3001/api/
+	localhost:3002/api/
+	127.0.0.1:3002/api/
+	`
+
+	// fmt.Println(ModifyOriginIP(s, "localhost", "my.example.com", "", -1, true, true, true))
+	// fmt.Println(ModifyOriginIP(s, "localhost", "my.example.com", "", -1, true, true, false))
+	// fmt.Println(ModifyOriginIP(s, "localhost", "test://my.example.com", "", -1, false, true, false))
+	fmt.Println(ModifyOriginIP(s, "localhost", "my.example.com:1234", "", -1, true, false, true))
 }

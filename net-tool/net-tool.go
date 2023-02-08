@@ -5,12 +5,10 @@ import (
 	"fmt"
 	"io"
 	"log"
-	"math"
 	"net"
 	"net/http"
 	"os"
 	"regexp"
-	"sort"
 	"strings"
 
 	. "github.com/digisan/go-generics/v2"
@@ -53,95 +51,125 @@ func PublicIP() string {
 	return ip.Query
 }
 
-// if [scheme] is false && [portOld] is -1, then replace any local url's old port to new port.
-func ReplacePort4LocalUrl(portOld, portNew int, scheme, only1st bool, fPaths ...string) error {
+// [old], [new] must be without port
+// if [onScheme] is empty, deal with both "http" and "https" scheme
+// if [onPort] is -1, deal with all valid port
+func ModifyOriginIP(text, old, new, onScheme string, onPort int, keepScheme, keepPort, only1st bool) (string, error) {
 
+	if NotIn(onScheme, "", "http", "https") {
+		return "", fmt.Errorf("[onScheme] can only be 'http', 'https' OR empty for no scheme or any scheme")
+	}
+	if NotInCloseRange(onPort, 0, 65535) && onPort != -1 {
+		return "", fmt.Errorf("[onPort] can only be [0, 65535] OR -1 for no port or any port")
+	}
+
+	rmc, fsf := regexp.MustCompile, fmt.Sprintf
+
+	var r *regexp.Regexp
+	switch {
+	case len(onScheme) > 0 && onPort > -1:
+		r = rmc(fsf(`%s://%s:%d`, onScheme, old, onPort))
+
+	case len(onScheme) == 0 && onPort > -1:
+		r = rmc(fsf(`(https?://)?%s:%d`, old, onPort))
+
+	case len(onScheme) > 0 && onPort < 0:
+		r = rmc(fsf(`%s://%s(:\d+)?`, onScheme, old))
+
+	case len(onScheme) == 0 && onPort < 0:
+		r = rmc(fsf(`(https?://)?%s(:\d+)?`, old))
+	}
+
+	if only1st {
+
+		if found := r.FindString(text); found != "" {
+			switch {
+			case keepScheme && keepPort:
+				new := strings.Replace(found, old, new, 1)
+				text = strings.Replace(text, found, new, 1)
+
+			case keepScheme && !keepPort:
+				toRm := strs.TrimAnyPrefix(found, "https://", "http://")
+				text = strings.Replace(text, toRm, new, 1)
+
+			case !keepScheme && keepPort:
+				if p := strings.LastIndex(found, ":"); p > -1 && IsNumeric(found[p+1:]) {
+					toRm := found[:p]
+					m := map[int]string{
+						strings.Index(text, "https://"+toRm): "https://" + toRm,
+						strings.Index(text, "http://"+toRm):  "http://" + toRm,
+						strings.Index(text, toRm):            toRm,
+					}
+					keys, _ := MapToKVs(m, nil, nil)
+					if k, ok := MinFloor(0, true, keys...); ok {
+						text = strings.Replace(text, m[k], new, 1)
+					}
+				}
+
+			// case !keepScheme && !keepPort:
+			default:
+				m := map[int]string{
+					strings.Index(text, "https://"+found): "https://" + found,
+					strings.Index(text, "http://"+found):  "http://" + found,
+					strings.Index(text, found):            found,
+				}
+				keys, _ := MapToKVs(m, nil, nil)
+				if k, ok := MinFloor(0, true, keys...); ok {
+					text = strings.Replace(text, m[k], new, 1)
+				}
+			}
+		}
+
+	} else {
+
+		switch {
+		case keepScheme && keepPort:
+			return r.ReplaceAllStringFunc(text, func(s string) string {
+				return strings.ReplaceAll(s, old, new)
+			}), nil
+
+		case keepScheme && !keepPort:
+			return r.ReplaceAllStringFunc(text, func(s string) string {
+				if p := strings.Index(s, "://"); p > -1 {
+					return s[:p] + "://" + new
+				}
+				return new
+			}), nil
+
+		case !keepScheme && keepPort:
+			return r.ReplaceAllStringFunc(text, func(s string) string {
+				if p := strings.LastIndex(s, ":"); p > -1 {
+					if port, ok := AnyTryToType[int](s[p+1:]); ok {
+						return new + ":" + fmt.Sprint(port)
+					}
+				}
+				return new
+			}), nil
+
+		// case !keepScheme && !keepPort:
+		default:
+			return r.ReplaceAllStringFunc(text, func(s string) string {
+				return new
+			}), nil
+		}
+	}
+
+	return text, nil
+}
+
+// [old], [new] must be without port
+// if [onScheme] is empty, deal with both "http" and "https" scheme
+// if [onPort] is -1, deal with all valid port
+func ModifyFileOriginIP(old, new, onScheme string, onPort int, keepScheme, keepPort bool, fPaths ...string) error {
 	for _, fPath := range fPaths {
-
 		data, err := os.ReadFile(fPath)
 		if err != nil {
 			return err
 		}
-
-		text := string(data)
-		locIP := LocalIP()
-
-		type sp struct {
-			s string
-			p int
+		text, err := ModifyOriginIP(string(data), old, new, onScheme, onPort, keepScheme, keepPort, false)
+		if err != nil {
+			return err
 		}
-		spGrp := make([]sp, 3)
-		for i := 0; i < len(spGrp); i++ {
-			spGrp[i].p = math.MaxInt32
-		}
-
-		var rLocalIPs []*regexp.Regexp
-		if scheme {
-			rLocalIPs = []*regexp.Regexp{
-				regexp.MustCompile(fmt.Sprintf(`https?://localhost:%d/?`, portOld)),
-				regexp.MustCompile(fmt.Sprintf(`https?://127.0.0.1:%d/?`, portOld)),
-				regexp.MustCompile(fmt.Sprintf(`https?://%s:%d/?`, locIP, portOld)),
-			}
-		} else {
-			if portOld != -1 {
-				rLocalIPs = []*regexp.Regexp{
-					regexp.MustCompile(fmt.Sprintf(`localhost:%d/?`, portOld)),
-					regexp.MustCompile(fmt.Sprintf(`127.0.0.1:%d/?`, portOld)),
-					regexp.MustCompile(fmt.Sprintf(`%s:%d/?`, locIP, portOld)),
-				}
-			} else {
-				rLocalIPs = []*regexp.Regexp{
-					regexp.MustCompile(`localhost:\d+/?`),
-					regexp.MustCompile(`127.0.0.1:\d+/?`),
-					regexp.MustCompile(fmt.Sprintf(`%s:\d+/?`, locIP)),
-				}
-			}
-		}
-
-		var (
-			sPortOld = fmt.Sprintf(":%d", portOld)
-			sPortNew = fmt.Sprintf(":%d", portNew)
-		)
-
-		for i, rip := range rLocalIPs {
-			if only1st {
-				if found := rip.FindString(text); found != "" {
-					if p := strings.Index(text, found); p >= 0 {
-						new := ""
-						if portOld == -1 {
-							new = strs.TrimTailFromLast(found, ":") + sPortNew
-							if strings.HasSuffix(found, "/") {
-								new += "/"
-							}
-						} else {
-							new = strings.Replace(found, sPortOld, sPortNew, 1)
-						}
-						spGrp[i].s = strings.Replace(text, found, new, 1)
-						spGrp[i].p = p
-					}
-				}
-			} else {
-				text = rip.ReplaceAllStringFunc(text, func(s string) string {
-					if portOld == -1 {
-						if strings.HasSuffix(s, "/") {
-							return strs.TrimTailFromLast(s, ":") + sPortNew + "/"
-						}
-						return strs.TrimTailFromLast(s, ":") + sPortNew
-					}
-					return strings.ReplaceAll(s, sPortOld, sPortNew)
-				})
-			}
-		}
-
-		if only1st {
-			sort.Slice(spGrp, func(i, j int) bool {
-				return spGrp[i].p < spGrp[j].p
-			})
-			if spGrp[0].p < math.MaxInt32 {
-				text = spGrp[0].s
-			}
-		}
-
 		if err := os.WriteFile(fPath, []byte(text), os.ModePerm); err != nil {
 			return err
 		}
@@ -149,189 +177,19 @@ func ReplacePort4LocalUrl(portOld, portNew int, scheme, only1st bool, fPaths ...
 	return nil
 }
 
-// if 'toPub' or 'toLoc' is true, 'aimIP' is ignored.
-// if 'toPub' & 'toLoc' are both true, return error.
-// otherwise, 'aimIP' must be valid.
-func Loc127To(toPub, toLoc bool, aimIP string, scheme, only1st bool, fPaths ...string) error {
-
-	if !toPub && !toLoc && !CheckIP(aimIP) {
-		return fmt.Errorf("[%v] is invalid IP address", aimIP)
-	}
-
-	if toPub && toLoc {
-		return fmt.Errorf("one of [toPub, toLoc] can only be true")
-	}
-
-	if toPub {
-		aimIP = PublicIP()
-	}
-	if toLoc {
-		aimIP = LocalIP()
-	}
-
+// [old], [new] must be without port
+// if [onScheme] is empty, deal with both "http" and "https" scheme
+// if [onPort] is -1, deal with all valid port
+func ModifyFile1stOriginIP(old, new, onScheme string, onPort int, keepScheme, keepPort bool, fPaths ...string) error {
 	for _, fPath := range fPaths {
-
 		data, err := os.ReadFile(fPath)
 		if err != nil {
 			return err
 		}
-		text := string(data)
-
-		type sp struct {
-			s string
-			p int
-		}
-		spGrp := make([]sp, 3)
-		for i := 0; i < len(spGrp); i++ {
-			spGrp[i].p = math.MaxInt32
-		}
-
-		var rLocalIPs []*regexp.Regexp
-		if scheme {
-			rLocalIPs = []*regexp.Regexp{
-				regexp.MustCompile(`https?://localhost(:\d+)?/?`),
-				regexp.MustCompile(`https?://127.0.0.1(:\d+)?/?`),
-			}
-		} else {
-			rLocalIPs = []*regexp.Regexp{
-				regexp.MustCompile(`localhost(:\d+)?`),
-				regexp.MustCompile(`127.0.0.1(:\d+)?`),
-			}
-		}
-
-		for i, rip := range rLocalIPs {
-			if only1st {
-				if found := rip.FindString(text); found != "" {
-					if p := strings.Index(text, found); p >= 0 {
-						new := strs.ReplaceFirstOnAnyOf(found, aimIP, "localhost", "127.0.0.1")
-						spGrp[i].s = strings.Replace(text, found, new, 1)
-						spGrp[i].p = p
-					}
-				}
-			} else {
-				text = rip.ReplaceAllStringFunc(text, func(s string) string {
-					return strs.ReplaceAllOnAnyOf(s, aimIP, "localhost", "127.0.0.1")
-				})
-			}
-		}
-
-		if only1st {
-			sort.Slice(spGrp, func(i, j int) bool {
-				return spGrp[i].p < spGrp[j].p
-			})
-			if spGrp[0].p < math.MaxInt32 {
-				text = spGrp[0].s
-			}
-		}
-
-		if err := os.WriteFile(fPath, []byte(text), os.ModePerm); err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-// e.g 192.168.1.10 to public IP
-func LocIP2PubIP(scheme, only1st bool, fPaths ...string) error {
-
-	var (
-		pubIP = PublicIP()
-		locIP = LocalIP()
-	)
-
-	for _, fPath := range fPaths {
-
-		data, err := os.ReadFile(fPath)
+		text, err := ModifyOriginIP(string(data), old, new, onScheme, onPort, keepScheme, keepPort, true)
 		if err != nil {
 			return err
 		}
-		text := string(data)
-
-		type sp struct {
-			s string
-			p int
-		}
-		spGrp := make([]sp, 3)
-		for i := 0; i < len(spGrp); i++ {
-			spGrp[i].p = math.MaxInt32
-		}
-
-		var rLocalIPs []*regexp.Regexp
-		if scheme {
-			rLocalIPs = []*regexp.Regexp{
-				regexp.MustCompile(fmt.Sprintf(`https?://%s(:\d+)?/?`, locIP)),
-			}
-		} else {
-			rLocalIPs = []*regexp.Regexp{
-				regexp.MustCompile(fmt.Sprintf(`%s(:\d+)?`, locIP)),
-			}
-		}
-
-		for i, rip := range rLocalIPs {
-			if only1st {
-				if found := rip.FindString(text); found != "" {
-					if p := strings.Index(text, found); p >= 0 {
-						new := strs.ReplaceFirstOnAnyOf(found, pubIP, locIP)
-						spGrp[i].s = strings.Replace(text, found, new, 1)
-						spGrp[i].p = p
-					}
-				}
-			} else {
-				text = rip.ReplaceAllStringFunc(text, func(s string) string {
-					return strs.ReplaceAllOnAnyOf(s, pubIP, locIP)
-				})
-			}
-		}
-
-		if only1st {
-			sort.Slice(spGrp, func(i, j int) bool {
-				return spGrp[i].p < spGrp[j].p
-			})
-			if spGrp[0].p < math.MaxInt32 {
-				text = spGrp[0].s
-			}
-		}
-
-		if err := os.WriteFile(fPath, []byte(text), os.ModePerm); err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-func ModifyOriginOrIP(src, dest string, scheme, only1st, rmPort bool, fPaths ...string) error {
-
-	r := IF(scheme, regexp.MustCompile(fmt.Sprintf(`https?://%s(:\d+)?/?`, src)), regexp.MustCompile(fmt.Sprintf(`%s(:\d+)?`, src)))
-
-	for _, fPath := range fPaths {
-
-		data, err := os.ReadFile(fPath)
-		if err != nil {
-			return err
-		}
-		text := string(data)
-
-		if only1st {
-			if found := r.FindString(text); found != "" {
-				if !rmPort {
-					new := strings.Replace(found, src, dest, 1)
-					text = strings.Replace(text, found, new, 1)
-				} else {
-					text = strings.Replace(text, found, dest, 1)
-				}
-			}
-		} else {
-			if !rmPort {
-				text = r.ReplaceAllStringFunc(text, func(s string) string {
-					return strings.ReplaceAll(s, src, dest)
-				})
-			} else {
-				text = r.ReplaceAllStringFunc(text, func(s string) string {
-					return dest
-				})
-			}
-		}
-
 		if err := os.WriteFile(fPath, []byte(text), os.ModePerm); err != nil {
 			return err
 		}

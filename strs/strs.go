@@ -81,6 +81,19 @@ func HasAnyPrefix(s string, prefixGrp ...string) bool {
 	return false
 }
 
+func TrimAnyPrefix(s string, prefixGrp ...string) string {
+	sort.Slice(prefixGrp, func(i, j int) bool {
+		return len(prefixGrp[i]) > len(prefixGrp[j])
+	})
+	for _, prefix := range prefixGrp {
+		before := s
+		if s = strings.TrimPrefix(s, prefix); s != before {
+			break
+		}
+	}
+	return s
+}
+
 func HasAnySuffix(s string, suffixGrp ...string) bool {
 	for _, suffix := range suffixGrp {
 		if strings.HasSuffix(s, suffix) {
@@ -88,6 +101,19 @@ func HasAnySuffix(s string, suffixGrp ...string) bool {
 		}
 	}
 	return false
+}
+
+func TrimAnySuffix(s string, suffixGrp ...string) string {
+	sort.Slice(suffixGrp, func(i, j int) bool {
+		return len(suffixGrp[i]) > len(suffixGrp[j])
+	})
+	for _, suffix := range suffixGrp {
+		before := s
+		if s = strings.TrimSuffix(s, suffix); s != before {
+			break
+		}
+	}
+	return s
 }
 
 func ContainsAny(s string, aims ...string) bool {
