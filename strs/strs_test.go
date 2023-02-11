@@ -252,7 +252,7 @@ func TestContainsAny(t *testing.T) {
 	}
 }
 
-func TestReplaceFirstOnAnyOf(t *testing.T) {
+func TestReplace1stOnAnyOf(t *testing.T) {
 	type args struct {
 		str  string
 		new  string
@@ -264,11 +264,27 @@ func TestReplaceFirstOnAnyOf(t *testing.T) {
 		want string
 	}{
 		// TODO: Add test cases.
+		{
+			args: args{
+				str:  "this is a test string",
+				new:  "A",
+				aims: []string{"a"},
+			},
+			want: "this is A test string",
+		},
+		{
+			args: args{
+				str:  "this is a test string",
+				new:  "A",
+				aims: []string{"is", "this"},
+			},
+			want: "A is a test string",
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := ReplaceFirstOnAnyOf(tt.args.str, tt.args.new, tt.args.aims...); got != tt.want {
-				t.Errorf("ReplaceFirstOnAnyOf() = %v, want %v", got, tt.want)
+			if got := Replace1stOnAnyOf(tt.args.str, tt.args.new, tt.args.aims...); got != tt.want {
+				t.Errorf("Replace1stOnAnyOf() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -286,6 +302,22 @@ func TestReplaceAllOnAnyOf(t *testing.T) {
 		want string
 	}{
 		// TODO: Add test cases.
+		{
+			args: args{
+				str:  "this is a test string",
+				new:  "A",
+				aims: []string{"a"},
+			},
+			want: "this is A test string",
+		},
+		{
+			args: args{
+				str:  "this is a test string",
+				new:  "A",
+				aims: []string{"is", "this", "str"},
+			},
+			want: "A A a test Aing",
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -404,4 +436,21 @@ func TestSortPaths(t *testing.T) {
 func TestReversePath(t *testing.T) {
 	path := "B.m.1.t.W"
 	fmt.Println(ReversePath(path))
+}
+
+func TestModifyOriginOrIP(t *testing.T) {
+
+	s := `
+	http://127.0.0.1:3000/api/
+	https://127.0.0.1:3000/api/
+	http://localhost:3001/api/
+	https://localhost:3001/api/
+	localhost:3002/api/
+	127.0.0.1:3002/api/
+	`
+
+	// fmt.Println(ModifyOriginIP(s, "localhost", "my.example.com", "", -1, true, true, true))
+	// fmt.Println(ModifyOriginIP(s, "localhost", "my.example.com", "", -1, true, true, false))
+	// fmt.Println(ModifyOriginIP(s, "localhost", "test://my.example.com", "", -1, false, true, false))
+	fmt.Println(ModifyOriginIP(s, "localhost", "my.example.com:1234", "", -1, true, false, true))
 }
