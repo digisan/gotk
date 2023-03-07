@@ -53,9 +53,9 @@ func Decrypt(cipherBuf, key []byte) string {
 		log.Fatalf("Error: NewCipher(%d bytes) = %s", len(key), err)
 	}
 
-	cfbdec := cipher.NewCFBDecrypter(c, commonIV)
+	cfbDec := cipher.NewCFBDecrypter(c, commonIV)
 	plainBuf := make([]byte, 1024)
-	cfbdec.XORKeyStream(plainBuf, cipherBuf)
+	cfbDec.XORKeyStream(plainBuf, cipherBuf)
 	plainBuf = bytes.TrimRight(plainBuf, "\x00")
 	// fmt.Printf("%x => %s\n", cipherBuf, plainBuf)
 	return string(plainBuf)
