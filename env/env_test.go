@@ -21,14 +21,14 @@ func TestSplitN(t *testing.T) {
 	fmt.Println(len(ss), len(ss[0]), len(ss[1]), ss)
 }
 
-func TestChunk2Map(t *testing.T) {
+func TestChunkToMap(t *testing.T) {
 	type args struct {
-		filepath     string
-		markstart    string
-		markend      string
-		sep          string
-		env          bool
-		val4path2abs bool
+		fPath       string
+		markStart   string
+		markEnd     string
+		sep         string
+		env         bool
+		pathVal2abs bool
 	}
 	tests := []struct {
 		name string
@@ -39,19 +39,19 @@ func TestChunk2Map(t *testing.T) {
 		{
 			name: "OK",
 			args: args{
-				filepath:     "./variables.sh",
-				markstart:    "###export",
-				markend:      "###",
-				sep:          "=",
-				env:          true,
-				val4path2abs: true,
+				fPath:       "./variables.sh",
+				markStart:   "###export",
+				markEnd:     "###",
+				sep:         "=",
+				env:         true,
+				pathVal2abs: true,
 			},
 			want: map[string]string{"$A": "~/Desktop/", "$B": "defabcghighi", "$C": "ghi"},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			m := Chunk2Map(tt.args.filepath, tt.args.markstart, tt.args.markend, tt.args.sep, tt.args.env, tt.args.val4path2abs)
+			m := ChunkToMap(tt.args.fPath, tt.args.markStart, tt.args.markEnd, tt.args.sep, tt.args.env, tt.args.pathVal2abs)
 			fmt.Println(m)
 		})
 	}
@@ -71,7 +71,7 @@ func TestEnvValued(t *testing.T) {
 	tests := []struct {
 		name       string
 		args       args
-		wantValstr string
+		wantValStr string
 	}{
 		// TODO: Add test cases.
 		{
@@ -80,7 +80,7 @@ func TestEnvValued(t *testing.T) {
 				str: "$TEST_ROOT/path/a/b/c",
 				m:   map[string]string{"TEST_ROOT": "root"},
 			},
-			wantValstr: "root/path/a/b/c",
+			wantValStr: "root/path/a/b/c",
 		},
 		{
 			name: "OK",
@@ -88,7 +88,7 @@ func TestEnvValued(t *testing.T) {
 				str: "$TEST_ROOT/$TEST_PATH/a/b/c",
 				m:   map[string]string{"TEST_ROOT": "root", "TEST_PATH": "path"},
 			},
-			wantValstr: "root/path/a/b/c",
+			wantValStr: "root/path/a/b/c",
 		},
 		{
 			name: "OK",
@@ -96,7 +96,7 @@ func TestEnvValued(t *testing.T) {
 				str: "$TEST_ROOT/$TEST_PATH/a/b/c",
 				m:   nil,
 			},
-			wantValstr: "root/path/a/b/c",
+			wantValStr: "root/path/a/b/c",
 		},
 	}
 	for i, tt := range tests {
@@ -107,8 +107,8 @@ func TestEnvValued(t *testing.T) {
 				os.Setenv("TEST_PATH", "path")
 			}
 
-			if gotValstr := EnvValued(tt.args.str, tt.args.m); gotValstr != tt.wantValstr {
-				t.Errorf("EnvValued() = %v, want %v", gotValstr, tt.wantValstr)
+			if gotValStr := EnvValued(tt.args.str, tt.args.m); gotValStr != tt.wantValStr {
+				t.Errorf("EnvValued() = %v, want %v", gotValStr, tt.wantValStr)
 			}
 		})
 	}

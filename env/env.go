@@ -7,18 +7,17 @@ import (
 	"strings"
 
 	. "github.com/digisan/go-generics/v2"
-	fd "github.com/digisan/gotk/filedir"
-	"github.com/digisan/gotk/io"
+	fd "github.com/digisan/gotk/file-dir"
 	"github.com/digisan/gotk/strs"
 )
 
-// Chunk2Map :
-func Chunk2Map(fpath, markStart, markEnd, sep string, env, pathVal2abs bool) map[string]string {
+// ChunkToMap :
+func ChunkToMap(fPath, markStart, markEnd, sep string, env, pathVal2abs bool) map[string]string {
 
 	m := make(map[string]string)
 
 	proc := false
-	_, err := io.FileLineScan(fpath, func(ln string) (bool, string) {
+	_, err := fd.FileLineScan(fPath, func(ln string) (bool, string) {
 
 		ln = strings.Trim(ln, " \t")
 		if !strings.HasPrefix(ln, "#") {
@@ -85,8 +84,8 @@ AGAIN3:
 	if pathVal2abs {
 		for key, value := range m {
 			if strs.HasAnyPrefix(value, "~/", "./", "../") {
-				abspath, _ := fd.AbsPath(value, false)
-				m[key] = abspath
+				absPath, _ := fd.AbsPath(value, false)
+				m[key] = absPath
 			}
 		}
 	}
@@ -111,7 +110,6 @@ func EnvValued(s string, m map[string]string) (valStr string) {
 		}
 	}
 
-	// keyVars, _ := mapslice.KsVs2Slc(m, "KL-DESC")
 	keyVars, _ := MapToKVs(m, func(i string, j string) bool { return len(i) > len(j) }, nil)
 	valStr = s
 

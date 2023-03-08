@@ -1,7 +1,9 @@
 package strs
 
 import (
+	"bufio"
 	"fmt"
+	"io"
 	"log"
 	"regexp"
 	"runtime"
@@ -24,8 +26,8 @@ func IsIn(ignoreCase, ignoreSpace bool, s string, group ...string) bool {
 	return In(s, group...)
 }
 
-func IsNotIn(insensitive, ignorespace bool, s string, group ...string) bool {
-	return !IsIn(insensitive, ignorespace, s, group...)
+func IsNotIn(insensitive, ignoreSpace bool, s string, group ...string) bool {
+	return !IsIn(insensitive, ignoreSpace, s, group...)
 }
 
 func Maxlen(s string, length int) string {
@@ -178,8 +180,8 @@ func SplitPartTo[T any](s, sep string, idx int) T {
 
 // idx 1 is the last element, idx 2 is the second last, etc...
 func SplitPartFromLastTo[T any](s, sep string, idx int) T {
-	laststr := Last(strings.Split(s, sep), idx)
-	if rt, ok := AnyTryToType[T](laststr); ok {
+	lastStr := Last(strings.Split(s, sep), idx)
+	if rt, ok := AnyTryToType[T](lastStr); ok {
 		return rt
 	}
 	panic(fmt.Sprintf("index@ [%d] of '%s' cannot be converted to [%T]", idx, s, *new(T)))
@@ -204,8 +206,8 @@ func SplitLn(s string) []string {
 	return strings.Split(s, sep)
 }
 
-func HtmlTextContent(htmlstr string) (rt []string) {
-	domDoc := html.NewTokenizer(strings.NewReader(htmlstr))
+func HtmlTextContent(htmlStr string) (rt []string) {
+	domDoc := html.NewTokenizer(strings.NewReader(htmlStr))
 	previousStartTokenTest := domDoc.Token()
 loopDomTest:
 	for {
@@ -233,13 +235,13 @@ func ReversePath(path string) string {
 
 func SortPaths(paths ...string) []string {
 	sort.SliceStable(paths, func(i, j int) bool {
-		pathi, pathj := paths[i], paths[j]
-		ni, nj := strings.Count(pathi, "."), strings.Count(pathj, ".")
-		minDot := Min(ni, nj)
-		ssi, ssj := strings.Split(pathi, "."), strings.Split(pathj, ".")
+		pathI, pathJ := paths[i], paths[j]
+		nI, nJ := strings.Count(pathI, "."), strings.Count(pathJ, ".")
+		minDot := Min(nI, nJ)
+		ssI, ssJ := strings.Split(pathI, "."), strings.Split(pathJ, ".")
 	NEXT:
 		for i := 0; i < minDot+1; i++ {
-			si, sj := ssi[i], ssj[i]
+			si, sj := ssI[i], ssJ[i]
 			if si == sj {
 				continue NEXT
 			}
@@ -253,7 +255,7 @@ func SortPaths(paths ...string) []string {
 			}
 			return si < sj // ascii ASC, uppercase first
 		}
-		return ni < nj
+		return nI < nJ
 	})
 	return paths
 }
@@ -362,4 +364,24 @@ func ModifyOriginIP(text, old, new, onScheme string, onPort int, keepScheme, kee
 	}
 
 	return text, nil
+}
+
+// ScanLine :
+func ScanLine(r io.Reader, f func(line string) (bool, string)) (string, error) {
+	lines := []string{}
+	scanner := bufio.NewScanner(r)
+	for scanner.Scan() {
+		if ok, line := f(scanner.Text()); ok {
+			lines = append(lines, line)
+		}
+	}
+	if err := scanner.Err(); err != nil {
+		return "", err
+	}
+	return strings.Join(lines, "\n"), nil
+}
+
+// StrLineScan :
+func StrLineScan(str string, f func(line string) (bool, string)) (string, error) {
+	return ScanLine(strings.NewReader(str), f)
 }

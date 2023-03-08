@@ -3,19 +3,20 @@ package filedir
 import (
 	"fmt"
 	"reflect"
+	"strings"
 	"testing"
 )
 
 func TestChangeFileName(t *testing.T) {
-	fpath := "./a/b/c/d.txt"
-	fmt.Println(fpath)
-	fmt.Println(ChangeFileName(fpath, "prefix-", "-crop"))
+	fPath := "./a/b/c/d.txt"
+	fmt.Println(fPath)
+	fmt.Println(ChangeFileName(fPath, "prefix-", "-crop"))
 
 	fmt.Println("------------------------------------")
 
-	fpath = "./a/b/c/d"
-	fmt.Println(fpath)
-	fmt.Println(ChangeFileName(fpath, "prefix-", "-crop"))
+	fPath = "./a/b/c/d"
+	fmt.Println(fPath)
+	fmt.Println(ChangeFileName(fPath, "prefix-", "-crop"))
 }
 
 func TestParent(t *testing.T) {
@@ -501,7 +502,7 @@ func TestMergeDir(t *testing.T) {
 	type args struct {
 		destdir string
 		move    bool
-		srcdirs []string
+		srcDirs []string
 	}
 	tests := []struct {
 		name    string
@@ -514,7 +515,7 @@ func TestMergeDir(t *testing.T) {
 			args: args{
 				destdir: "~/Desktop/mergetest0",
 				move:    false,
-				srcdirs: []string{"./", "../io"},
+				srcDirs: []string{"./", "../io"},
 			},
 		},
 		{
@@ -522,7 +523,7 @@ func TestMergeDir(t *testing.T) {
 			args: args{
 				destdir: "./merge4",
 				move:    true,
-				srcdirs: []string{"./merge1", "./merge3"},
+				srcDirs: []string{"./merge1", "./merge3"},
 			},
 		},
 	}
@@ -533,7 +534,7 @@ func TestMergeDir(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := MergeDir(tt.args.destdir, tt.args.move, oc, tt.args.srcdirs...); (err != nil) != tt.wantErr {
+			if err := MergeDir(tt.args.destdir, tt.args.move, oc, tt.args.srcDirs...); (err != nil) != tt.wantErr {
 				t.Errorf("MergeDir() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
@@ -631,7 +632,7 @@ func TestSelfHash(t *testing.T) {
 func TestChangePath(t *testing.T) {
 	type args struct {
 		strict   bool
-		fpath    string
+		fPath    string
 		newtail  string
 		fromlast int
 		keepext  bool
@@ -647,7 +648,7 @@ func TestChangePath(t *testing.T) {
 		{
 			name: "",
 			args: args{
-				fpath:    "a/b/c/d.txt",
+				fPath:    "a/b/c/d.txt",
 				newtail:  "D",
 				fromlast: 1,
 				keepext:  true,
@@ -657,7 +658,7 @@ func TestChangePath(t *testing.T) {
 		{
 			name: "",
 			args: args{
-				fpath:    "a/b/c/d.txt",
+				fPath:    "a/b/c/d.txt",
 				newtail:  "D",
 				fromlast: 1,
 				keepext:  false,
@@ -669,7 +670,7 @@ func TestChangePath(t *testing.T) {
 			args: args{
 				strict:   true,
 				cp:       true,
-				fpath:    "./test/v.go",
+				fPath:    "./test/v.go",
 				newtail:  "C/D",
 				fromlast: 2,
 				keepext:  true,
@@ -679,7 +680,7 @@ func TestChangePath(t *testing.T) {
 		{
 			name: "",
 			args: args{
-				fpath:    "a/b/c/d.txt",
+				fPath:    "a/b/c/d.txt",
 				newtail:  "D.json",
 				fromlast: 2,
 				keepext:  false,
@@ -689,7 +690,7 @@ func TestChangePath(t *testing.T) {
 		{
 			name: "",
 			args: args{
-				fpath:    "/d.txt",
+				fPath:    "/d.txt",
 				newtail:  "D",
 				fromlast: 1,
 				keepext:  true,
@@ -699,7 +700,7 @@ func TestChangePath(t *testing.T) {
 		{
 			name: "",
 			args: args{
-				fpath:    "/d.txt",
+				fPath:    "/d.txt",
 				newtail:  "D.json",
 				fromlast: 1,
 				keepext:  false,
@@ -709,7 +710,7 @@ func TestChangePath(t *testing.T) {
 		{
 			name: "move",
 			args: args{
-				fpath:    "./var.go",
+				fPath:    "./var.go",
 				newtail:  "test/v",
 				fromlast: 1,
 				keepext:  true,
@@ -722,7 +723,7 @@ func TestChangePath(t *testing.T) {
 			name: "strict",
 			args: args{
 				strict:   true,
-				fpath:    "./Var.go",
+				fPath:    "./Var.go",
 				newtail:  "test/v",
 				fromlast: 1,
 				keepext:  true,
@@ -734,7 +735,7 @@ func TestChangePath(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := ChangeFilePath(tt.args.strict, tt.args.fpath, tt.args.newtail, tt.args.fromlast, tt.args.keepext, tt.args.cp, tt.args.mv); got != tt.want {
+			if got := ChangeFilePath(tt.args.strict, tt.args.fPath, tt.args.newtail, tt.args.fromlast, tt.args.keepext, tt.args.cp, tt.args.mv); got != tt.want {
 				t.Errorf("ChangeFilePath() = %v, want %v", got, tt.want)
 			}
 		})
@@ -743,4 +744,131 @@ func TestChangePath(t *testing.T) {
 
 func TestRmFiles(t *testing.T) {
 	RmFilesIn("~/Desktop/test", true, true, "jpg", "json")
+}
+
+func TestMustWriteFile(t *testing.T) {
+	type args struct {
+		filename string
+		data     []byte
+	}
+	tests := []struct {
+		name string
+		args args
+	}{
+		// TODO: Add test cases.
+		{
+			name: "OK",
+			args: args{
+				filename: "~/Desktop/testout.txt",
+				data:     []byte("TestMustWriteFile111"),
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			MustWriteFile(tt.args.filename, tt.args.data)
+		})
+	}
+}
+
+func TestMustAppendFile(t *testing.T) {
+	type args struct {
+		filename string
+		data     []byte
+		newline  bool
+	}
+	tests := []struct {
+		name string
+		args args
+	}{
+		// TODO: Add test cases.
+		{
+			name: "OK",
+			args: args{
+				filename: "~/Desktop/testout.txt",
+				data:     []byte("TestMustAppendFile"),
+				newline:  true,
+			},
+		},
+		{
+			name: "OK",
+			args: args{
+				filename: "./testout1.txt",
+				data:     []byte("TestMustAppendFile"),
+				newline:  false,
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			MustAppendFile(tt.args.filename, tt.args.data, tt.args.newline)
+		})
+	}
+}
+
+func TestMustCreateDirs(t *testing.T) {
+	type args struct {
+		dir []string
+	}
+	tests := []struct {
+		name string
+		args args
+	}{
+		// TODO: Add test cases.
+		{
+			name: "OK",
+			args: args{
+				dir: []string{
+					"./test/must/create/dir/",
+					"./test/must1/create1/dir1/",
+					"./test/must2/create2/dir2/",
+				},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			MustCreateDirs(tt.args.dir...)
+		})
+	}
+}
+
+func TestFileLineScan(t *testing.T) {
+	type args struct {
+		fPath   string
+		f       func(line string) (bool, string)
+		outFile string
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    string
+		wantErr bool
+	}{
+		// TODO: Add test cases.
+		{
+			name: "OK",
+			args: args{
+				fPath: "../generics/T1.template",
+				f: func(line string) (bool, string) {
+					return true, strings.ReplaceAll(strings.ReplaceAll(line, "Xxx", "Int"), "xxx", "int")
+				},
+				outFile: "./out.txt",
+			},
+			want:    "",
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := FileLineScan(tt.args.fPath, tt.args.f, tt.args.outFile)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("FileLineScan() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if got != tt.want {
+				t.Errorf("FileLineScan() = %v, want %v", got, tt.want)
+			}
+		})
+	}
 }

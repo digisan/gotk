@@ -9,8 +9,8 @@ import (
 	"strings"
 
 	. "github.com/digisan/go-generics/v2"
-	fd "github.com/digisan/gotk/filedir"
-	"github.com/digisan/gotk/io"
+	fd "github.com/digisan/gotk/file-dir"
+	"github.com/digisan/gotk/strs"
 )
 
 var (
@@ -21,12 +21,12 @@ var (
 
 // GetRunningPID:
 func GetRunningPID(pathOfExe string) (pidGrp []int) {
-	abspath, err := fd.AbsPath(pathOfExe, true)
+	absPath, err := fd.AbsPath(pathOfExe, true)
 	if err != nil {
 		log.Fatalf("%v", err)
 	}
 
-	dir, exe := filepath.Dir(abspath), filepath.Base(abspath)
+	dir, exe := filepath.Dir(absPath), filepath.Base(absPath)
 
 	// ps -Af | grep ***
 	out, err := exec.Command("/bin/sh", "-c", "ps -Af | grep "+exe).CombinedOutput()
@@ -38,7 +38,7 @@ func GetRunningPID(pathOfExe string) (pidGrp []int) {
 	}
 
 	pidGrpGrep := []int{}
-	io.StrLineScan(string(out), func(ln string) (bool, string) {
+	strs.StrLineScan(string(out), func(ln string) (bool, string) {
 		I := 0
 		for _, seg := range sSplit(ln, " ") {
 			if len(seg) > 0 {
@@ -55,7 +55,7 @@ func GetRunningPID(pathOfExe string) (pidGrp []int) {
 			}
 		}
 		return true, ""
-	}, "")
+	})
 
 	// pgrep ***
 	if len(exe) > 15 {
@@ -80,8 +80,8 @@ func GetRunningPID(pathOfExe string) (pidGrp []int) {
 			log.Fatalf("%v", err)
 		}
 
-		procpath := sSplit(sTrim(string(out), " \t\r\n"), ": ")[1]
-		if dir == procpath && In(fmt.Sprint(pid), pidGrpPGrep...) {
+		procPath := sSplit(sTrim(string(out), " \t\r\n"), ": ")[1]
+		if dir == procPath && In(fmt.Sprint(pid), pidGrpPGrep...) {
 			pidGrp = append(pidGrp, pid)
 		}
 	}

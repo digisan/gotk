@@ -49,15 +49,15 @@ func GitTag() (tag string, err error) {
 	cmd := exec.Command("bash", "-c", "git describe --tags")
 	output, err := cmd.Output()
 	if err != nil {
-		es := err.Error() 
+		es := err.Error()
 		switch {
 		case strings.Contains(es, "127"):
 			err = errors.New("[git] command not found")
 		}
 		return "", err
 	}
-	if outstr := strings.Trim(string(output), " \n\t"); outstr != "" {
-		return outstr, nil
+	if outStr := strings.Trim(string(output), " \n\t"); outStr != "" {
+		return outStr, nil
 	}
 	return "", nil
 }

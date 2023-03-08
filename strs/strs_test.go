@@ -392,7 +392,7 @@ func TestSplitLn(t *testing.T) {
 
 func TestHtmlTextContent(t *testing.T) {
 	type args struct {
-		htmlstr string
+		htmlStr string
 	}
 	tests := []struct {
 		name   string
@@ -403,7 +403,7 @@ func TestHtmlTextContent(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if gotRt := HtmlTextContent(tt.args.htmlstr); !reflect.DeepEqual(gotRt, tt.wantRt) {
+			if gotRt := HtmlTextContent(tt.args.htmlStr); !reflect.DeepEqual(gotRt, tt.wantRt) {
 				t.Errorf("HtmlTextContent() = %v, want %v", gotRt, tt.wantRt)
 			}
 		})

@@ -19,45 +19,56 @@ import (
 	"github.com/digisan/gotk/strs"
 )
 
-// "a/b/c/d.txt" => "a/b/c/prefix-d-suffix.txt"
-// "a/b/c/d" => "a/b/c/prefix-d-suffix"
-func ChangeFileName(fpath, prefix, suffix string) string {
-	ext := filepath.Ext(fpath)
-	fname := filepath.Base(fpath)
-	name := fname[:len(fname)-len(ext)]
-	nameNew := prefix + name + suffix + ext
-	return filepath.Join(filepath.Dir(fpath), nameNew)
+const (
+	// FilePerm :
+	FilePerm = 0666
+	// DirPerm :
+	DirPerm = 0777
+)
+
+func init() {
+	log.SetFlags(log.LstdFlags | log.Lshortfile)
 }
 
-// e.g. fpath is "/a/b/c/d.txt",
+// "a/b/c/d.txt" => "a/b/c/prefix-d-suffix.txt"
+// "a/b/c/d" => "a/b/c/prefix-d-suffix"
+func ChangeFileName(fPath, prefix, suffix string) string {
+	ext := filepath.Ext(fPath)
+	fname := filepath.Base(fPath)
+	name := fname[:len(fname)-len(ext)]
+	nameNew := prefix + name + suffix + ext
+	return filepath.Join(filepath.Dir(fPath), nameNew)
+}
+
+// e.g. fPath is "/a/b/c/d.txt",
 // if [fromLast] is 1 and newTail is [D], return is "/a/b/c/D.txt"
 // if [fromLast] is 2 and newTail is [D], return is "/a/b/D.txt"
 // if [fromLast] is 1 and newTail is [D/E.txt] return is "/a/b/c/D/E.txt"
-func ChangeFilePath(strict bool, fpath, newTail string, fromLast int, keepExt, cp, mv bool) string {
+func ChangeFilePath(strict bool, fPath, newTail string, fromLast int, keepExt, cp, mv bool) string {
 
-	if strict && !FileExists(fpath) {
-		log.Fatalf("[%s] is not existing", fpath)
+	if strict && !FileExists(fPath) {
+		log.Fatalf("[%s] is not existing", fPath)
 	}
 
 	sep := string(os.PathSeparator)
 
 	ext := ""
 	if keepExt {
-		iLastExt := strings.LastIndex(fpath, ".")
-		iLastPart := strings.LastIndex(fpath, sep)
+		iLastExt := strings.LastIndex(fPath, ".")
+		iLastPart := strings.LastIndex(fPath, sep)
 		if iLastExt > iLastPart {
-			ext = fpath[iLastExt:]
+			ext = fPath[iLastExt:]
 		}
 	}
 
 	newPath := ""
-	head, tail := "", strs.SplitPartFromLastTo[string](fpath, sep, fromLast)
+	head, tail := "", strs.SplitPartFromLastTo[string](fPath, sep, fromLast)
 	if fromLast == 1 {
-		head = strings.TrimRight(fpath, tail)
+		head = strings.TrimRight(fPath, tail)
 		newPath = head + newTail + ext
 	} else {
-		idx := strings.LastIndex(fpath, sep+tail+sep)
-		head = fpath[:idx]
+		idx := strings.LastIndex(fPath, sep+tail+sep)
+		head = fPath[:idx]
 		newPath = head + sep + newTail + ext
 	}
 
@@ -65,13 +76,13 @@ func ChangeFilePath(strict bool, fpath, newTail string, fromLast int, keepExt, c
 		return newPath
 	}
 
-	if FileExists(fpath) {
+	if FileExists(fPath) {
 		if err := os.MkdirAll(filepath.Dir(newPath), os.ModePerm); err != nil {
 			log.Fatalln(err)
 		}
 		switch {
 		case cp:
-			buf, err := os.ReadFile(fpath)
+			buf, err := os.ReadFile(fPath)
 			if err != nil {
 				log.Fatalln(err)
 			}
@@ -79,7 +90,7 @@ func ChangeFilePath(strict bool, fpath, newTail string, fromLast int, keepExt, c
 				log.Fatalln(err)
 			}
 		case mv:
-			if err := os.Rename(fpath, newPath); err != nil {
+			if err := os.Rename(fPath, newPath); err != nil {
 				log.Fatalln(err)
 			}
 		}
@@ -204,41 +215,41 @@ func AbsPath(path string, check bool) (string, error) {
 		}
 		path = user.HomeDir + path[1:]
 	}
-	abspath, err := filepath.Abs(path)
+	absPath, err := filepath.Abs(path)
 	if err != nil {
 		log.Fatalf("%v", err)
 	}
 
-	if check && (!DirExists(abspath) && !FileExists(abspath)) {
-		return abspath, fmt.Errorf("%s doesn't exist", abspath)
+	if check && (!DirExists(absPath) && !FileExists(absPath)) {
+		return absPath, fmt.Errorf("%s doesn't exist", absPath)
 	}
-	return abspath, nil
+	return absPath, nil
 }
 
 // RelPath : if check(false), error always nil
 func RelPath(path string, check bool) (string, error) {
-	basepath, err := AbsPath(filepath.Dir(os.Args[0]), check)
+	basePath, err := AbsPath(filepath.Dir(os.Args[0]), check)
 	if err != nil {
 		return "", err
 	}
-	targpath, err := AbsPath(path, check)
+	targPath, err := AbsPath(path, check)
 	if err != nil {
 		return "", err
 	}
-	// fmt.Println("basepath: ", basepath)
-	// fmt.Println("target:   ", targpath)
-	return filepath.Rel(basepath, targpath)
+	// fmt.Println("basePath: ", basePath)
+	// fmt.Println("target:   ", targPath)
+	return filepath.Rel(basePath, targPath)
 }
 
 func AncestorList(path string) (ancestors []string) {
-	abspath, _ := AbsPath(path, false)
+	absPath, _ := AbsPath(path, false)
 	for {
-		// fmt.Println(abspath)
-		abspath = filepath.Dir(abspath)
-		if abspath == "/" || abspath[1:] == ":\\" {
+		// fmt.Println(absPath)
+		absPath = filepath.Dir(absPath)
+		if absPath == "/" || absPath[1:] == ":\\" {
 			break
 		}
-		ancestors = append(ancestors, abspath)
+		ancestors = append(ancestors, absPath)
 	}
 	ancestors = Reverse(ancestors)
 	// fmt.Println(ancestors)
@@ -393,25 +404,25 @@ func WalkFileDir(path string, recursive bool, excTypes ...string) (filepaths, di
 }
 
 // MergeDir: if onConflict == nil, overwrites previous when conflict
-func MergeDir(destDir string, move bool, onConflict func(existing, incoming []byte) (overwrite bool, overwriteData []byte), srcdirs ...string) error {
+func MergeDir(destDir string, move bool, onConflict func(existing, incoming []byte) (overwrite bool, overwriteData []byte), srcDirs ...string) error {
 
 	destDir, _ = AbsPath(destDir, false)
 
-	for _, srcdir := range srcdirs {
-		srcdir, err := AbsPath(srcdir, true)
+	for _, srcDir := range srcDirs {
+		srcDir, err := AbsPath(srcDir, true)
 		if err != nil {
 			return err
 		}
 
-		files, dirs, err := WalkFileDir(srcdir, true)
+		files, dirs, err := WalkFileDir(srcDir, true)
 		if err != nil {
 			return err
 		}
 
 		// create each folder
 		for _, dir := range dirs {
-			aimdir := filepath.Clean(destDir) + dir[len(srcdir):]
-			os.MkdirAll(aimdir, 0700)
+			aimDir := filepath.Clean(destDir) + dir[len(srcDir):]
+			os.MkdirAll(aimDir, 0700)
 		}
 
 		// create non-empty folders, including self folder
@@ -420,43 +431,43 @@ func MergeDir(destDir string, move bool, onConflict func(existing, incoming []by
 			dirs = append(dirs, filepath.Dir(file))
 		}
 		for _, dir := range Settify(dirs...) {
-			aimdir := filepath.Clean(destDir) + dir[len(srcdir):]
-			os.Mkdir(aimdir, 0700)
+			aimDir := filepath.Clean(destDir) + dir[len(srcDir):]
+			os.Mkdir(aimDir, 0700)
 		}
 
-		// fmt.Println("src-dir:", srcdir)
+		// fmt.Println("src-dir:", srcDir)
 		// fmt.Println("dest-dir:", destDir)
 
 		// copy files
 	NEXT_FILE:
 		for _, file := range files {
-			destdata, err := os.ReadFile(file)
+			destData, err := os.ReadFile(file)
 			if err != nil {
 				return err
 			}
 
-			destfile := strings.Replace(file, srcdir, destDir, 1)
+			destFile := strings.Replace(file, srcDir, destDir, 1)
 
-			if FileExists(destfile) && onConflict != nil {
-				// fmt.Printf("conflict at: %s\n", destfile)
-				existing, err := os.ReadFile(destfile)
+			if FileExists(destFile) && onConflict != nil {
+				// fmt.Printf("conflict at: %s\n", destFile)
+				existing, err := os.ReadFile(destFile)
 				if err != nil {
 					return err
 				}
-				overwrite, data := onConflict(existing, destdata)
+				overwrite, data := onConflict(existing, destData)
 				if !overwrite {
 					continue NEXT_FILE
 				}
-				destdata = data
+				destData = data
 			}
 
-			if err := os.WriteFile(destfile, destdata, os.ModePerm); err != nil {
+			if err := os.WriteFile(destFile, destData, os.ModePerm); err != nil {
 				return err
 			}
 		}
 
 		if move {
-			os.RemoveAll(srcdir)
+			os.RemoveAll(srcDir)
 		}
 	}
 	return nil
@@ -541,4 +552,89 @@ func RmFilesIn(path string, recursive, rmEmptyDir bool, exts ...string) error {
 		return nil
 	}
 	return fmt.Errorf("directory [%v] is not existing", path)
+}
+
+func MustCreateDir(path string) {
+	path, _ = AbsPath(path, false)
+	fPath := path + "/MustCreateDir.temp"
+	MustWriteFile(fPath, []byte{})
+	if err := os.Remove(fPath); err != nil {
+		log.Fatalf("%v", err)
+	}
+}
+
+func MustCreateDirs(paths ...string) {
+	for _, path := range paths {
+		MustCreateDir(path)
+	}
+}
+
+func MustWriteFile(path string, data []byte) {
+	dir, _ := AbsPath(filepath.Dir(path), false)
+	_, err := os.Stat(dir)
+	if err != nil && os.IsNotExist(err) {
+		if err := os.MkdirAll(dir, DirPerm); err != nil { // dir must be 0777 to put writes in
+			log.Fatalf("Could NOT Create File to Write: %v", err)
+		}
+		goto WRITE
+	}
+	if err != nil {
+		log.Fatalf("Could NOT Get file Status: %v", err)
+	}
+
+	path = filepath.Join(dir, filepath.Base(path))
+WRITE:
+	if err := os.WriteFile(path, data, FilePerm); err != nil {
+		log.Fatalf("Could NOT Write File: %v", err)
+	}
+}
+
+func MustAppendFile(path string, data []byte, newline bool) {
+	path, _ = AbsPath(path, false)
+	_, err := os.Stat(path)
+	if err != nil && os.IsNotExist(err) {
+		MustWriteFile(path, data)
+		return
+	}
+	if err != nil {
+		log.Fatalf("Could NOT Get file Status: %v", err)
+	}
+
+	file, err := os.OpenFile(path, os.O_APPEND|os.O_WRONLY, FilePerm)
+	if err != nil {
+		log.Fatalf("Could NOT Open File to Append: %v", err)
+	}
+	defer file.Close()
+
+	if newline {
+		data = append([]byte{'\n'}, data...)
+	}
+	if _, err = file.Write(data); err != nil {
+		log.Fatalf("Could NOT Append File: %v", err)
+	}
+}
+
+// FileLineScan :
+func FileLineScan(path string, f func(line string) (bool, string), outFile string) (string, error) {
+	path, err := AbsPath(path, true)
+	if err != nil {
+		return "", err
+	}
+	file, err := os.Open(path)
+	if err != nil {
+		return "", err
+	}
+	defer func() {
+		if file != nil {
+			file.Close()
+		}
+	}()
+	content, err := strs.ScanLine(file, f)
+	if err != nil {
+		return "", err
+	}
+	if outFile != "" {
+		MustWriteFile(outFile, []byte(content))
+	}
+	return content, nil
 }
