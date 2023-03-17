@@ -250,7 +250,7 @@ func TestAllExistAsWhole(t *testing.T) {
 
 func TestFileIsEmpty(t *testing.T) {
 	type args struct {
-		filename string
+		fName string
 	}
 	tests := []struct {
 		name    string
@@ -261,20 +261,20 @@ func TestFileIsEmpty(t *testing.T) {
 		// TODO: Add test cases.
 		{
 			name:    "OK",
-			args:    args{filename: "./io.go"},
+			args:    args{fName: "./io.go"},
 			want:    false,
 			wantErr: false,
 		},
 		{
 			name:    "OK",
-			args:    args{filename: "./io.txt"},
+			args:    args{fName: "./io.txt"},
 			want:    true,
 			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := IsFileEmpty(tt.args.filename)
+			got, err := IsFileEmpty(tt.args.fName)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("FileIsEmpty() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -418,7 +418,7 @@ func TestFileDir(t *testing.T) {
 
 func TestFileExists(t *testing.T) {
 	type args struct {
-		filename string
+		fName string
 	}
 	tests := []struct {
 		name string
@@ -429,28 +429,28 @@ func TestFileExists(t *testing.T) {
 		{
 			name: "OK",
 			args: args{
-				filename: "./io.go",
+				fName: "./io.go",
 			},
 			want: true,
 		},
 		{
 			name: "OK",
 			args: args{
-				filename: "~/Desktop/gotk/io/io.go",
+				fName: "~/Desktop/gotk/io/io.go",
 			},
 			want: true,
 		},
 		{
 			name: "OK",
 			args: args{
-				filename: "./io.txt",
+				fName: "./io.txt",
 			},
 			want: false,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := FileExists(tt.args.filename); got != tt.want {
+			if got := FileExists(tt.args.fName); got != tt.want {
 				t.Errorf("FileExists() = %v, want %v", got, tt.want)
 			}
 		})
@@ -500,7 +500,7 @@ func TestDirExists(t *testing.T) {
 
 func TestMergeDir(t *testing.T) {
 	type args struct {
-		destdir string
+		destDir string
 		move    bool
 		srcDirs []string
 	}
@@ -513,7 +513,7 @@ func TestMergeDir(t *testing.T) {
 		{
 			name: "OK",
 			args: args{
-				destdir: "~/Desktop/mergetest0",
+				destDir: "~/Desktop/mergetest0",
 				move:    false,
 				srcDirs: []string{"./", "../io"},
 			},
@@ -521,7 +521,7 @@ func TestMergeDir(t *testing.T) {
 		{
 			name: "OK",
 			args: args{
-				destdir: "./merge4",
+				destDir: "./merge4",
 				move:    true,
 				srcDirs: []string{"./merge1", "./merge3"},
 			},
@@ -534,7 +534,7 @@ func TestMergeDir(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := MergeDir(tt.args.destdir, tt.args.move, oc, tt.args.srcDirs...); (err != nil) != tt.wantErr {
+			if err := MergeDir(tt.args.destDir, tt.args.move, oc, tt.args.srcDirs...); (err != nil) != tt.wantErr {
 				t.Errorf("MergeDir() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
@@ -633,9 +633,9 @@ func TestChangePath(t *testing.T) {
 	type args struct {
 		strict   bool
 		fPath    string
-		newtail  string
-		fromlast int
-		keepext  bool
+		newTail  string
+		fromLast int
+		keepExt  bool
 		cp       bool
 		mv       bool
 	}
@@ -649,9 +649,9 @@ func TestChangePath(t *testing.T) {
 			name: "",
 			args: args{
 				fPath:    "a/b/c/d.txt",
-				newtail:  "D",
-				fromlast: 1,
-				keepext:  true,
+				newTail:  "D",
+				fromLast: 1,
+				keepExt:  true,
 			},
 			want: "a/b/c/D.txt",
 		},
@@ -659,9 +659,9 @@ func TestChangePath(t *testing.T) {
 			name: "",
 			args: args{
 				fPath:    "a/b/c/d.txt",
-				newtail:  "D",
-				fromlast: 1,
-				keepext:  false,
+				newTail:  "D",
+				fromLast: 1,
+				keepExt:  false,
 			},
 			want: "a/b/c/D",
 		},
@@ -671,9 +671,9 @@ func TestChangePath(t *testing.T) {
 				strict:   true,
 				cp:       true,
 				fPath:    "./test/v.go",
-				newtail:  "C/D",
-				fromlast: 2,
-				keepext:  true,
+				newTail:  "C/D",
+				fromLast: 2,
+				keepExt:  true,
 			},
 			want: "./C/D.go",
 		},
@@ -681,9 +681,9 @@ func TestChangePath(t *testing.T) {
 			name: "",
 			args: args{
 				fPath:    "a/b/c/d.txt",
-				newtail:  "D.json",
-				fromlast: 2,
-				keepext:  false,
+				newTail:  "D.json",
+				fromLast: 2,
+				keepExt:  false,
 			},
 			want: "a/b/D.json",
 		},
@@ -691,9 +691,9 @@ func TestChangePath(t *testing.T) {
 			name: "",
 			args: args{
 				fPath:    "/d.txt",
-				newtail:  "D",
-				fromlast: 1,
-				keepext:  true,
+				newTail:  "D",
+				fromLast: 1,
+				keepExt:  true,
 			},
 			want: "/D.txt",
 		},
@@ -701,9 +701,9 @@ func TestChangePath(t *testing.T) {
 			name: "",
 			args: args{
 				fPath:    "/d.txt",
-				newtail:  "D.json",
-				fromlast: 1,
-				keepext:  false,
+				newTail:  "D.json",
+				fromLast: 1,
+				keepExt:  false,
 			},
 			want: "/D.json",
 		},
@@ -711,9 +711,9 @@ func TestChangePath(t *testing.T) {
 			name: "move",
 			args: args{
 				fPath:    "./var.go",
-				newtail:  "test/v",
-				fromlast: 1,
-				keepext:  true,
+				newTail:  "test/v",
+				fromLast: 1,
+				keepExt:  true,
 				cp:       true,
 				mv:       true,
 			},
@@ -724,9 +724,9 @@ func TestChangePath(t *testing.T) {
 			args: args{
 				strict:   true,
 				fPath:    "./Var.go",
-				newtail:  "test/v",
-				fromlast: 1,
-				keepext:  true,
+				newTail:  "test/v",
+				fromLast: 1,
+				keepExt:  true,
 				cp:       true,
 				mv:       true,
 			},
@@ -735,7 +735,7 @@ func TestChangePath(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := ChangeFilePath(tt.args.strict, tt.args.fPath, tt.args.newtail, tt.args.fromlast, tt.args.keepext, tt.args.cp, tt.args.mv); got != tt.want {
+			if got := ChangeFilePath(tt.args.strict, tt.args.fPath, tt.args.newTail, tt.args.fromLast, tt.args.keepExt, tt.args.cp, tt.args.mv); got != tt.want {
 				t.Errorf("ChangeFilePath() = %v, want %v", got, tt.want)
 			}
 		})
@@ -748,8 +748,8 @@ func TestRmFiles(t *testing.T) {
 
 func TestMustWriteFile(t *testing.T) {
 	type args struct {
-		filename string
-		data     []byte
+		fName string
+		data  []byte
 	}
 	tests := []struct {
 		name string
@@ -759,23 +759,23 @@ func TestMustWriteFile(t *testing.T) {
 		{
 			name: "OK",
 			args: args{
-				filename: "~/Desktop/testout.txt",
-				data:     []byte("TestMustWriteFile111"),
+				fName: "~/Desktop/testout.txt",
+				data:  []byte("TestMustWriteFile111"),
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			MustWriteFile(tt.args.filename, tt.args.data)
+			MustWriteFile(tt.args.fName, tt.args.data)
 		})
 	}
 }
 
 func TestMustAppendFile(t *testing.T) {
 	type args struct {
-		filename string
-		data     []byte
-		newline  bool
+		fName   string
+		data    []byte
+		newline bool
 	}
 	tests := []struct {
 		name string
@@ -785,23 +785,23 @@ func TestMustAppendFile(t *testing.T) {
 		{
 			name: "OK",
 			args: args{
-				filename: "~/Desktop/testout.txt",
-				data:     []byte("TestMustAppendFile"),
-				newline:  true,
+				fName:   "~/Desktop/testout.txt",
+				data:    []byte("TestMustAppendFile"),
+				newline: true,
 			},
 		},
 		{
 			name: "OK",
 			args: args{
-				filename: "./testout1.txt",
-				data:     []byte("TestMustAppendFile"),
-				newline:  false,
+				fName:   "./testout1.txt",
+				data:    []byte("TestMustAppendFile"),
+				newline: false,
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			MustAppendFile(tt.args.filename, tt.args.data, tt.args.newline)
+			MustAppendFile(tt.args.fName, tt.args.data, tt.args.newline)
 		})
 	}
 }

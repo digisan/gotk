@@ -34,8 +34,8 @@ func init() {
 // "a/b/c/d" => "a/b/c/prefix-d-suffix"
 func ChangeFileName(fPath, prefix, suffix string) string {
 	ext := filepath.Ext(fPath)
-	fname := filepath.Base(fPath)
-	name := fname[:len(fname)-len(ext)]
+	fName := filepath.Base(fPath)
+	name := fName[:len(fName)-len(ext)]
 	nameNew := prefix + name + suffix + ext
 	return filepath.Join(filepath.Dir(fPath), nameNew)
 }
@@ -134,8 +134,8 @@ func FileExists(path string) bool {
 
 // AllFilesExist:
 func AllFilesExist(paths ...string) bool {
-	for _, filename := range paths {
-		if !FileExists(filename) {
+	for _, fName := range paths {
+		if !FileExists(fName) {
 			return false
 		}
 	}
@@ -330,21 +330,21 @@ func WalkFileDir(path string, recursive bool, excTypes ...string) (filepaths, di
 	NEXT_FILE:
 		for _, file := range files {
 
-			filename := file.Name()
+			fName := file.Name()
 
 			// ignore hidden file or directory
-			if strings.HasPrefix(filename, ".") {
+			if strings.HasPrefix(fName, ".") {
 				continue
 			}
 
 			// ignore excluded files
 			for _, exc := range excTypes {
-				if strings.HasSuffix(filename, "."+exc) {
+				if strings.HasSuffix(fName, "."+exc) {
 					continue NEXT_FILE
 				}
 			}
 
-			if fp := filepath.Join(path, filename); FileExists(fp) {
+			if fp := filepath.Join(path, fName); FileExists(fp) {
 				filepaths = append(filepaths, fp)
 			} else {
 				directories = append(directories, fp)
@@ -360,7 +360,7 @@ func WalkFileDir(path string, recursive bool, excTypes ...string) (filepaths, di
 					return err
 				}
 
-				filename := d.Name()
+				fName := d.Name()
 
 				// ignore self folder
 				if skipSelf {
@@ -369,7 +369,7 @@ func WalkFileDir(path string, recursive bool, excTypes ...string) (filepaths, di
 				}
 
 				// ignore hidden file or directory
-				if strings.HasPrefix(filename, ".") {
+				if strings.HasPrefix(fName, ".") {
 					return nil
 				}
 
@@ -382,7 +382,7 @@ func WalkFileDir(path string, recursive bool, excTypes ...string) (filepaths, di
 
 				// ignore excluded files
 				for _, exc := range excTypes {
-					if strings.HasSuffix(filename, "."+exc) {
+					if strings.HasSuffix(fName, "."+exc) {
 						return nil
 					}
 				}
@@ -630,6 +630,31 @@ func FileLineScan(path string, f func(line string) (bool, string), outFile strin
 		}
 	}()
 	content, err := strs.ScanLine(file, f)
+	if err != nil {
+		return "", err
+	}
+	if outFile != "" {
+		MustWriteFile(outFile, []byte(content))
+	}
+	return content, nil
+}
+
+// FileLineScanEx :
+func FileLineScanEx(path string, nAbove, nBelow int, junkLine string, f func(line string, cache []string) (bool, string), outFile string) (string, error) {
+	path, err := AbsPath(path, true)
+	if err != nil {
+		return "", err
+	}
+	file, err := os.Open(path)
+	if err != nil {
+		return "", err
+	}
+	defer func() {
+		if file != nil {
+			file.Close()
+		}
+	}()
+	content, err := strs.ScanLineEx(file, nAbove, nBelow, junkLine, f)
 	if err != nil {
 		return "", err
 	}

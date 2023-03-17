@@ -1,7 +1,7 @@
 github.com/BurntSushi/toml v1.2.1 h1:9F2/+DoOYIOksmaJFPw1tGFy1eDnIJXg+UHjuD8lTak=
 github.com/BurntSushi/toml v1.2.1/go.mod h1:CxXYINrC8qIiEnFrOxCa7Jy5BFHlXnUU2pbicEuybxQ=
-github.com/digisan/go-generics v0.3.3 h1:0C5E6Wl3rmRVi3KZ1Y8y0GVSq04wu41Ps2X1kMZhUV4=
-github.com/digisan/go-generics v0.3.3/go.mod h1:VL55aCSjSaDHPbLtQyGg5fFFwG9SSHiAO/Zke/Tkhcg=
+github.com/digisan/go-generics v0.3.5 h1:MqMxG1OnnAbwBtkeKFzu3teBqb9BkhnLRyiW2OLZz28=
+github.com/digisan/go-generics v0.3.5/go.mod h1:VL55aCSjSaDHPbLtQyGg5fFFwG9SSHiAO/Zke/Tkhcg=
 github.com/h2non/filetype v1.1.3 h1:FKkx9QbD7HR/zjK1Ia5XiBsq9zdLi5Kf3zGyFTAFkGg=
 github.com/h2non/filetype v1.1.3/go.mod h1:319b3zT68BvV+WRj7cwy856M2ehB3HqNOt6sy1HndBY=
 golang.org/x/net v0.8.0 h1:Zrh2ngAOFYneWTAIAPethzeaQLuHwhuBkuV6ZiRnUaQ=

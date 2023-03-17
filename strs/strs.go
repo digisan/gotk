@@ -381,7 +381,35 @@ func ScanLine(r io.Reader, f func(line string) (bool, string)) (string, error) {
 	return strings.Join(lines, "\n"), nil
 }
 
+func ScanLineEx(r io.Reader, nAbove, nBelow int, junkLine string, f func(line string, cache []string) (bool, string)) (string, error) {
+	if nAbove < 0 || nBelow < 0 {
+		return "", fmt.Errorf("both nAbove: [%v] and nBelow [%v] cannot be less than 0", nAbove, nBelow)
+	}
+	var (
+		scanner = bufio.NewScanner(r)
+		lines   = []string{}
+		rtLines = []string{}
+	)
+	for scanner.Scan() {
+		lines = append(lines, scanner.Text())
+	}
+	if err := scanner.Err(); err != nil {
+		return "", err
+	}
+	for cache := range IterCache(lines, nAbove, nBelow, junkLine) {
+		if ok, line := f(cache.Elem, cache.Cache); ok {
+			rtLines = append(rtLines, line)
+		}
+	}
+	return strings.Join(rtLines, "\n"), nil
+}
+
 // StrLineScan :
 func StrLineScan(str string, f func(line string) (bool, string)) (string, error) {
 	return ScanLine(strings.NewReader(str), f)
+}
+
+// StrLineScanEx :
+func StrLineScanEx(str string, nAbove, nBelow int, junkLine string, f func(line string, cache []string) (bool, string)) (string, error) {
+	return ScanLineEx(strings.NewReader(str), nAbove, nBelow, junkLine, f)
 }
