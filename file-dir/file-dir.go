@@ -11,12 +11,28 @@ import (
 	"log"
 	"math"
 	"os"
+	"os/exec"
 	"os/user"
 	"path/filepath"
 	"strings"
 
 	. "github.com/digisan/go-generics/v2"
 	"github.com/digisan/gotk/strs"
+	"github.com/h2non/filetype"
+)
+
+const (
+	// File Type
+	Document    = "document"
+	Image       = "image"
+	Audio       = "audio"
+	Video       = "video"
+	Archive     = "archive"
+	Application = "application"
+	Executable  = "executable"
+	Font        = "font"
+	Text        = "text"
+	Unknown     = "unknown"
 )
 
 const (
@@ -662,4 +678,64 @@ func FileLineScanEx(path string, nAbove, nBelow int, junkLine string, f func(lin
 		MustWriteFile(outFile, []byte(content))
 	}
 	return content, nil
+}
+
+func SupportedFileTypes() []string {
+	return []string{Document, Image, Audio, Video, Archive, Application, Executable, Font, Text, Unknown}
+}
+
+func IsSupportedFileType(fType string) bool {
+	fType = strings.ToLower(fType)
+	return In(fType, SupportedFileTypes()...)
+}
+
+func IsTextFile(fPath string) bool {
+	cmd, err := exec.Command("file", fPath).Output()
+	if err != nil {
+		log.Printf("error @IsTextFile: %s\n", err)
+		return false
+	}
+	output := strings.TrimSpace(string(cmd))
+	return strings.HasSuffix(output, " text") || strings.Contains(output, " text ")
+}
+
+// if return "unknown", check it is text file
+func FileType(f io.ReadSeeker) string {
+	defer f.Seek(0, io.SeekStart)
+
+	head := make([]byte, 261)
+	f.Read(head)
+	switch {
+	case filetype.IsImage(head):
+		return Image
+	case filetype.IsVideo(head):
+		return Video
+	case filetype.IsAudio(head):
+		return Audio
+	case filetype.IsDocument(head):
+		return Document
+	case filetype.IsArchive(head):
+		return Archive
+	case filetype.IsApplication(head):
+		return Application
+	case filetype.IsFont(head):
+		return Font
+	default:
+		{
+			f.Seek(0, io.SeekStart)
+			data, err := io.ReadAll(f)
+			if err != nil {
+				return Unknown
+			}
+			tempFile := "/tmp/temp4filetype"
+			if err := os.WriteFile(tempFile, data, os.ModePerm); err != nil {
+				return Unknown
+			}
+			defer os.RemoveAll(tempFile)
+			if IsTextFile(tempFile) {
+				return Text
+			}
+		}
+		return Unknown
+	}
 }

@@ -7,11 +7,22 @@ import (
 	"encoding/xml"
 	"io"
 	"os"
+	"strings"
 
 	"github.com/BurntSushi/toml"
 	. "github.com/digisan/go-generics/v2"
-	"github.com/h2non/filetype"
 	"gopkg.in/yaml.v3"
+)
+
+const (
+	// Text Type
+	JSON    = "json"
+	XML     = "xml"
+	CSV     = "csv"
+	TOML    = "toml"
+	YAML    = "yaml"
+	TEXT    = "text"
+	UNKNOWN = "unknown"
 )
 
 // IsXML: Check str is valid XML
@@ -44,56 +55,20 @@ func IsYAML(data []byte) bool {
 	return err == nil && len(m) > 0
 }
 
-const (
+func SupportedDataTypes() []string {
+	return []string{JSON, XML, CSV, TOML, YAML, TEXT, UNKNOWN}
+}
 
-	// Binary Type
-	Document    = "document"
-	Image       = "image"
-	Audio       = "audio"
-	Video       = "video"
-	Archive     = "archive"
-	Application = "executable"
-	Binary      = "binary"
-
-	// Text Type
-	JSON = "json"
-	XML  = "xml"
-	CSV  = "csv"
-	TOML = "toml"
-	YAML = "yaml"
-
-	Unknown = "unknown"
-)
-
-func BinType(f io.ReadSeeker) string {
-	defer func() {
-		f.Seek(0, io.SeekStart)
-	}()
-	head := make([]byte, 261)
-	f.Read(head)
-	switch {
-	case filetype.IsImage(head):
-		return Image
-	case filetype.IsVideo(head):
-		return Video
-	case filetype.IsAudio(head):
-		return Audio
-	case filetype.IsDocument(head):
-		return Document
-	case filetype.IsArchive(head):
-		return Archive
-	case filetype.IsApplication(head):
-		return Application
-	default:
-		return Unknown
-	}
+func IsSupportedDataType(tType string) bool {
+	tType = strings.ToLower(tType)
+	return In(tType, SupportedDataTypes()...)
 }
 
 type Block interface {
 	string | []byte | *os.File
 }
 
-func txtType(data []byte) string {
+func dataType(data []byte) string {
 	switch {
 	case IsJSON(data):
 		return JSON
@@ -106,25 +81,25 @@ func txtType(data []byte) string {
 	case IsCSV(data):
 		return CSV
 	default:
-		return Unknown
+		return UNKNOWN
 	}
 }
 
-func TxtType[T Block](data T) string {
+func DataType[T Block](data T) string {
 	var in any = data
 	switch TypeOf(data) {
 	case "string":
-		return txtType(StrToConstBytes(in.(string)))
+		return dataType(StrToConstBytes(in.(string)))
 	case "[]uint8":
-		return txtType(in.([]byte))
+		return dataType(in.([]byte))
 	case "*os.File":
 		f := in.(*os.File)
-		defer func() { f.Seek(0, io.SeekStart) }()
+		defer f.Seek(0, io.SeekStart)
 		bytes, err := io.ReadAll(f)
 		if err != nil {
 			return err.Error()
 		}
-		return txtType(bytes)
+		return dataType(bytes)
 	}
 	panic("shouldn't be here")
 }

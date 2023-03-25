@@ -16,16 +16,20 @@ func TestTypeCheck(t *testing.T) {
 
 func TestTxtType(t *testing.T) {
 	str := "abc"
-	fmt.Println(TxtType(str))
+	fmt.Println(DataType(str))
 
 	data := []byte{88, 89}
-	fmt.Println(TxtType(data))
+	fmt.Println(DataType(data))
 
 	f, err := os.Open("./data/sample.csv")
 	if err == nil {
-		fmt.Println("sample type:", TxtType(f))
+		fmt.Println("sample type:", DataType(f))
 	}
 	csv := make([]byte, 100)
 	n, err := f.Read(csv)
 	fmt.Println(n, err, string(csv))
+}
+
+func TestListTypes(t *testing.T) {
+	fmt.Println(SupportedDataTypes())
 }

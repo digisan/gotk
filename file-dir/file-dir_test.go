@@ -2,6 +2,8 @@ package filedir
 
 import (
 	"fmt"
+	"log"
+	"os"
 	"reflect"
 	"strings"
 	"testing"
@@ -871,4 +873,17 @@ func TestFileLineScan(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestFileTypeCheck(t *testing.T) {
+	r, err := os.Open("./file-dir.go")
+	if err != nil {
+		log.Fatalln(err)
+	}
+	defer r.Close()
+	fmt.Println(FileType(r))
+}
+
+func TestListTypes(t *testing.T) {
+	fmt.Println(SupportedFileTypes())
 }
