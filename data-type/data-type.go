@@ -15,7 +15,7 @@ import (
 )
 
 const (
-	// Text Type
+	// Data Type
 	JSON    = "json"
 	XML     = "xml"
 	CSV     = "csv"
