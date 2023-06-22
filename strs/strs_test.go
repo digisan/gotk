@@ -474,3 +474,20 @@ localhost:3002/api/
 		fmt.Println(rt)
 	}
 }
+
+func TestTrimTo(t *testing.T) {
+
+	str := "                  \"asn_hasLevel\": {"
+
+	s1 := TrimTailFromFirst(str, "\"")
+	fmt.Println(s1, len(s1))
+
+	s2 := TrimTailFromLast(str, "\"")
+	fmt.Println(s2, len(s2))
+
+	s3 := TrimHeadToFirst(str, "\"")
+	fmt.Println(s3, len(s3))
+
+	s4 := TrimHeadToLast(str, "\"")
+	fmt.Println(s4, len(s4))
+}

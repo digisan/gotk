@@ -187,9 +187,23 @@ func SplitPartFromLastTo[T any](s, sep string, idx int) T {
 	panic(fmt.Sprintf("index@ [%d] of '%s' cannot be converted to [%T]", idx, s, *new(T)))
 }
 
+func TrimTailFromFirst(s, mark string) string {
+	if i := strings.Index(s, mark); i >= 0 {
+		return s[:i]
+	}
+	return s
+}
+
 func TrimTailFromLast(s, mark string) string {
 	if i := strings.LastIndex(s, mark); i >= 0 {
 		return s[:i]
+	}
+	return s
+}
+
+func TrimHeadToFirst(s, mark string) string {
+	if i := strings.Index(s, mark); i >= 0 {
+		return s[i+len(mark):]
 	}
 	return s
 }
