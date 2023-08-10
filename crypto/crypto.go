@@ -4,8 +4,10 @@ import (
 	"bytes"
 	"crypto/aes"
 	"crypto/cipher"
+	"fmt"
 	"log"
 	"sync"
+	"time"
 )
 
 var (
@@ -59,4 +61,19 @@ func Decrypt(cipherBuf, key []byte) string {
 	plainBuf = bytes.TrimRight(plainBuf, "\x00")
 	// fmt.Printf("%x => %s\n", cipherBuf, plainBuf)
 	return string(plainBuf)
+}
+
+func EncodeStr(origin string, key []byte) (string, []byte) {
+	if len(key) == 0 {
+		key = []byte(fmt.Sprintf("%d", time.Now().UnixNano())[3:19])
+	}
+	secret := Encrypt(origin, key)
+	encoded := fmt.Sprintf("%x", secret)
+	return encoded, key
+}
+
+func DecodeStr(encoded string, key []byte) string {
+	secret := []byte{}
+	fmt.Sscanf(encoded, "%x", &secret)
+	return Decrypt(secret, key)
 }
