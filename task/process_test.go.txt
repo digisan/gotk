@@ -1,0 +1,12 @@
+// package task
+
+// import (
+// 	"fmt"
+// 	"testing"
+// 	"time"
+// )
+
+// func TestGetRunningPID(t *testing.T) {
+// 	fmt.Println(GetRunningPID("/usr/sbin/nginx"))
+// 	fmt.Println(time.Now())
+// }
