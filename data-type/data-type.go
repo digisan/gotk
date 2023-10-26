@@ -11,6 +11,7 @@ import (
 
 	"github.com/BurntSushi/toml"
 	. "github.com/digisan/go-generics/v2"
+	"golang.org/x/net/html"
 	"gopkg.in/yaml.v3"
 )
 
@@ -21,6 +22,7 @@ const (
 	CSV     = "csv"
 	TOML    = "toml"
 	YAML    = "yaml"
+	HTML    = "html"
 	TEXT    = "text"
 	UNKNOWN = "unknown"
 )
@@ -55,13 +57,26 @@ func IsYAML(data []byte) bool {
 	return err == nil && len(m) > 0
 }
 
-func SupportedDataTypes() []string {
-	return []string{JSON, XML, CSV, TOML, YAML, TEXT, UNKNOWN}
+// IsHTML: check str is valid HTML
+func IsHTML(data []byte) bool {
+	z := html.NewTokenizer(bytes.NewReader(data))
+	for {
+		switch z.Next() {
+		case html.ErrorToken:
+			return false
+		case html.StartTagToken, html.EndTagToken:
+			return true
+		}
+	}
 }
 
-func IsSupportedDataType(tType string) bool {
+func SupportedTypes() []string {
+	return []string{JSON, XML, CSV, TOML, YAML, HTML, TEXT, UNKNOWN}
+}
+
+func IsSupportedType(tType string) bool {
 	tType = strings.ToLower(tType)
-	return In(tType, SupportedDataTypes()...)
+	return In(tType, SupportedTypes()...)
 }
 
 type Block interface {
@@ -80,6 +95,8 @@ func dataType(data []byte) string {
 		return YAML
 	case IsCSV(data):
 		return CSV
+	case IsHTML(data):
+		return HTML
 	default:
 		return UNKNOWN
 	}
