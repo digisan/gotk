@@ -12,8 +12,9 @@ func TestTypeCheck(t *testing.T) {
 	fmt.Println(IsCSV([]byte("")))
 	fmt.Println(IsTOML([]byte("")))
 	fmt.Println(IsYAML([]byte("doe: \"a deer, a female deer\"")))
-	fmt.Println(IsHTML([]byte("<html><body><p>This is valid HTML.</p></body></html>")))
+	fmt.Println(IsHTML([]byte("<html><body><p>This <img /> is <br> valid HTML.</p></body></html>")))
 	fmt.Println(IsHTML([]byte("This is a valid TEXT.")))
+	fmt.Println(IsHTML([]byte("")))
 }
 
 func TestTxtType(t *testing.T) {

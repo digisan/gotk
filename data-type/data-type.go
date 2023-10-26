@@ -57,17 +57,56 @@ func IsYAML(data []byte) bool {
 	return err == nil && len(m) > 0
 }
 
-// IsHTML: check str is valid HTML
-func IsHTML(data []byte) bool {
-	z := html.NewTokenizer(bytes.NewReader(data))
+// IsValidHTML: check str is valid HTML. if plainTextIncl is true, plain text is valid HTML.
+func IsValidHTML(data []byte, plainTextIncl bool) bool {
+
+	isVoidElement := func(tagName string) bool {
+		// List of known void (self-closing) HTML elements
+		voidElements := map[string]bool{
+			"area": true, "base": true, "br": true, "col": true, "embed": true,
+			"hr": true, "img": true, "input": true, "link": true, "meta": true,
+			"param": true, "source": true, "track": true, "wbr": true, "keygen": true,
+		}
+		return voidElements[tagName]
+	}
+
+	tokenizer := html.NewTokenizer(bytes.NewReader(data))
+	openTags := make(map[string]int)
+	flagTag := false
 	for {
-		switch z.Next() {
+		switch tokenizer.Next() {
 		case html.ErrorToken:
+			if tokenizer.Err().Error() == "EOF" {
+				// Make sure all previously opened tags are closed
+				for _, count := range openTags {
+					if count > 0 {
+						return false
+					}
+				}
+				return IF(plainTextIncl, true, flagTag)
+			}
 			return false
-		case html.StartTagToken, html.EndTagToken:
-			return true
+
+		case html.StartTagToken:
+			flagTag = true
+			token := tokenizer.Token()
+			tagName := token.Data
+			if !isVoidElement(tagName) {
+				openTags[tagName]++
+			}
+
+		case html.EndTagToken:
+			token := tokenizer.Token()
+			tagName := token.Data
+			if !isVoidElement(tagName) {
+				openTags[tagName]--
+			}
 		}
 	}
+}
+
+func IsHTML(data []byte) bool {
+	return IsValidHTML(data, false)
 }
 
 func SupportedTypes() []string {
