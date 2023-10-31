@@ -518,14 +518,29 @@ func SelfSHA256() string {
 	return FileHash(os.Args[0], sha256.New())
 }
 
+// Wildcard applies in file name
 func Remove(path string, rmEmptyDir bool) error {
 	path, err := AbsPath(path, false)
 	if err != nil {
 		return err
 	}
-	if err := os.RemoveAll(path); err != nil {
-		return err
+
+	if name := filepath.Base(path); strs.ContainsAny(name, "*", "?") {
+		matched, err := filepath.Glob(filepath.Join(filepath.Dir(path), name))
+		if err != nil {
+			return err
+		}
+		for _, path := range matched {
+			if err := os.RemoveAll(path); err != nil {
+				return err
+			}
+		}
+	} else {
+		if err := os.RemoveAll(path); err != nil {
+			return err
+		}
 	}
+
 	if rmEmptyDir {
 		ls := AncestorList(path)
 		for i := len(ls); i > 0; i-- {

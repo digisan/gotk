@@ -605,7 +605,7 @@ func TestRemove(t *testing.T) {
 		{
 			name: "OK",
 			args: args{
-				path:       "~/Desktop/test/a.txt",
+				path:       "../*.txt",
 				rmEmptyDir: true,
 			},
 			wantErr: false,
