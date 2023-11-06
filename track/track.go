@@ -132,6 +132,7 @@ func CheckAccess(invoker string, spanSec, accessLmt int) bool {
 	if tsLast, ok := smFrequent.Load(prefix); ok {
 		_, _, ts := parseKey(key)
 		if ts-tsLast.(int64) <= int64(spanSec) {
+			smFrequent.Store(prefix, ts) // update latest access timestamp
 			return false
 		} else {
 			delRecord(prefix)

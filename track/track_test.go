@@ -35,7 +35,14 @@ func TestRecord(t *testing.T) {
 
 	for i := 0; i < 100; i++ {
 		canAccess := CheckAccess("user", span, limit)
-		fmt.Println(canAccess)
+		fmt.Println(canAccess, i)
 		time.Sleep(time.Duration(100 * time.Millisecond))
+
+		if i == 40 {
+			time.Sleep(time.Duration(2 * time.Second))
+		}
+		if i == 70 {
+			time.Sleep(time.Duration(2 * time.Second))
+		}
 	}
 }
