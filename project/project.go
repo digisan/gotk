@@ -17,7 +17,7 @@ func PrjName(dfltName string) (string, bool) {
 	const check = "/.git"
 NEXT:
 	for i := 1; i < 64; i++ {
-		for _, ln := range SplitLn(tk.TrackCaller(i)) {
+		for _, ln := range SplitLn(tk.CallerDescription(i)) {
 			if strings.HasPrefix(ln, "/") {
 				ln = TrimTailFromLast(ln, ":")
 			AGAIN:
