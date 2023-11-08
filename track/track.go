@@ -8,6 +8,7 @@ import (
 	"runtime"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	. "github.com/digisan/go-generics/v2"
@@ -117,6 +118,11 @@ func delRecord(prefix string) int {
 	return len(keys)
 }
 
+var (
+	flag atomic.Int32 // store clean up monitor period (second)
+	mtx  = sync.Mutex{}
+)
+
 func CheckAccess(invoker string, spanSec, accessLmt int) bool {
 
 	key := genKey(invoker)
@@ -155,5 +161,43 @@ func CheckAccess(invoker string, spanSec, accessLmt int) bool {
 		return false
 	}
 
+	// start single monitor for cleaning up
+	mtx.Lock()
+	defer mtx.Unlock()
+	if flag.Load() == 0 {
+		flag.Store(60) // default monitoring period
+		go func() {
+			fmt.Println("Starting Access Cleanup Monitor")
+			for {
+				period := flag.Load()
+				time.Sleep(time.Duration(period * int32(time.Second)))
+				//
+				tsNow := time.Now().Unix()
+				smAccess.Range(func(key, value any) bool {
+					if _, _, ts := parseKey(key.(string)); tsNow-ts > int64(period) {
+						smAccess.Delete(key)
+					}
+					return true
+				})
+				smFrequent.Range(func(key, value any) bool {
+					if tsNow-value.(int64) > int64(period) {
+						smFrequent.Delete(key)
+					}
+					return true
+				})
+			}
+		}()
+	}
+
 	return true
+}
+
+type CleanOption struct {
+	period int32
+}
+
+func SetAccessCleanupPeriod(opt CleanOption) {
+	if opt.period > 0 {
+		flag.Store(opt.period)
+	}
 }

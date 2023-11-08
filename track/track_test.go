@@ -30,8 +30,8 @@ func Test_trackCaller(t *testing.T) {
 
 func TestRecord(t *testing.T) {
 
-	span := 1
-	limit := 5
+	span := 2
+	limit := 3
 
 	for i := 0; i < 100; i++ {
 		canAccess := CheckAccess("user", span, limit)
@@ -39,10 +39,37 @@ func TestRecord(t *testing.T) {
 		time.Sleep(time.Duration(100 * time.Millisecond))
 
 		if i == 40 {
-			time.Sleep(time.Duration(2 * time.Second))
+			fmt.Println("Sleeping... Second")
+			time.Sleep(time.Duration(3 * time.Second))
+
+			SetAccessCleanupPeriod(CleanOption{period: 4})
 		}
 		if i == 70 {
-			time.Sleep(time.Duration(2 * time.Second))
+			fmt.Println("Sleeping... Second")
+			time.Sleep(time.Duration(3 * time.Second))
+
+			SetAccessCleanupPeriod(CleanOption{period: 3})
 		}
+	}
+
+	for i := 0; i < 10; i++ {
+
+		n := 0
+		smAccess.Range(func(key, value any) bool {
+			fmt.Println(key, value)
+			n++
+			return true
+		})
+		fmt.Println("smAccess:", n)
+
+		n = 0
+		smFrequent.Range(func(key, value any) bool {
+			fmt.Println(key, value)
+			n++
+			return true
+		})
+		fmt.Println("smFrequent:", n)
+
+		time.Sleep(time.Duration(2 * time.Second))
 	}
 }
