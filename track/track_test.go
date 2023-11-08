@@ -34,17 +34,17 @@ func TestRecord(t *testing.T) {
 	limit := 3
 
 	for i := 0; i < 100; i++ {
-		canAccess := CheckAccess("user", span, limit)
-		fmt.Println(canAccess, i)
+
+		fmt.Println(CheckAccess("user", span, limit), i)
 		time.Sleep(time.Duration(100 * time.Millisecond))
 
-		if i == 40 {
+		if i == 30 {
 			fmt.Println("Sleeping... Second")
-			time.Sleep(time.Duration(3 * time.Second))
+			time.Sleep(time.Duration(4 * time.Second))
 
 			SetAccessCleanupPeriod(CleanOption{period: 4})
 		}
-		if i == 70 {
+		if i == 60 {
 			fmt.Println("Sleeping... Second")
 			time.Sleep(time.Duration(3 * time.Second))
 
@@ -52,23 +52,27 @@ func TestRecord(t *testing.T) {
 		}
 	}
 
-	for i := 0; i < 10; i++ {
+	for i := 0; i < 100; i++ {
 
-		n := 0
+		n1 := 0
 		smAccess.Range(func(key, value any) bool {
 			fmt.Println(key, value)
-			n++
+			n1++
 			return true
 		})
-		fmt.Println("smAccess:", n)
+		fmt.Println("smAccess:", n1)
 
-		n = 0
+		n2 := 0
 		smFrequent.Range(func(key, value any) bool {
 			fmt.Println(key, value)
-			n++
+			n2++
 			return true
 		})
-		fmt.Println("smFrequent:", n)
+		fmt.Println("smFrequent:", n2)
+
+		if n1+n2 == 0 {
+			break
+		}
 
 		time.Sleep(time.Duration(2 * time.Second))
 	}

@@ -126,6 +126,7 @@ var (
 func CheckAccess(invoker string, spanSec, accessLmt int) bool {
 
 	key := genKey(invoker)
+	_, _, tsNow := parseKey(key)
 	if n, ok := smAccess.Load(key); ok {
 		smAccess.Store(key, n.(int)+1)
 	} else {
@@ -136,12 +137,12 @@ func CheckAccess(invoker string, spanSec, accessLmt int) bool {
 	prefix := strs.TrimTailFromLast(key, SEP)
 
 	if tsLast, ok := smFrequent.Load(prefix); ok {
-		_, _, ts := parseKey(key)
-		if ts-tsLast.(int64) <= int64(spanSec) {
-			smFrequent.Store(prefix, ts) // update latest access timestamp
+		if tsNow-tsLast.(int64) <= int64(spanSec) {
+			smFrequent.Store(prefix, tsNow) // update latest access timestamp
 			return false
 		} else {
-			delRecord(prefix)
+			delRecord(prefix)      // after enough period, clear previous record
+			smAccess.Store(key, 1) // but this time access still need to add 1
 			return true
 		}
 	}
@@ -155,9 +156,8 @@ func CheckAccess(invoker string, spanSec, accessLmt int) bool {
 	}
 
 	// check total access number with limit number
-	if total >= accessLmt {
-		_, _, ts := parseKey(key)
-		smFrequent.Store(prefix, ts)
+	if total > accessLmt {
+		smFrequent.Store(prefix, tsNow)
 		return false
 	}
 
