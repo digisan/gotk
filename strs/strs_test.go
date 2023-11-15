@@ -109,7 +109,7 @@ func TestMaxlen(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := Maxlen(tt.args.s, tt.args.length); got != tt.want {
+			if got := MaxLen(tt.args.s, tt.args.length); got != tt.want {
 				t.Errorf("Maxlen() = %v, want %v", got, tt.want)
 			}
 		})
@@ -439,23 +439,6 @@ func TestReversePath(t *testing.T) {
 	fmt.Println(ReversePath(path))
 }
 
-func TestModifyOriginOrIP(t *testing.T) {
-
-	s := `
-	http://127.0.0.1:3000/api/
-	https://127.0.0.1:3000/api/
-	http://localhost:3001/api/
-	https://localhost:3001/api/
-	localhost:3002/api/
-	127.0.0.1:3002/api/
-	`
-
-	// fmt.Println(ModifyOriginIP(s, "localhost", "my.example.com", "", -1, true, true, true))
-	// fmt.Println(ModifyOriginIP(s, "localhost", "my.example.com", "", -1, true, true, false))
-	// fmt.Println(ModifyOriginIP(s, "localhost", "test://my.example.com", "", -1, false, true, false))
-	fmt.Println(ModifyOriginIP(s, "localhost", "my.example.com:1234", "", -1, true, false, true))
-}
-
 func TestScanLineEx(t *testing.T) {
 
 	s := `http://127.0.0.1:3000/api/
@@ -490,4 +473,36 @@ func TestTrimTo(t *testing.T) {
 
 	s4 := TrimHeadToLast(str, "\"")
 	fmt.Println(s4, len(s4))
+}
+
+func TestHeadTailSpace(t *testing.T) {
+	s := "       ab c d    "
+	hs, ts := HeadSpace(s), TailSpace(s)
+	fmt.Println(hs, len(hs))
+	fmt.Println(ts, len(ts))
+
+	s = "ab c d "
+	hs, ts = HeadSpace(s), TailSpace(s)
+	fmt.Println(hs, len(hs))
+	fmt.Println(ts, len(ts))
+
+	s = "  ab c d"
+	hs, ts = HeadSpace(s), TailSpace(s)
+	fmt.Println(hs, len(hs))
+	fmt.Println(ts, len(ts))
+
+	s = "ab c d"
+	hs, ts = HeadSpace(s), TailSpace(s)
+	fmt.Println(hs, len(hs))
+	fmt.Println(ts, len(ts))
+
+	s = "   "
+	hs, ts = HeadSpace(s), TailSpace(s)
+	fmt.Println(hs, len(hs))
+	fmt.Println(ts, len(ts))
+
+	s = ""
+	hs, ts = HeadSpace(s), TailSpace(s)
+	fmt.Println(hs, len(hs))
+	fmt.Println(ts, len(ts))
 }
