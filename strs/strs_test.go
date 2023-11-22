@@ -481,28 +481,65 @@ func TestHeadTailSpace(t *testing.T) {
 	fmt.Println(hs, len(hs))
 	fmt.Println(ts, len(ts))
 
-	s = "ab c d "
-	hs, ts = HeadSpace(s), TailSpace(s)
+	fmt.Println("-----------------------")
+
+	// s = "ab c d "
+	// hs, ts = HeadSpace(s), TailSpace(s)
+	// fmt.Println(hs, len(hs))
+	// fmt.Println(ts, len(ts))
+
+	// s = "  ab c d"
+	// hs, ts = HeadSpace(s), TailSpace(s)
+	// fmt.Println(hs, len(hs))
+	// fmt.Println(ts, len(ts))
+
+	// s = "ab c d"
+	// hs, ts = HeadSpace(s), TailSpace(s)
+	// fmt.Println(hs, len(hs))
+	// fmt.Println(ts, len(ts))
+
+	// s = "   "
+	// hs, ts = HeadSpace(s), TailSpace(s)
+	// fmt.Println(hs, len(hs))
+	// fmt.Println(ts, len(ts))
+
+	// s = ""
+	// hs, ts = HeadSpace(s), TailSpace(s)
+	// fmt.Println(hs, len(hs))
+	// fmt.Println(ts, len(ts))
+
+	fmt.Println("-----------------------")
+
+	s = "	a		"
+	hs, ts = HeadTblChar(s), TailTblChar(s)
 	fmt.Println(hs, len(hs))
 	fmt.Println(ts, len(ts))
 
-	s = "  ab c d"
-	hs, ts = HeadSpace(s), TailSpace(s)
+	fmt.Println("-----------------------")
+
+	s = "a"
+	hs, ts = HeadTblChar(s), TailTblChar(s)
 	fmt.Println(hs, len(hs))
 	fmt.Println(ts, len(ts))
 
-	s = "ab c d"
-	hs, ts = HeadSpace(s), TailSpace(s)
+	fmt.Println("-----------------------")
+
+	s = "	"
+	hs, ts = HeadTblChar(s), TailTblChar(s)
 	fmt.Println(hs, len(hs))
 	fmt.Println(ts, len(ts))
 
-	s = "   "
-	hs, ts = HeadSpace(s), TailSpace(s)
-	fmt.Println(hs, len(hs))
-	fmt.Println(ts, len(ts))
+	fmt.Println("-----------------------")
 
 	s = ""
-	hs, ts = HeadSpace(s), TailSpace(s)
+	hs, ts = HeadTblChar(s), TailTblChar(s)
+	fmt.Println(hs, len(hs))
+	fmt.Println(ts, len(ts))
+
+	fmt.Println("-----------------------")
+
+	s = "	 	a		  	"
+	hs, ts = HeadBlank(s), TailBlank(s)
 	fmt.Println(hs, len(hs))
 	fmt.Println(ts, len(ts))
 }

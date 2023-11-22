@@ -215,26 +215,50 @@ func TrimHeadToLast(s, mark string) string {
 	return s
 }
 
-func HeadSpace(s string) string {
+func HeadConsecutive(s string, cc ...rune) string {
 	for i, c := range s {
-		if c != ' ' {
+		if NotIn(c, cc...) {
 			return s[:i]
 		}
 	}
 	return s
 }
 
-func TailSpace(s string) string {
+func HeadSpace(s string) string {
+	return HeadConsecutive(s, ' ')
+}
+
+func HeadTblChar(s string) string {
+	return HeadConsecutive(s, '\t')
+}
+
+func HeadBlank(s string) string {
+	return HeadConsecutive(s, ' ', '\t')
+}
+
+func TailConsecutive(s string, cc ...rune) string {
 	buf := []rune{}
 	for _, c := range s {
 		buf = append(buf, c)
 	}
 	for i, c := range Reverse(buf) {
-		if c != ' ' {
+		if NotIn(c, cc...) {
 			return s[len(s)-i:]
 		}
 	}
 	return s
+}
+
+func TailSpace(s string) string {
+	return TailConsecutive(s, ' ')
+}
+
+func TailTblChar(s string) string {
+	return TailConsecutive(s, '\t')
+}
+
+func TailBlank(s string) string {
+	return TailConsecutive(s, ' ', '\t')
 }
 
 func SplitLn(s string) []string {
