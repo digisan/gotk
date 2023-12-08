@@ -887,3 +887,7 @@ func TestFileTypeCheck(t *testing.T) {
 func TestListTypes(t *testing.T) {
 	fmt.Println(SupportedFileTypes())
 }
+
+func TestCopyFolder(t *testing.T) {
+	CopyFolder("../data-for-test", "copy-test", "csv")
+}

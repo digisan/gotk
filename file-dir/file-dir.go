@@ -754,3 +754,74 @@ func FileType(f io.ReadSeeker) string {
 		return Unknown
 	}
 }
+
+func CopyFile(src, dst string) error {
+	srcFile, err := os.Open(src)
+	if err != nil {
+		return err
+	}
+	defer srcFile.Close()
+
+	destFile, err := os.Create(dst)
+	if err != nil {
+		return err
+	}
+	defer destFile.Close()
+
+	_, err = io.Copy(destFile, srcFile)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func CopyFolder(src, dst string, inclExt ...string) error {
+	// Create the destination folder if it doesn't exist
+	if err := os.MkdirAll(dst, 0755); err != nil {
+		return err
+	}
+
+	// Open the source folder
+	srcFolder, err := os.Open(src)
+	if err != nil {
+		return err
+	}
+	defer srcFolder.Close()
+
+	// Read the contents of the source folder
+	fileInfos, err := srcFolder.Readdir(-1)
+	if err != nil {
+		return err
+	}
+
+	for i, ext := range inclExt {
+		inclExt[i] = "." + strings.TrimPrefix(ext, ".")
+	}
+
+	// Iterate through the files and copy them
+	for _, fileInfo := range fileInfos {
+
+		name := fileInfo.Name()
+		if ext := filepath.Ext(name); len(inclExt) > 0 && NotIn(ext, inclExt...) {
+			continue
+		}
+
+		srcPath := filepath.Join(src, name)
+		dstPath := filepath.Join(dst, name)
+
+		if fileInfo.IsDir() {
+			// If the file is a directory, recursively copy the folder
+			if err := CopyFolder(srcPath, dstPath); err != nil {
+				return err
+			}
+		} else {
+			// If the file is a regular file, copy it
+			if err := CopyFile(srcPath, dstPath); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
