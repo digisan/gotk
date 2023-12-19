@@ -543,3 +543,7 @@ func TestHeadTailSpace(t *testing.T) {
 	fmt.Println(hs, len(hs))
 	fmt.Println(ts, len(ts))
 }
+
+func TestReplaceAllInFolder(t *testing.T) {
+	fmt.Println(ReplaceAllInFolder("package strs", "package AAA", "../strs", "old"))
+}

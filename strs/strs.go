@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"os"
+	"path/filepath"
 	"regexp"
 	"runtime"
 	"sort"
@@ -72,6 +74,31 @@ func RangeReplace(s string, ranges [][2]int, ns []string) string {
 		}
 	}
 	return s
+}
+
+func ReplaceAllInFolder(oldStr, newStr, dir, ext string) (fPaths []string) {
+	des, err := os.ReadDir(dir)
+	if err != nil {
+		return nil
+	}
+	ext = "." + strings.TrimPrefix(ext, ".")
+	for _, de := range des {
+		if de.IsDir() {
+			continue
+		}
+		if strings.HasSuffix(de.Name(), ext) {
+			fPath := filepath.Join(dir, de.Name())
+			data, err := os.ReadFile(fPath)
+			if err != nil {
+				continue
+			}
+			s := strings.ReplaceAll(string(data), oldStr, newStr)
+			if err := os.WriteFile(fPath, []byte(s), os.ModePerm); err == nil {
+				fPaths = append(fPaths, fPath)
+			}
+		}
+	}
+	return
 }
 
 func HasAnyPrefix(s string, prefixGrp ...string) bool {
