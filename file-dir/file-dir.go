@@ -16,7 +16,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	. "github.com/digisan/go-generics/v2"
+	. "github.com/digisan/go-generics"
 	"github.com/digisan/gotk/strs"
 	"github.com/h2non/filetype"
 )
