@@ -1,4 +1,4 @@
 # gotk
 
-upgrade to go1.22.0
-version => v0.5.0
+upgrade to go1.22.1
+version => v0.5.2
