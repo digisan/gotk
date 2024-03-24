@@ -9,10 +9,10 @@ import (
 type HeaderName string
 
 const (
-	DataElement                    HeaderName = "Data Element"                      // A
-	DataElementDefinition          HeaderName = "Data Element Definition"           // B
-	DataElementReferences          HeaderName = "Data Element References"           // C
-	DataElementComments            HeaderName = "Data Element Comments"             // D
+	// DataElement                    HeaderName = "Data Element"                      // A
+	// DataElementDefinition          HeaderName = "Data Element Definition"           // B
+	// DataElementReferences          HeaderName = "Data Element References"           // C
+	// DataElementComments            HeaderName = "Data Element Comments"             // D
 	ValueDomain                    HeaderName = "Value Domain"                      // E
 	ValueDomainDefinition          HeaderName = "Value Domain Definition"           // F
 	ValueDomainReferences          HeaderName = "Value Domain References"           // G

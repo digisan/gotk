@@ -18,6 +18,9 @@ func ValuesFromConsts[T any](fSrcPath string) (values []T, err error) {
 	flag := false
 	_, err = fd.FileLineScan(fSrcPath, func(line string) (bool, string) {
 		ln := strings.TrimSpace(line)
+		if strings.HasPrefix(ln, "//") {
+			return false, ""
+		}
 		if ln == "const (" {
 			flag = true
 		}
