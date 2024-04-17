@@ -1,10 +1,13 @@
 package src
 
 import (
+	_ "embed"
 	"fmt"
-	"runtime"
 	"testing"
 )
+
+//go:embed const_test.go
+var src string
 
 type HeaderName string
 
@@ -41,29 +44,41 @@ const (
 const (
 	A uint = 1
 	B uint = 2
-	C bool = false
+	C bool = true
 )
 
 func TestValuesFromConsts(t *testing.T) {
-	_, fSrcPath, _, _ := runtime.Caller(0)
 
-	values, err := ValuesFromConsts[HeaderName](fSrcPath)
+	values, consts, err := ValuesFromConsts[HeaderName](src)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	for _, val := range values {
-		fmt.Printf("%v\n", val)
+	for i, val := range values {
+		fmt.Printf("%v - %v\n", consts[i], val)
 	}
 
 	fmt.Println("----------------------------------")
 
-	values1, err1 := ValuesFromConsts[uint](fSrcPath)
+	values1, consts1, err1 := ValuesFromConsts[bool](src)
 	if err1 != nil {
 		fmt.Println(err1)
 		return
 	}
-	for _, val := range values1 {
-		fmt.Printf("%v\n", val)
+	for i, val := range values1 {
+		fmt.Printf("%v - %v\n", consts1[i], val)
 	}
+}
+
+func TestMapFromConsts(t *testing.T) {
+
+	m, err := MapFromConsts[uint](src)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	for k, v := range m {
+		fmt.Println(k, ":", v)
+	}
+
 }

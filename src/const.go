@@ -5,32 +5,41 @@ import (
 	"strings"
 
 	. "github.com/digisan/go-generics"
-	fd "github.com/digisan/gotk/file-dir"
 	"github.com/digisan/gotk/strs"
 )
 
-// fSrcPath: _, fSrcPath, _, _ := runtime.Caller(0/1)
-func ValuesFromConsts[T any](fSrcPath string) (values []T, err error) {
+// + 'import _ "embed"'
+//
+// + '//go:embed ***.go'
+//
+// + 'var src string'
+func ValuesFromConsts[T any](src string) (values []T, consts []string, err error) {
 
 	Type := fmt.Sprintf("%T", *new(T))
 	Type = strs.TrimHeadToLast(Type, ".")
 
 	flag := false
-	_, err = fd.FileLineScan(fSrcPath, func(line string) (bool, string) {
+	_, err = strs.StrLineScan(src, func(line string) (bool, string) {
 		ln := strings.TrimSpace(line)
 		if strings.HasPrefix(ln, "//") {
 			return false, ""
 		}
-		if ln == "const (" {
+		if !flag && ln == "const (" {
 			flag = true
+			return false, ""
 		}
 		if flag && ln == ")" {
 			flag = false
+			return false, ""
 		}
 		if flag {
 			if strings.Contains(ln, "=") && strings.Contains(ln, Type) {
 				ss := strings.Split(ln, "=")
 				if strings.Contains(ss[0], Type) {
+
+					// const name
+					cst := strings.TrimSpace(strings.TrimSuffix(strings.TrimSpace(ss[0]), Type))
+
 					valStr := strings.TrimSpace(ss[1])
 					if strs.HasAnyPrefix(valStr, "\"", "`") { // string type value
 						pCloseQ := 1
@@ -53,8 +62,10 @@ func ValuesFromConsts[T any](fSrcPath string) (values []T, err error) {
 						val := valStr[1:pCloseQ]
 						if v, err := AnyToType[T](val); err == nil {
 							values = append(values, v)
+							consts = append(consts, cst)
 						} else if v, ok := AnyTryToType[T](val); ok {
 							values = append(values, v)
+							consts = append(consts, cst)
 						}
 						return true, ln
 
@@ -62,8 +73,10 @@ func ValuesFromConsts[T any](fSrcPath string) (values []T, err error) {
 						val := strings.TrimSpace(strs.TrimTailFromFirst(valStr, "//"))
 						if v, err := AnyToType[T](val); err == nil {
 							values = append(values, v)
+							consts = append(consts, cst)
 						} else if v, ok := AnyTryToType[T](val); ok {
 							values = append(values, v)
+							consts = append(consts, cst)
 						}
 						return true, ln
 					}
@@ -71,7 +84,23 @@ func ValuesFromConsts[T any](fSrcPath string) (values []T, err error) {
 			}
 		}
 		return false, ""
+	})
+	return
+}
 
-	}, "")
+// + 'import _ "embed"'
+//
+// + '//go:embed ***.go'
+//
+// + 'var src string'
+func MapFromConsts[T any](src string) (m map[string]T, err error) {
+	values, consts, err := ValuesFromConsts[T](src)
+	if err != nil {
+		return nil, err
+	}
+	m = make(map[string]T)
+	for i, val := range values {
+		m[consts[i]] = val
+	}
 	return
 }
