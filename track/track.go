@@ -170,7 +170,7 @@ func CheckAccess(invoker string, spanSec, accessLmt int) bool {
 			fmt.Println("Starting Access Cleanup Monitor")
 			for {
 				period := flag.Load()
-				time.Sleep(time.Duration(period * int32(time.Second)))
+				time.Sleep(time.Duration(period) * time.Second)
 				//
 				tsNow := time.Now().Unix()
 				smAccess.Range(func(key, value any) bool {
