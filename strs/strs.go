@@ -12,24 +12,50 @@ import (
 	"sort"
 	"strings"
 
-	. "github.com/digisan/go-generics"
+	gg "github.com/digisan/go-generics"
 	"golang.org/x/net/html"
 )
 
-func IsIn(ignoreCase, ignoreSpace bool, s string, group ...string) bool {
+func In(ignoreCase, ignoreSpace bool, s string, group ...string) bool {
 	if ignoreCase {
 		s = strings.ToLower(s)
-		group = FilterMap4SglTyp(group, nil, func(i int, e string) string { return strings.ToLower(e) })
+		group = gg.FilterMap4SglTyp(group, nil, func(i int, e string) string { return strings.ToLower(e) })
 	}
 	if ignoreSpace {
 		s = strings.TrimSpace(s)
-		group = FilterMap4SglTyp(group, nil, func(i int, e string) string { return strings.TrimSpace(e) })
+		group = gg.FilterMap4SglTyp(group, nil, func(i int, e string) string { return strings.TrimSpace(e) })
 	}
-	return In(s, group...)
+	return gg.In(s, group...)
 }
 
-func IsNotIn(insensitive, ignoreSpace bool, s string, group ...string) bool {
-	return !IsIn(insensitive, ignoreSpace, s, group...)
+func NotIn(ignoreCase, ignoreSpace bool, s string, group ...string) bool {
+	return !In(ignoreCase, ignoreSpace, s, group...)
+}
+
+func AsPrefixIn(s string, group ...string) bool {
+	for _, elem := range group {
+		if strings.HasPrefix(elem, s) {
+			return true
+		}
+	}
+	return false
+}
+
+func AsPrefixNotIn(s string, group ...string) bool {
+	return !AsPrefixIn(s, group...)
+}
+
+func AsSuffixIn(s string, group ...string) bool {
+	for _, elem := range group {
+		if strings.HasSuffix(elem, s) {
+			return true
+		}
+	}
+	return false
+}
+
+func AsSuffixNotIn(s string, group ...string) bool {
+	return !AsSuffixIn(s, group...)
 }
 
 func MaxLen(s string, length int) string {
@@ -63,7 +89,7 @@ func IndexAllByReg(s, sub string) (starts, ends []int) {
 }
 
 func RangeReplace(s string, ranges [][2]int, ns []string) string {
-	for i := 0; i < Min(len(ranges), len(ns)); i++ {
+	for i := 0; i < gg.Min(len(ranges), len(ns)); i++ {
 		lenPrev := len(s)
 		start, end := ranges[i][0], ranges[i][1]
 		s = s[:start] + ns[i] + s[end:]
@@ -199,7 +225,7 @@ func SplitPartTo[T any](s, sep string, idx int) T {
 	if idx < 0 && idx >= len(ss) {
 		log.Fatalf("index@ [%d] of '%s' is out of range", idx, s)
 	}
-	if rt, ok := AnyTryToType[T](ss[idx]); ok {
+	if rt, ok := gg.AnyTryToType[T](ss[idx]); ok {
 		return rt
 	}
 	panic(fmt.Sprintf("index@ [%d] of '%s' cannot be converted to [%T]", idx, s, *new(T)))
@@ -207,8 +233,8 @@ func SplitPartTo[T any](s, sep string, idx int) T {
 
 // idx 1 is the last element, idx 2 is the second last, etc...
 func SplitPartFromLastTo[T any](s, sep string, idx int) T {
-	lastStr := Last(strings.Split(s, sep), idx)
-	if rt, ok := AnyTryToType[T](lastStr); ok {
+	lastStr := gg.Last(strings.Split(s, sep), idx)
+	if rt, ok := gg.AnyTryToType[T](lastStr); ok {
 		return rt
 	}
 	panic(fmt.Sprintf("index@ [%d] of '%s' cannot be converted to [%T]", idx, s, *new(T)))
@@ -244,7 +270,7 @@ func TrimHeadToLast(s, mark string) string {
 
 func HeadConsecutive(s string, cc ...rune) string {
 	for i, c := range s {
-		if NotIn(c, cc...) {
+		if gg.NotIn(c, cc...) {
 			return s[:i]
 		}
 	}
@@ -268,8 +294,8 @@ func TailConsecutive(s string, cc ...rune) string {
 	for _, c := range s {
 		buf = append(buf, c)
 	}
-	for i, c := range Reverse(buf) {
-		if NotIn(c, cc...) {
+	for i, c := range gg.Reverse(buf) {
+		if gg.NotIn(c, cc...) {
 			return s[len(s)-i:]
 		}
 	}
@@ -289,7 +315,7 @@ func TailBlank(s string) string {
 }
 
 func SplitLn(s string) []string {
-	sep := MATCH(runtime.GOOS, "windows", "linux", "darwin", "\r\n", "\n", "\r", "\n")
+	sep := gg.MATCH(runtime.GOOS, "windows", "linux", "darwin", "\r\n", "\n", "\r", "\n")
 	return strings.Split(s, sep)
 }
 
@@ -317,14 +343,14 @@ loopDomTest:
 }
 
 func ReversePath(path string) string {
-	return strings.Join(Reverse(strings.Split(path, ".")), ".")
+	return strings.Join(gg.Reverse(strings.Split(path, ".")), ".")
 }
 
 func SortPaths(paths ...string) []string {
 	sort.SliceStable(paths, func(i, j int) bool {
 		pathI, pathJ := paths[i], paths[j]
 		nI, nJ := strings.Count(pathI, "."), strings.Count(pathJ, ".")
-		minDot := Min(nI, nJ)
+		minDot := gg.Min(nI, nJ)
 		ssI, ssJ := strings.Split(pathI, "."), strings.Split(pathJ, ".")
 	NEXT:
 		for i := 0; i < minDot+1; i++ {
@@ -332,9 +358,9 @@ func SortPaths(paths ...string) []string {
 			if si == sj {
 				continue NEXT
 			}
-			if IsUint(si) && IsUint(sj) {
-				idxI, _ := AnyTryToType[uint](si)
-				idxJ, _ := AnyTryToType[uint](sj)
+			if gg.IsUint(si) && gg.IsUint(sj) {
+				idxI, _ := gg.AnyTryToType[uint](si)
+				idxJ, _ := gg.AnyTryToType[uint](sj)
 				if idxI == idxJ {
 					continue NEXT
 				}
@@ -377,7 +403,7 @@ func ScanLineEx(r io.Reader, nAbove, nBelow int, junkLine string, f func(line st
 	if err := scanner.Err(); err != nil {
 		return "", err
 	}
-	for cache := range IterCache(lines, nAbove, nBelow, junkLine) {
+	for cache := range gg.IterCache(lines, nAbove, nBelow, junkLine) {
 		if ok, line := f(cache.Elem, cache.Cache); ok {
 			rtLines = append(rtLines, line)
 		}

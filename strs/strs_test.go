@@ -43,7 +43,7 @@ func TestIsIn(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := IsIn(tt.args.ignoreCase, tt.args.ignoreSpace, tt.args.s, tt.args.group...); got != tt.want {
+			if got := In(tt.args.ignoreCase, tt.args.ignoreSpace, tt.args.s, tt.args.group...); got != tt.want {
 				t.Errorf("IsIn() = %v, want %v", got, tt.want)
 			}
 		})
@@ -88,7 +88,7 @@ func TestIsNotIn(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := IsNotIn(tt.args.ignoreCase, tt.args.ignoreSpace, tt.args.s, tt.args.group...); got != tt.want {
+			if got := NotIn(tt.args.ignoreCase, tt.args.ignoreSpace, tt.args.s, tt.args.group...); got != tt.want {
 				t.Errorf("IsNotIn() = %v, want %v", got, tt.want)
 			}
 		})
