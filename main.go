@@ -32,12 +32,21 @@ func main() {
 
 	// track.TrackAll()
 
-	FixedPrintf := FnFixedPrintf()
-	for i := range 30 {
+	ColorPrintf("original color - %s - %s\n", B("hello"), R(CB(1.23)))
+
+	fPrintf := FnFixedPrintf()
+	for i := range 3 {
 		s := strings.Repeat("-", i)
-		FixedPrintf("%v %s\n", time.Now().Format("2006-01-02 15:04:05"), s)
+		fPrintf("%v %s\n", time.Now().Format("2006-01-02 15:04:05"), s)
 		time.Sleep(time.Duration(1000) * time.Millisecond)
 	}
 	fmt.Println("Done")
 
+	fcPrintf := FnFixedColorPrintf()
+	for i := range 5 {
+		s := strings.Repeat("-", i)
+		fcPrintf("%v %s\n", time.Now().Format("2006-01-02 15:04:05"), G(s))
+		time.Sleep(time.Duration(1000) * time.Millisecond)
+	}
+	fmt.Println("Done")
 }
