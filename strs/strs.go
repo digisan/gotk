@@ -373,13 +373,18 @@ func SortPaths(paths ...string) []string {
 	return paths
 }
 
-// ScanLine :
+// return (true, "") keeps original line
 func ScanLine(r io.Reader, f func(line string) (bool, string)) (string, error) {
 	lines := []string{}
 	scanner := bufio.NewScanner(r)
 	for scanner.Scan() {
-		if ok, line := f(scanner.Text()); ok {
-			lines = append(lines, line)
+		raw := scanner.Text()
+		if ok, line := f(raw); ok {
+			if len(line) > 0 {
+				lines = append(lines, line)
+			} else { // empty line return means to keep original raw line
+				lines = append(lines, raw)
+			}
 		}
 	}
 	if err := scanner.Err(); err != nil {
@@ -388,6 +393,7 @@ func ScanLine(r io.Reader, f func(line string) (bool, string)) (string, error) {
 	return strings.Join(lines, "\n"), nil
 }
 
+// return (true, "") keeps original line
 func ScanLineEx(r io.Reader, nAbove, nBelow int, junkLine string, f func(line string, cache []string) (bool, string)) (string, error) {
 	if nAbove < 0 || nBelow < 0 {
 		return "", fmt.Errorf("both nAbove: [%v] and nBelow [%v] cannot be less than 0", nAbove, nBelow)
@@ -405,7 +411,11 @@ func ScanLineEx(r io.Reader, nAbove, nBelow int, junkLine string, f func(line st
 	}
 	for cache := range gg.IterCache(lines, nAbove, nBelow, junkLine) {
 		if ok, line := f(cache.Elem, cache.Cache); ok {
-			rtLines = append(rtLines, line)
+			if len(line) > 0 {
+				rtLines = append(rtLines, line)
+			} else { // empty line return means to keep original raw line
+				rtLines = append(rtLines, cache.Elem)
+			}
 		}
 	}
 	return strings.Join(rtLines, "\n"), nil

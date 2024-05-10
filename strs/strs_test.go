@@ -442,13 +442,21 @@ func TestReversePath(t *testing.T) {
 func TestScanLineEx(t *testing.T) {
 
 	s := `http://127.0.0.1:3000/api/
-https://127.0.0.1:3000/api/
-http://localhost:3001/api/
-https://localhost:3001/api/
-localhost:3002/api/
-127.0.0.1:3002/api/`
+	https://127.0.0.1:3000/api/
+		http://localhost:3001/api/
+			https://localhost:3001/api/
+				localhost:3002/api/
+					127.0.0.1:3002/api/`
 
-	rt, err := ScanLineEx(strings.NewReader(s), 2, 2, "******", func(line string, cache []string) (bool, string) {
+	rt, err := ScanLineEx(strings.NewReader(s), 2, 2, "***", func(line string, cache []string) (bool, string) {
+
+		if strings.Contains(line, "localhost") {
+			return true, ""
+		}
+		if strings.Contains(line, "http:") {
+			return false, ""
+		}
+
 		// fmt.Println(line, "--->", cache)
 		return true, strings.ToUpper(line)
 	})
